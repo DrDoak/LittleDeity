@@ -6,7 +6,6 @@ using UnityEngine.EventSystems;
 public class HitboxMaker : MonoBehaviour
 {
 
-//	public List<ElementType> elementTypes;
 	public FactionType Faction;
 	PhysicsSS m_physics;
 	Fighter m_fighter;
@@ -46,6 +45,34 @@ public class HitboxMaker : MonoBehaviour
 
 		ExecuteEvents.Execute<ICustomMessageTarget> (gameObject, null, (x, y) => x.OnHitboxCreate(line));
 		return line;
+	}
+
+	public Hitbox CreateHitbox(HitboxInfo hbi) {
+		Vector2 cOff = (m_physics == null) ? hbi.HitboxOffset : m_physics.OrientVectorToDirection(hbi.HitboxOffset);
+		Vector3 newPos = transform.position + (Vector3)cOff;
+		var go = GameObject.Instantiate(HitboxList.Instance.Hitbox, newPos, Quaternion.identity);
+
+		Hitbox newBox = go.GetComponent<Hitbox>();
+		if (hbi.FollowCharacter) {
+			go.transform.SetParent (gameObject.transform);
+			newBox.transform.localScale = m_physics.OrientVectorToDirection(new Vector2 (hbi.HitboxScale.x / transform.localScale.x, hbi.HitboxScale.y / transform.localScale.y), false);
+		} else {
+			newBox.SetScale ((m_physics == null) ? hbi.HitboxScale : m_physics.OrientVectorToDirection(hbi.HitboxScale,false));
+		}
+		newBox.Damage = hbi.Damage;
+		newBox.Duration = hbi.HitboxDuration;
+		newBox.Knockback = (m_physics == null) ? hbi.Knockback : m_physics.OrientVectorToDirection(hbi.Knockback);
+		newBox.IsFixedKnockback = hbi.FixedKnockback;
+		newBox.Stun = hbi.Stun;
+		newBox.AddElement(hbi.Element);
+		newBox.Creator = gameObject;
+		newBox.Faction = Faction;
+		if (hbi.FollowCharacter)
+			newBox.SetFollow (gameObject,hbi.HitboxOffset);
+		if (hbi.ApplyProps)
+			ExecuteEvents.Execute<ICustomMessageTarget> (gameObject, null, (x, y) => x.OnHitboxCreate(newBox));
+		newBox.Init();
+		return newBox;
 	}
 
 	public Hitbox CreateHitbox(Vector2 hitboxScale, Vector2 offset, float damage, float stun, float hitboxDuration, Vector2 knockback, bool fixedKnockback = true,

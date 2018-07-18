@@ -47,7 +47,7 @@ public class Leveller : MonoBehaviour {
 		//Debug.Log ("Current: " + Instance.exp.Experience);
 
 		if (Instance.exp.Experience >= Instance.DataRequirement * (Mathf.Pow(Instance.Level,Instance.Scaler))) {
-			EventManager.TriggerEvent (3);
+			//EventManager.TriggerEvent (3);
 			Instance.NextLevel = (int)(((float)Instance.DataRequirement * (Mathf.Pow ((float)Instance.Level, Instance.Scaler))));
 			//Debug.Log ("Event Triggered");
 		}
@@ -72,12 +72,12 @@ public class Leveller : MonoBehaviour {
     void AddAbilityPoints()
     {
 
-        AbilityTree.PointsToSpend += PointAdditions;
-        AbilityTreeNode n = AbilityManager.abilityTree.UnlockAbilitiesAutomatic();
-        if(n!=null)
+        //AbilityTree.PointsToSpend += PointAdditions;
+        //AbilityTreeNode n = AbilityManager.abilityTree.UnlockAbilitiesAutomatic();
+        /*if(n!=null)
         {
             levelUpStr += "\n~ABILITY UPGRADED! " + n.tree.DisplayAbility();
-        }
+        }*/
     }
 
     void AddTransferSlots()
@@ -96,7 +96,7 @@ public class Leveller : MonoBehaviour {
 		if(Level == 2 || Level % 3 == 0)
 			exp.gameObject.GetComponent<PropertyHolder>().NumTransfers += 1;
 	}
-
+	/*
     void OnEnable()
     {
 
@@ -116,5 +116,5 @@ public class Leveller : MonoBehaviour {
         EventManager.LevelUpEvent -= AddTransferSlots;
 		EventManager.LevelUpEvent -= AddTransfers;
 		EventManager.LevelUpEvent -= DisplayLevelUp;
-    }
+    }*/
 }

@@ -17,15 +17,17 @@ public class AttackAnimInfo {
 
 [System.Serializable]
 public class HitboxInfo {
-	public bool IsHitboxCreater = true;
 	public Vector2 HitboxScale = new Vector2 (1.0f, 1.0f);
 	public Vector2 HitboxOffset = new Vector2(0f,0f);
 	public float Damage = 10.0f;
 	public float Stun = 0.3f;
 	public float HitboxDuration = 0.5f;
 	public Vector2 Knockback = new Vector2(10.0f,10.0f);
+	public bool FixedKnockback = true;
 	public ElementType Element = ElementType.PHYSICAL;
 	public bool ApplyProps = true;
+	public bool FollowCharacter = true;
+	public float Delay = 0.0f;
 }
 
 [System.Serializable]
@@ -55,7 +57,7 @@ public class AttackInfo : MonoBehaviour
 
 	public string AttackName = "default";
 
-	public HitboxInfo m_HitboxInfo;
+	public List<HitboxInfo> m_HitboxInfo;
 	public AttackAnimInfo m_AttackAnimInfo;
 	public AIInfo m_AIInfo;
 	public SoundInfo m_SoundInfo;
@@ -121,9 +123,9 @@ public class AttackInfo : MonoBehaviour
 
 	protected virtual void OnStartUp()
 	{
-		if (m_AIInfo.UniqueAIPrediction == false){
-			m_AIInfo.AIPredictionHitbox = m_HitboxInfo.HitboxScale;
-			m_AIInfo.AIPredictionOffset = m_HitboxInfo.HitboxOffset;
+		if (m_AIInfo.UniqueAIPrediction == false && m_HitboxInfo.Count > 0){
+			m_AIInfo.AIPredictionHitbox = m_HitboxInfo[0].HitboxScale;
+			m_AIInfo.AIPredictionOffset = m_HitboxInfo[0].HitboxOffset;
 		}
 		if (m_SoundInfo.StartupSoundFX != null)
 			FindObjectOfType<AudioManager> ().PlayClipAtPos (m_SoundInfo.StartupSoundFX,transform.position,0.5f,0f,0.25f);
@@ -131,8 +133,8 @@ public class AttackInfo : MonoBehaviour
 
 	protected virtual void OnAttack()
 	{
-		if (m_HitboxInfo.IsHitboxCreater) {
-			CreateHitbox ();
+		if (m_HitboxInfo.Count > 0) {
+			createHitboxes ();
 		}
 		if (m_SoundInfo.AttackSoundFX != null)
 			FindObjectOfType<AudioManager> ().PlayClipAtPos (m_SoundInfo.AttackSoundFX,transform.position,0.5f,0f,0.25f);
@@ -146,12 +148,18 @@ public class AttackInfo : MonoBehaviour
 	{
 	}
 
-	private void CreateHitbox()
+	private void createHitboxes()
 	{
 		//m_hitboxMaker.AddHitType(HitType);
-		Vector2 offset = m_physics.OrientVectorToDirection(m_HitboxInfo.HitboxOffset);
-		m_hitboxMaker.CreateHitbox(m_HitboxInfo.HitboxScale, offset, m_HitboxInfo.Damage,
-			m_HitboxInfo.Stun, m_HitboxInfo.HitboxDuration, m_HitboxInfo.Knockback, true, true,m_HitboxInfo.Element,m_HitboxInfo.ApplyProps);
+		foreach (HitboxInfo hi in m_HitboxInfo) {
+			if (hi.Delay <= 0f)
+				m_hitboxMaker.CreateHitbox (hi);
+			else
+				GetComponent<Fighter> ().QueueHitbox (hi, hi.Delay);
+		}
+//		Vector2 offset = m_physics.OrientVectorToDirection(m_HitboxInfo.HitboxOffset);
+//		m_hitboxMaker.CreateHitbox(m_HitboxInfo.HitboxScale, offset, m_HitboxInfo.Damage,
+//			m_HitboxInfo.Stun, m_HitboxInfo.HitboxDuration, m_HitboxInfo.Knockback, true, true,m_HitboxInfo.Element,m_HitboxInfo.ApplyProps);
 	}
 }
 

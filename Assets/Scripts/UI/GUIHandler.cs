@@ -22,8 +22,6 @@ public class GUIHandler : MonoBehaviour {
 	public GameObject IconPropertyPrefab;
 	public Sprite UnknownPropertyIcon;
 
-    private Ability abilityToUpdate;
-
 	Dictionary<string,GameObject> m_iconList;
 
 	void Awake () {
@@ -79,18 +77,6 @@ public class GUIHandler : MonoBehaviour {
 		}
 		Instance.PropertyLists.Clear ();
 	}
-
-    public static void SetAbility(Ability a)
-    {
-        Instance.abilityToUpdate = a;
-    }
-
-    public static void UpdateAbility(List<Property> p1, List<Ability> a1, List<Property> p2)
-    {
-		if (Instance.abilityToUpdate != null) {
-			Instance.abilityToUpdate.SetTransferLists(p1,a1,p2);
-		}
-    }
     
 
 	public void AddPropIcon(Property p) { 

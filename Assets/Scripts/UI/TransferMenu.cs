@@ -266,7 +266,7 @@ public class TransferMenu : MonoBehaviour {
 
 	void ExitMenu() {
 
-	    GUIHandler.UpdateAbility(m_propMenus[0].propertyList, new List<Ability>(), m_propMenus[1].propertyList);
+	    //GUIHandler.UpdateAbility(m_propMenus[0].propertyList, new List<Ability>(), m_propMenus[1].propertyList);
         if (m_currentGhost != null)
 			Destroy (m_currentGhost);
 		exiting = true;

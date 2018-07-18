@@ -25,6 +25,8 @@ public class Fighter : MonoBehaviour
 
 	private float m_animationSpeed = 2f;
 
+	private Dictionary<HitboxInfo, float> m_queuedHitboxes = new Dictionary<HitboxInfo, float> ();
+
 	[HideInInspector]
 	public AudioClip AttackSound;
 
@@ -50,17 +52,32 @@ public class Fighter : MonoBehaviour
 			}
 		}
 	}
+	public void QueueHitbox(HitboxInfo hi, float delay) {
+		m_queuedHitboxes.Add (hi, Time.timeSinceLevelLoad + delay);
+	}
+	private void updateQueueHitboxes() {
+		Dictionary<HitboxInfo, float> newQueue = new Dictionary<HitboxInfo, float> ();
+		foreach (HitboxInfo hi in m_queuedHitboxes.Keys) {
+			if (Time.timeSinceLevelLoad > m_queuedHitboxes [hi])
+				GetComponent<HitboxMaker> ().CreateHitbox (hi);
+			else
+				newQueue.Add (hi,m_queuedHitboxes[hi]);
+		}
+		m_queuedHitboxes = newQueue;
+	}
 
 	internal void Update()
 	{
 		ActivateStunIfDead ();
 		if (ProgressStun())
 			return;
+		updateQueueHitboxes();
 		if (ProgressAttack())
 			return;
 		ProgressWalkOrIdleAnimation();
 	}
-
+	
+	
 	private bool ProgressStun()
 	{
 		if (StunTime <= 0.0f)
@@ -107,7 +124,7 @@ public class Fighter : MonoBehaviour
 
 	private void OnAttackStart()
 	{
-				/*if (m_currentAttack.m_SoundInfo.AttackFX)
+		/*if (m_currentAttack.m_SoundInfo.AttackFX)
 			AddEffect(m_currentAttack.m_SoundInfo.AttackFX, m_currentAttack.m_AttackAnimInfo.RecoveryTime + 0.2f);*/
 
 		m_anim.Play(m_currentAttack.m_AttackAnimInfo.StartUpAnimation, true);
