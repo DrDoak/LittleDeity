@@ -1,0 +1,38 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 073567d476aa41245990d4ce84b4e434, type: 3}
+  m_Name: Base Descriptions
+  m_EditorClassIdentifier: 
+  AbilityNames:
+  - Transfer
+  - Melee
+  - Nano Sword
+  - Critical Strike
+  - Increase Attack Rate
+  - Increase Attack Damage
+  - Bleed
+  - Heal
+  - Carbon Copy
+  - Siphon
+  - Overpower
+  AbilityDescriptions:
+  - Absorb Properties from your environment
+  - Deal physical damage
+  - 10% Chance to Deal Extra Attack
+  - Deal extra damage
+  - 10% Attack Speed Increase
+  - 10% Attack Damage Increase
+  - 10% Chance to Apply Decay on Hit
+  - 10% Chance to Heal on Hit
+  - 10% to create a copy of yourself
+  - Take the lifeforce of an enemy on hit
+  - Deal large amount of damage with charged melee attack
+  AbilityImages: []

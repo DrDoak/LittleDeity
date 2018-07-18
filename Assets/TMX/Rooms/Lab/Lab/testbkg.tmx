@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.0" tiledversion="1.1.4" orientation="orthogonal" renderorder="right-down" width="8" height="16" tilewidth="32" tileheight="32" infinite="0" nextobjectid="1">
+ <tileset firstgid="1" name="test" tilewidth="32" tileheight="32" tilecount="110" columns="10">
+  <image source="../../../../../Sol/Assets/Art/Tiles/test.png" width="320" height="352"/>
+ </tileset>
+ <tileset firstgid="111" name="industrial" tilewidth="32" tileheight="32" tilecount="50" columns="10">
+  <image source="../../../../../IrrelevantGame/assets/tile/industrial.png" width="320" height="160"/>
+ </tileset>
+ <tileset firstgid="161" name="Hetairoi" tilewidth="32" tileheight="32" tilecount="100" columns="10">
+  <image source="../../../../../IrrelevantGame/assets/tile/Hetairoi.png" width="320" height="320"/>
+ </tileset>
+ <tileset firstgid="261" source="../../Tilesets/lab.tsx"/>
+ <tileset firstgid="361" source="../../Tilesets/Example.tsx"/>
+ <layer name="Tile Layer 1" width="8" height="16">
+  <data encoding="csv">
+0,0,0,0,172,171,161,171,
+0,2684354747,188,188,171,121,121,121,
+189,1610612923,0,0,161,121,121,121,
+0,0,0,3221225578,172,162,172,172,
+0,0,0,1610612841,30,0,0,1073741864,
+0,0,0,1610612841,30,0,0,30,
+0,0,0,1610612841,30,0,0,30,
+0,0,0,1610612841,30,0,0,30,
+0,0,0,1610612841,30,0,0,40,
+0,0,0,1610612841,30,0,3221225578,161,
+0,0,0,1610612840,30,0,172,162,
+0,0,0,214,30,0,172,121,
+0,0,0,224,30,0,172,121,
+161,171,171,224,30,0,162,162,
+171,162,172,172,172,0,0,1073742058,
+171,121,121,121,171,0,0,224
+</data>
+ </layer>
+ <layer name="Tile Layer 2" width="8" height="16">
+  <data encoding="csv">
+191,191,191,231,231,191,191,191,
+181,191,191,231,231,191,191,191,
+211,211,211,211,211,211,211,211,
+211,211,211,211,211,211,211,211,
+191,181,191,231,231,191,181,191,
+191,181,181,231,231,181,191,191,
+191,181,181,231,231,191,191,191,
+181,181,191,231,231,191,191,191,
+211,211,211,211,211,211,211,211,
+211,211,211,211,211,211,211,211,
+181,181,191,231,231,191,191,181,
+181,181,191,231,231,191,181,181,
+181,181,191,231,231,191,181,181,
+181,191,191,231,231,191,191,191,
+211,211,211,211,211,211,211,211,
+211,211,211,211,211,211,211,211
+</data>
+ </layer>
+</map>

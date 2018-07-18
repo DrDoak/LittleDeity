@@ -1,0 +1,29 @@
+﻿# Tiled2Unity generated file. Do not modify by hand.
+# Wavefront file for 'CT_Start_mesh_0002.obj'
+
+# Vertices (Count = 8)
+v -672 -1024 0
+v -704 -1024 0
+v -704 -992 0
+v -672 -992 0
+v -672 -1056 0
+v -704 -1056 0
+v -704 -1024 0
+v -672 -1024 0
+
+# Texture cooridinates (Count = 4)
+vt 0.6 0.7
+vt 0.7 0.7
+vt 0.7 0.8
+vt 0.6 0.8
+
+# Normal
+vn 0 0 -1
+
+# Mesh description
+g CT_Start_mesh_0002
+
+# Faces
+f 1/1/1 2/2/1 3/3/1 4/4/1
+f 5/2/1 6/1/1 7/4/1 8/3/1
+
