@@ -224,37 +224,39 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 92acc23af4626be4fa32c868acac10d0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  saveID: autoID
-  pos: {x: 0, y: 0, z: 0}
-  zRot: 0
-  targetID: none
-  targetDir: 4
-  healthVal: 0
   data:
     regID: Player-TestScene-762
+    prefabPath: 
+    targetDir: 0
     name: 
     pos: {x: 0, y: 0, z: 0}
     zRot: 0
+    IsFacingLeft: 0
+    PersistentInt:
+      keys: []
+      values: 
+    PersistentFloats:
+      keys: []
+      values: []
+    PersistentStrings:
+      keys: []
+      values: []
     health: 100
     maxHealth: 100
     faction: 3
-    prefabPath: 
     targetID: 
     propertyList: []
     propertyDescriptions: []
     propertyValues: []
     transfers: 0
     slots: 0
-    targetDir: 0
     IsCurrentCharacter: 0
-    IsFacingLeft: 0
     terminalVelocity: 0
     TurretDefaultFace: 0
     Experience: 0
     TriggerUsed: 0
     triggerString: 
   recreated: 0
-  PrefabPath: 
 --- !u!114 &1008774774
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -269,15 +271,105 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   AttackName: melee
   m_HitboxInfo:
-    IsHitboxCreater: 1
-    HitboxScale: {x: 1.75, y: 0.5}
-    HitboxOffset: {x: 0.75, y: -0.25}
-    Damage: 24
-    Stun: 0.5
-    HitboxDuration: 0.25
-    Knockback: {x: 8, y: 5}
+  - HitboxScale: {x: 1, y: 1}
+    HitboxOffset: {x: 0, y: 0}
+    Damage: 10
+    Stun: 0.3
+    HitboxDuration: 0.5
+    Knockback: {x: 10, y: 10}
+    FixedKnockback: 1
     Element: 0
     ApplyProps: 1
+    FollowCharacter: 1
+    Delay: 0
+  - HitboxScale: {x: 1, y: 1}
+    HitboxOffset: {x: 0, y: 0}
+    Damage: 10
+    Stun: 0.3
+    HitboxDuration: 0.5
+    Knockback: {x: 10, y: 10}
+    FixedKnockback: 1
+    Element: 0
+    ApplyProps: 1
+    FollowCharacter: 1
+    Delay: 0
+  - HitboxScale: {x: 1, y: 1}
+    HitboxOffset: {x: 0, y: 0}
+    Damage: 10
+    Stun: 0.3
+    HitboxDuration: 0.5
+    Knockback: {x: 10, y: 10}
+    FixedKnockback: 1
+    Element: 0
+    ApplyProps: 1
+    FollowCharacter: 1
+    Delay: 0
+  - HitboxScale: {x: 1, y: 1}
+    HitboxOffset: {x: 0, y: 0}
+    Damage: 10
+    Stun: 0.3
+    HitboxDuration: 0.5
+    Knockback: {x: 10, y: 10}
+    FixedKnockback: 1
+    Element: 0
+    ApplyProps: 1
+    FollowCharacter: 1
+    Delay: 0
+  - HitboxScale: {x: 1, y: 1}
+    HitboxOffset: {x: 0, y: 0}
+    Damage: 10
+    Stun: 0.3
+    HitboxDuration: 0.5
+    Knockback: {x: 10, y: 10}
+    FixedKnockback: 1
+    Element: 0
+    ApplyProps: 1
+    FollowCharacter: 1
+    Delay: 0
+  - HitboxScale: {x: 1, y: 1}
+    HitboxOffset: {x: 0, y: 0}
+    Damage: 10
+    Stun: 0.3
+    HitboxDuration: 0.5
+    Knockback: {x: 10, y: 10}
+    FixedKnockback: 1
+    Element: 0
+    ApplyProps: 1
+    FollowCharacter: 1
+    Delay: 0
+  - HitboxScale: {x: 1, y: 1}
+    HitboxOffset: {x: 0, y: 0}
+    Damage: 10
+    Stun: 0.3
+    HitboxDuration: 0.5
+    Knockback: {x: 10, y: 10}
+    FixedKnockback: 1
+    Element: 0
+    ApplyProps: 1
+    FollowCharacter: 1
+    Delay: 0
+  - HitboxScale: {x: 1, y: 1}
+    HitboxOffset: {x: 0, y: 0}
+    Damage: 10
+    Stun: 0.3
+    HitboxDuration: 0.5
+    Knockback: {x: 10, y: 10}
+    FixedKnockback: 1
+    Element: 0
+    ApplyProps: 1
+    FollowCharacter: 1
+    Delay: 0
+  - HitboxScale: {x: 1, y: 1}
+    HitboxOffset: {x: 0, y: 0}
+    Damage: 10
+    Stun: 0.3
+    HitboxDuration: 0.5
+    Knockback: {x: 10, y: 10}
+    FixedKnockback: 1
+    Element: 0
+    ApplyProps: 1
+    FollowCharacter: 1
+    Delay: 0
   m_AttackAnimInfo:
     AnimSpeed: 1
     StartUpTime: 0.5
@@ -860,7 +952,7 @@ Prefab:
     - target: {fileID: 224409164585238760, guid: 86856ebb1cc73c04a86115975021a18e,
         type: 2}
       propertyPath: m_AnchorMin.y
-      value: 0
+      value: 0.00000029802322
       objectReference: {fileID: 0}
     - target: {fileID: 224409164585238760, guid: 86856ebb1cc73c04a86115975021a18e,
         type: 2}
@@ -875,7 +967,7 @@ Prefab:
     - target: {fileID: 224159792454195676, guid: 86856ebb1cc73c04a86115975021a18e,
         type: 2}
       propertyPath: m_AnchorMin.y
-      value: 0.55813944
+      value: 0.55813956
       objectReference: {fileID: 0}
     - target: {fileID: 224159792454195676, guid: 86856ebb1cc73c04a86115975021a18e,
         type: 2}
@@ -890,7 +982,7 @@ Prefab:
     - target: {fileID: 224919683728530804, guid: 86856ebb1cc73c04a86115975021a18e,
         type: 2}
       propertyPath: m_AnchorMin.y
-      value: 0
+      value: 0.00000029802322
       objectReference: {fileID: 0}
     - target: {fileID: 224919683728530804, guid: 86856ebb1cc73c04a86115975021a18e,
         type: 2}
@@ -1355,17 +1447,17 @@ Prefab:
     - target: {fileID: 224858247495619676, guid: 86856ebb1cc73c04a86115975021a18e,
         type: 2}
       propertyPath: m_AnchoredPosition.y
-      value: 0.000011444092
+      value: -0.000034332275
       objectReference: {fileID: 0}
     - target: {fileID: 224777399314521252, guid: 86856ebb1cc73c04a86115975021a18e,
         type: 2}
       propertyPath: m_AnchoredPosition.y
-      value: -0.000022888184
+      value: 0.00016021729
       objectReference: {fileID: 0}
     - target: {fileID: 224209084733379808, guid: 86856ebb1cc73c04a86115975021a18e,
         type: 2}
       propertyPath: m_AnchoredPosition.y
-      value: -0.000022888184
+      value: 0.00016021729
       objectReference: {fileID: 0}
     - target: {fileID: 114735191990344546, guid: 86856ebb1cc73c04a86115975021a18e,
         type: 2}
@@ -1401,6 +1493,11 @@ Prefab:
         type: 2}
       propertyPath: orthographic size
       value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: 224739168298920636, guid: 86856ebb1cc73c04a86115975021a18e,
+        type: 2}
+      propertyPath: m_AnchorMin.y
+      value: 0.00000059604645
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 86856ebb1cc73c04a86115975021a18e, type: 2}

@@ -4,22 +4,20 @@ using UnityEngine;
 using System;
 
 public class PersistentItem : MonoBehaviour {
-	public string saveID = "autoID";
-	public Vector3 pos = Vector3.zero;
-	public float zRot = 0f;
-	public string targetID = "none";
-	public RoomDirection targetDir = RoomDirection.NEUTRAL;
-	public float healthVal = 0;
 	public CharData data = new CharData();
+
 	public bool recreated = false;
-	public string PrefabPath = "";
+
+	public delegate void SerializeAction();
+	public static event SerializeAction OnLoad;
+	public static event SerializeAction OnSave;
 
 	protected bool m_registryChecked = false;
 	void Awake() {
 		if (data.regID == "") {
-			data.regID = SaveObjManager.Instance.GenerateID (gameObject,PrefabPath);
+			data.regID = SaveObjManager.Instance.GenerateID (gameObject,data.prefabPath);
 		}
-		saveID = data.regID;
+//		saveID = data.regID;
 	}
 	public void registryCheck() {
 		m_registryChecked = true;
@@ -43,8 +41,9 @@ public class PersistentItem : MonoBehaviour {
 		data.name = gameObject.name;
 		data.pos = transform.position;
 		data.zRot = transform.rotation.eulerAngles.z;
-		data.targetID = "";
-		if (GetComponent<Interactable>()) {
+		if (data.prefabPath == "")
+			data.prefabPath = getProperName ();
+		/*if (GetComponent<Interactable>()) {
 			data.TriggerUsed = GetComponent<Interactable> ().TriggerUsed;
 			data.triggerString = GetComponent<Interactable> ().value;
 		}
@@ -79,21 +78,20 @@ public class PersistentItem : MonoBehaviour {
 		}
 
 		if (GetComponent<ExperienceHolder> ())
-			data.Experience = GetComponent<ExperienceHolder> ().Experience;
-		if (PrefabPath == "")
-			data.prefabPath = getProperName ();
-		else
-			data.prefabPath = PrefabPath;
+			data.Experience = GetComponent<ExperienceHolder> ().Experience;*/
 	}
 
 	public void LoadData() {
+		Quaternion q = Quaternion.Euler(new Vector3 (0f, 0f, data.zRot));
+		transform.localRotation = q;
+		gameObject.name = data.name;
+		gameObject.name = getProperName ();
+		/*
 		if (GetComponent<Attackable> ()) {
 			GetComponent<Attackable> ().MaxHealth = data.maxHealth;
 			GetComponent<Attackable> ().SetHealth (data.health);
 			GetComponent<Attackable> ().Faction = data.faction;
 		}
-		Quaternion q = Quaternion.Euler(new Vector3 (0f, 0f, data.zRot));
-		transform.localRotation = q;
 		if (GetComponent<PhysicsSS> ()) {
 			GetComponent<PhysicsSS> ().SetDirection (data.IsFacingLeft);
 			GetComponent<PhysicsSS> ().TerminalVelocity = data.terminalVelocity;
@@ -119,9 +117,7 @@ public class PersistentItem : MonoBehaviour {
 		if (GetComponent<Interactable>()) {
 			GetComponent<Interactable> ().TriggerUsed = data.TriggerUsed;
 			GetComponent<Interactable> ().value = data.triggerString;
-		}
-		gameObject.name = data.name;
-		gameObject.name = getProperName ();
+		}*/
 	}
 	private string getProperName() {
 		string properName = "";
@@ -137,12 +133,10 @@ public class PersistentItem : MonoBehaviour {
 	void OnEnable() {
 		SaveObjManager.OnLoaded += LoadData;
 		SaveObjManager.OnBeforeSave += StoreData;
-		//SaveObjManager.OnBeforeSave += ApplyData;
 	}
 
 	void OnDisable() {
 		SaveObjManager.OnLoaded -= LoadData;
 		SaveObjManager.OnBeforeSave -= StoreData;
-		//SaveObjManager.OnBeforeSave -= ApplyData;
 	}
 }

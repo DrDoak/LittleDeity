@@ -155,12 +155,11 @@ public class SaveObjManager : MonoBehaviour{
 	}
 	void m_moveItem(GameObject go,string newRoom, Vector3 newPos) {
 		PersistentItem item = go.GetComponent<PersistentItem> ();
-		item.targetID = null;
 		item.StoreData ();
 		refreshPersItems();
 		DelCharData (item.data);
 		CharacterSaveContainer cc = LoadChars(savePath + newRoom);
-		item.pos = newPos;
+//		item.pos = newPos;
 		JsonUtility.ToJson(new CharacterSaveContainer());
 		cc.actors.Add (item.data);
 		Save (savePath + newRoom, cc);
