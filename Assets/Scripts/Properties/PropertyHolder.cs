@@ -6,14 +6,15 @@ using UnityEngine.EventSystems;
 
 public class PropertyHolder : MonoBehaviour {
 
-	public List<Property> m_properties;
 	public string HolderName = "SameAsObject";
-	bool m_currentPlayer;
+
 	public int MaxSlots = 4;
 	public int NumTransfers = 99;
-	public List<string> m_toRemove;
 	public WaterHitbox SubmergedHitbox = null;
-	public Color EffectColor = Color.white;
+
+	private List<Property> m_properties;
+	private bool m_currentPlayer;
+	private List<string> m_toRemove;
 
 	// Use this for initialization
 	void Awake () {
@@ -33,13 +34,6 @@ public class PropertyHolder : MonoBehaviour {
 			}
 		}
 		m_currentPlayer = (GetComponent<BasicMovement> () && GetComponent<BasicMovement> ().IsCurrentPlayer);
-		//AddBodyEffect (GameManager.Instance.FXBodyTest);
-		/*if (m_currentPlayer) {
-			foreach (Property p in m_properties) {
-				GUIHandler.Instance.AddPropIcon (p);
-			}
-			//GUIHandler.CreatePropertyList(m_properties, "Test List", Vector3.zero);
-		}*/
 		ExecuteEvents.Execute<ICustomMessageTarget> (gameObject, null, (x, y) => x.OnCreation ());
 	}
 

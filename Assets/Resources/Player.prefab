@@ -24,15 +24,15 @@ GameObject:
   - component: {fileID: 50890797584334854}
   - component: {fileID: 114667538344402448}
   - component: {fileID: 95834142111736882}
+  - component: {fileID: 114300482907652120}
   - component: {fileID: 114223702759941158}
-  - component: {fileID: 114183775052015364}
   - component: {fileID: 114319908791872480}
+  - component: {fileID: 114183775052015364}
+  - component: {fileID: 114845752184036596}
   - component: {fileID: 114407925808802884}
   - component: {fileID: 114506322611810582}
-  - component: {fileID: 114845752184036596}
   - component: {fileID: 114499401245312444}
   - component: {fileID: 114691824885118858}
-  - component: {fileID: 114300482907652120}
   m_Layer: 9
   m_Name: Player
   m_TagString: Player
@@ -47,7 +47,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1000013670716774}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 52.65, y: -24.38, z: 0}
+  m_LocalPosition: {x: 8.51, y: -11.49, z: 0}
   m_LocalScale: {x: 1.5, y: 1.5, z: 4}
   m_Children: []
   m_Father: {fileID: 0}
@@ -379,11 +379,9 @@ MonoBehaviour:
   data:
     regID: Player-TestScene-762
     prefabPath: 
-    targetDir: 0
     name: 
     pos: {x: 0, y: 0, z: 0}
     zRot: 0
-    IsFacingLeft: 0
     PersistentInt:
       keys: []
       values: 
@@ -393,22 +391,13 @@ MonoBehaviour:
     PersistentStrings:
       keys: []
       values: []
-    health: 100
-    maxHealth: 100
-    faction: 3
+    PersistentBools:
+      keys: []
+      values: 
+    targetDir: 0
     targetID: 
-    propertyList: []
-    propertyDescriptions: []
-    propertyValues: []
-    transfers: 0
-    slots: 0
-    IsCurrentCharacter: 0
-    terminalVelocity: 0
-    TurretDefaultFace: 0
-    Experience: 0
-    TriggerUsed: 0
-    triggerString: 
   recreated: 0
+  StartPosition: {x: 0, y: 0, z: 0}
 --- !u!114 &114845752184036596
 MonoBehaviour:
   m_ObjectHideFlags: 1

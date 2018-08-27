@@ -6,9 +6,9 @@ using UnityEngine;
 [RequireComponent (typeof (SpriteRenderer))]
 public class AnimatorSprite : MonoBehaviour
 {
-	Animator m_anim;
-	List<string> m_states;
-	public string m_currentAnim = "";
+	private Animator m_anim;
+	private List<string> m_states;
+	private string m_currentAnim = "";
 
 	internal void Awake()
 	{

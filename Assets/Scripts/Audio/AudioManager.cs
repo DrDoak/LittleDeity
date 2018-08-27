@@ -7,13 +7,13 @@ public class AudioManager : MonoBehaviour
 
 	public static AudioManager instance;
 
-	public AudioMixerGroup mixerGroup;
+	//public AudioMixerGroup mixerGroup;
 	public GameObject oneShotAudio;
-	AudioSource m_musicTrack = null;
-	string old_clip_name = "none";
 	public bool Paused = false;
 
-	public Sound[] sounds;
+	private AudioSource m_musicTrack = null;
+	private string old_clip_name = "none";
+	//public Sound[] sounds;
 
 	void Awake()
 	{
@@ -37,7 +37,7 @@ public class AudioManager : MonoBehaviour
 		}*/
 	}
 
-	public void Play(string sound)
+	/*public void Play(string sound)
 	{
 		Sound s = Array.Find(sounds, item => item.name == sound);
 		if (s == null)
@@ -50,7 +50,7 @@ public class AudioManager : MonoBehaviour
 		s.source.pitch = s.pitch * (1f + UnityEngine.Random.Range(-s.pitchVariance / 2f, s.pitchVariance / 2f));
 
 		s.source.Play();
-	}
+	}*/
 	public void PlayClipAtPos(AudioClip ac, Vector3 pos, float baseVolume = 0.5f, float volumeRange = 0f, float pitchRange = 0f, float destroyAfter = 1f) {
 		GameObject go = Instantiate (oneShotAudio, pos, Quaternion.identity);
 

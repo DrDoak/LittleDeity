@@ -42,8 +42,8 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1268188623968778}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -70.12892, y: 0.6941223, z: 0}
-  m_LocalScale: {x: 0.9, y: 1, z: 4}
+  m_LocalPosition: {x: 12.1139555, y: -9.244315, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 4}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
@@ -107,6 +107,7 @@ MonoBehaviour:
   Stealable: 1
   Viewable: 1
   Stackable: 0
+  InstantUse: 0
   value: 0
   PropertyName: None
   Description: No description provided.
@@ -124,34 +125,28 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 92acc23af4626be4fa32c868acac10d0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  saveID: autoID
-  pos: {x: 0, y: 0, z: 0}
-  zRot: 0
-  targetID: none
-  targetDir: 4
-  healthVal: 0
   data:
     regID: Not Assigned
+    prefabPath: 
     name: 
     pos: {x: 0, y: 0, z: 0}
     zRot: 0
-    health: 100
-    maxHealth: 100
-    prefabPath: 
-    targetID: 
-    propertyList: []
-    propertyDescriptions: []
-    propertyValues: []
-    transfers: 0
-    slots: 0
+    PersistentInt:
+      keys: []
+      values: 
+    PersistentFloats:
+      keys: []
+      values: []
+    PersistentStrings:
+      keys: []
+      values: []
+    PersistentBools:
+      keys: []
+      values: 
     targetDir: 0
-    IsCurrentCharacter: 0
-    IsFacingLeft: 0
-    Experience: 0
-    TriggerUsed: 0
-    triggerString: 
+    targetID: 
   recreated: 0
-  PrefabPath: 
+  StartPosition: {x: 0, y: 0, z: 0}
 --- !u!114 &114688656372999518
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -168,17 +163,15 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 256
   DecelerationRatio: 1
-  OnGround: 1
+  TerminalVelocity: -5
+  GravityForce: -1
+  ReactToWater: 1
   Floating: 0
   MaxClimbAngle: 80
-  TrueVelocity: {x: 0, y: 0, z: 0}
-  m_inputedMove: {x: 0, y: 0}
-  TerminalVelocity: -5
-  GravityScale: -1
-  FacingLeft: 0
-  ReactToWater: 1
-  UseBuoyancy: 0
   BuoyancyScale: -1
+  OnGround: 1
+  FacingLeft: 0
+  TrueVelocity: {x: 0, y: 0, z: 0}
 --- !u!114 &114696086362039986
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -190,11 +183,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6cecf518dba7e8f429d2dc6df9ba9177, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_health: 100
+  Health: 100
   MaxHealth: 100
   Alive: 1
   DeathTime: 0
-  m_currDeathTime: 0
   Faction: 3
   Resistences: []
   DisplayHealth: 1
