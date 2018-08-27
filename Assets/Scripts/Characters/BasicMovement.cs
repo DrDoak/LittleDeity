@@ -5,6 +5,17 @@ using Luminosity.IO;
 
 [RequireComponent (typeof (PhysicsSS))]
 [RequireComponent (typeof (Attackable))]
+
+[System.Serializable]
+public class FootstepInfo {
+	public bool PlayFootsteps = false;
+	public AudioClip FootStepClip = null;
+	public float FootStepVolume = 0.3f;
+	public float FootStepPitchVariation = 0.25f;
+	public float FootStepVolumeVariation = 0.0f;
+	public float FootstepInterval = 0.75f;
+}
+
 public class BasicMovement : MonoBehaviour
 {
 	private const float MAX_OFFSET_TOLERANCE = 0.1f;
@@ -20,9 +31,9 @@ public class BasicMovement : MonoBehaviour
 	private float m_jumpHeight = 4.0f;
 	public float JumpHeight { get { return m_jumpHeight; } private set { m_jumpHeight = value; } }
 
-	[SerializeField]
+	/*[SerializeField]
 	private float m_timeToJumpApex = .4f;
-	public float TimeToJumpApex { get { return m_timeToJumpApex; } private set { m_timeToJumpApex = value; } }
+	public float TimeToJumpApex { get { return m_timeToJumpApex; } private set { m_timeToJumpApex = value; } }*/
 
 	[SerializeField]
 	private bool VariableJumpHeight = false;
@@ -64,8 +75,8 @@ public class BasicMovement : MonoBehaviour
 	private PhysicsSS m_followObj;
 	private bool m_autonomy = true;
 
-	public bool PlayFootsteps = false;
-	public float footstepInterval = 0.75f;
+	public FootstepInfo m_FootStepInfo;
+
 	float m_sinceStep = 0f;
 
 	private float m_lastDownTime = 0f;
@@ -73,8 +84,9 @@ public class BasicMovement : MonoBehaviour
 	internal void Awake()
 	{
 		m_physics = GetComponent<PhysicsSS>();
-		/*if (CanJump)
-			SetJumpData (JumpHeight,TimeToJumpApex);*/
+		if (CanJump)
+			setJumpData (JumpHeight);
+
 	}
 		
 		
@@ -86,7 +98,7 @@ public class BasicMovement : MonoBehaviour
 			PlayerMovement();
 		else if (m_targetSet)
 			NpcMovement();
-		if (PlayFootsteps)
+		if (m_FootStepInfo.PlayFootsteps)
 			PlayStepSounds ();
 		MoveSmoothly();
 	}
@@ -94,12 +106,14 @@ public class BasicMovement : MonoBehaviour
 	private void PlayStepSounds() {
 		if (m_inputMove.x != 0f && m_physics.OnGround) {
 			m_sinceStep += Time.deltaTime;
-			if (m_sinceStep > footstepInterval) {
+			if (m_sinceStep > m_FootStepInfo.FootstepInterval) {
 				m_sinceStep = 0f;
-				FindObjectOfType<AudioManager> ().PlayClipAtPos (FXBody.Instance.SFXFootstep,transform.position,0.3f,0f,0.25f);
+				FindObjectOfType<AudioManager> ().PlayClipAtPos (
+					(m_FootStepInfo.FootStepClip == null)?FXBody.Instance.SFXFootstep:m_FootStepInfo.FootStepClip,transform.position,
+					m_FootStepInfo.FootStepVolume,m_FootStepInfo.FootStepVolumeVariation,m_FootStepInfo.FootStepPitchVariation);
 			}
 		} else {
-			m_sinceStep = footstepInterval;
+			m_sinceStep = m_FootStepInfo.FootstepInterval;
 		}
 	}
 	protected virtual void PlayerMovement() {
@@ -124,12 +138,7 @@ public class BasicMovement : MonoBehaviour
 		if (CanJump)
 			JumpMovement ();
 		SetDirectionFromInput();
-		if (InputManager.GetButtonDown ("Quicksave")) {
-			SaveObjManager.Instance.SaveProfile ("QuickSave");
-			TextboxManager.StartSequence ("~QuickSave Successful");
-		} else if (InputManager.GetButtonDown ("Quickload")) {
-			PauseGame.QuickLoad ();
-		}
+
 	}
 
 	protected void JumpMovement() {
@@ -312,5 +321,17 @@ public class BasicMovement : MonoBehaviour
 
 	public void SetMoveSpeed(float moveSpeed) {
 		MoveSpeed = moveSpeed;
+	}
+
+	private void setJumpData(float jumpHeight) {
+		m_jumpVector.y = (-m_physics.GravityForce * (8f * Mathf.Sqrt (jumpHeight))) + 9f;
+	}
+
+	private void storeData(CharData d) {
+		d.PersistentBools ["IsCurrentPlayer"] = IsCurrentPlayer;
+	}
+
+	private void loadData(CharData d) {
+		IsCurrentPlayer = d.PersistentBools ["IsCurrentPlayer"];
 	}
 }

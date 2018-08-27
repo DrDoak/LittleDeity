@@ -45,6 +45,8 @@ public class Attackable : MonoBehaviour
 		Health = Mathf.Min (Health, MaxHealth);
 		m_currDeathTime = 0.0f;
 		InitResistences ();
+		if (GetComponent<PersistentItem> () != null)
+			GetComponent<PersistentItem> ().InitializeSaveLoadFuncs (storeData,loadData);
 	}
 
 	internal void InitResistences() {
@@ -299,5 +301,17 @@ public class Attackable : MonoBehaviour
 		newR.KnockbackResist /= numResists;
 		newR.StunResist /= numResists;
 		return newR;
+	}
+
+	private void storeData(CharData d) {
+		d.PersistentFloats["Health"] = Health;
+		d.PersistentFloats["MaxHealth"] = MaxHealth;
+		d.PersistentInt["Faction"] = (int)Faction;
+	}
+
+	private void loadData(CharData d) {
+		MaxHealth = d.PersistentFloats["MaxHealth"];
+		SetHealth (d.PersistentFloats["Health"]);
+		Faction = (FactionType)d.PersistentInt["Faction"];
 	}
 }

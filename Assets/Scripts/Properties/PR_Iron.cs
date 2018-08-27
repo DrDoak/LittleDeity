@@ -19,7 +19,7 @@ public class PR_Iron : Property {
 			//GetComponent<BasicMovement> ().SetJumpData (GetComponent<BasicMovement> ().JumpHeight / 1.5f, GetComponent<BasicMovement> ().TimeToJumpApex);
 		}
 		fx = GetComponent<PropertyHolder> ().AddBodyEffect (FXBody.Instance.FXIron);
-     //   GetComponent<PhysicsSS>().SetGravityScale(-2.0f);
+     //   GetComponent<PhysicsSS>().SetGravityForce(-2.0f);
     }
 
 	public override void OnUpdate() {
@@ -45,7 +45,7 @@ public class PR_Iron : Property {
 			//GetComponent<BasicMovement> ().SetJumpData (GetComponent<BasicMovement> ().JumpHeight * 1.5f, GetComponent<BasicMovement> ().TimeToJumpApex);
 		}
 		GetComponent<PropertyHolder> ().RemoveBodyEffect (fx);
-        //GetComponent<PhysicsSS>().SetGravityScale(-1.0f);
+        //GetComponent<PhysicsSS>().SetGravityForce(-1.0f);
     }
 	public override void OnWaterEnter(WaterHitbox waterCollided)  {
 		//Debug.Log ("Water enter");

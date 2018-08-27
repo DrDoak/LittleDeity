@@ -32,7 +32,7 @@ GameObject:
   - component: {fileID: 114845752184036596}
   - component: {fileID: 114499401245312444}
   - component: {fileID: 114691824885118858}
-  - component: {fileID: 114505256567422150}
+  - component: {fileID: 114300482907652120}
   m_Layer: 9
   m_Name: Player
   m_TagString: Player
@@ -47,7 +47,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1000013670716774}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -1.650199, y: -0.55709517, z: 0}
+  m_LocalPosition: {x: 52.65, y: -24.38, z: 0}
   m_LocalScale: {x: 1.5, y: 1.5, z: 4}
   m_Children: []
   m_Father: {fileID: 0}
@@ -85,18 +85,18 @@ BoxCollider2D:
   m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0, y: -0.22}
+  m_Offset: {x: 0, y: -0.25}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 1.28, y: 1.28}
+    oldSize: {x: 2, y: 2}
     newSize: {x: 1, y: 1}
     adaptiveTilingThreshold: 0.5
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 0.3, y: 0.8}
+  m_Size: {x: 0.4, y: 1.5}
   m_EdgeRadius: 0
 --- !u!95 &95834142111736882
 Animator:
@@ -126,11 +126,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6cecf518dba7e8f429d2dc6df9ba9177, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_health: 80
+  Health: 100
   MaxHealth: 80
   Alive: 1
   DeathTime: 2
-  m_currDeathTime: 0
   Faction: 1
   Resistences: []
   DisplayHealth: 1
@@ -151,17 +150,26 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 256
   DecelerationRatio: 1
-  OnGround: 1
+  TerminalVelocity: -1
+  GravityForce: -1
+  ReactToWater: 1
   Floating: 0
   MaxClimbAngle: 60
-  TrueVelocity: {x: 0, y: 0, z: 0}
-  m_inputedMove: {x: 0, y: 0}
-  TerminalVelocity: -5
-  GravityScale: -1
-  FacingLeft: 1
-  ReactToWater: 1
-  UseBuoyancy: 0
   BuoyancyScale: -1
+  OnGround: 1
+  FacingLeft: 1
+  TrueVelocity: {x: 0, y: 0, z: 0}
+--- !u!114 &114300482907652120
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1000013670716774}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c38c64b4a743e5b47bf774f39e47274b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &114319908791872480
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -174,20 +182,20 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   IsCurrentPlayer: 1
-  JumpHeight: 3
-  TimeToJumpApex: 0.4
+  m_jumpHeight: 4
   VariableJumpHeight: 1
-  variableJumpApplied: 0
-  MoveSpeed: 6
-  jumpVector: {x: 0, y: 15}
-  m_inputMove: {x: 0, y: 0}
+  m_moveSpeed: 8
+  m_jumpVector: {x: 0, y: 25}
   m_minDistance: 1
   m_abandonDistance: 10
-  Submerged: 0
   CanJump: 1
-  m_stuckTime: 0
-  PlayFootsteps: 0
-  footstepInterval: 0.4
+  m_FootStepInfo:
+    PlayFootsteps: 1
+    FootStepClip: {fileID: 0}
+    FootStepVolume: 0.35
+    FootStepPitchVariation: 0.25
+    FootStepVolumeVariation: 0
+    FootstepInterval: 0.5
 --- !u!114 &114407925808802884
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -219,15 +227,105 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   AttackName: melee
   m_HitboxInfo:
-    IsHitboxCreater: 1
-    HitboxScale: {x: 1.75, y: 0.5}
-    HitboxOffset: {x: 0.75, y: -0.25}
-    Damage: 24
-    Stun: 0.5
-    HitboxDuration: 0.25
-    Knockback: {x: 8, y: 5}
+  - HitboxScale: {x: 1, y: 1}
+    HitboxOffset: {x: 0, y: 0}
+    Damage: 10
+    Stun: 0.3
+    HitboxDuration: 0.5
+    Knockback: {x: 10, y: 10}
+    FixedKnockback: 1
     Element: 0
     ApplyProps: 1
+    FollowCharacter: 1
+    Delay: 0
+  - HitboxScale: {x: 1, y: 1}
+    HitboxOffset: {x: 0, y: 0}
+    Damage: 10
+    Stun: 0.3
+    HitboxDuration: 0.5
+    Knockback: {x: 10, y: 10}
+    FixedKnockback: 1
+    Element: 0
+    ApplyProps: 1
+    FollowCharacter: 1
+    Delay: 0
+  - HitboxScale: {x: 1, y: 1}
+    HitboxOffset: {x: 0, y: 0}
+    Damage: 10
+    Stun: 0.3
+    HitboxDuration: 0.5
+    Knockback: {x: 10, y: 10}
+    FixedKnockback: 1
+    Element: 0
+    ApplyProps: 1
+    FollowCharacter: 1
+    Delay: 0
+  - HitboxScale: {x: 1, y: 1}
+    HitboxOffset: {x: 0, y: 0}
+    Damage: 10
+    Stun: 0.3
+    HitboxDuration: 0.5
+    Knockback: {x: 10, y: 10}
+    FixedKnockback: 1
+    Element: 0
+    ApplyProps: 1
+    FollowCharacter: 1
+    Delay: 0
+  - HitboxScale: {x: 1, y: 1}
+    HitboxOffset: {x: 0, y: 0}
+    Damage: 10
+    Stun: 0.3
+    HitboxDuration: 0.5
+    Knockback: {x: 10, y: 10}
+    FixedKnockback: 1
+    Element: 0
+    ApplyProps: 1
+    FollowCharacter: 1
+    Delay: 0
+  - HitboxScale: {x: 1, y: 1}
+    HitboxOffset: {x: 0, y: 0}
+    Damage: 10
+    Stun: 0.3
+    HitboxDuration: 0.5
+    Knockback: {x: 10, y: 10}
+    FixedKnockback: 1
+    Element: 0
+    ApplyProps: 1
+    FollowCharacter: 1
+    Delay: 0
+  - HitboxScale: {x: 1, y: 1}
+    HitboxOffset: {x: 0, y: 0}
+    Damage: 10
+    Stun: 0.3
+    HitboxDuration: 0.5
+    Knockback: {x: 10, y: 10}
+    FixedKnockback: 1
+    Element: 0
+    ApplyProps: 1
+    FollowCharacter: 1
+    Delay: 0
+  - HitboxScale: {x: 1, y: 1}
+    HitboxOffset: {x: 0, y: 0}
+    Damage: 10
+    Stun: 0.3
+    HitboxDuration: 0.5
+    Knockback: {x: 10, y: 10}
+    FixedKnockback: 1
+    Element: 0
+    ApplyProps: 1
+    FollowCharacter: 1
+    Delay: 0
+  - HitboxScale: {x: 1, y: 1}
+    HitboxOffset: {x: 0, y: 0}
+    Damage: 10
+    Stun: 0.3
+    HitboxDuration: 0.5
+    Knockback: {x: 10, y: 10}
+    FixedKnockback: 1
+    Element: 0
+    ApplyProps: 1
+    FollowCharacter: 1
+    Delay: 0
   m_AttackAnimInfo:
     AnimSpeed: 1
     StartUpTime: 0.5
@@ -243,20 +341,6 @@ MonoBehaviour:
   m_SoundInfo:
     StartupSoundFX: {fileID: 0}
     AttackSoundFX: {fileID: 8300000, guid: ce3a750d395e7cc42941ee7427b916bb, type: 3}
---- !u!114 &114505256567422150
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1000013670716774}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 581441eaf6befcc44b2578a2b8ba926b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  Experience: 0
-  VisualExperience: 0
-  m_visualExperience: 0
 --- !u!114 &114506322611810582
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -292,37 +376,39 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 92acc23af4626be4fa32c868acac10d0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  saveID: autoID
-  pos: {x: 0, y: 0, z: 0}
-  zRot: 0
-  targetID: none
-  targetDir: 4
-  healthVal: 0
   data:
     regID: Player-TestScene-762
+    prefabPath: 
+    targetDir: 0
     name: 
     pos: {x: 0, y: 0, z: 0}
     zRot: 0
+    IsFacingLeft: 0
+    PersistentInt:
+      keys: []
+      values: 
+    PersistentFloats:
+      keys: []
+      values: []
+    PersistentStrings:
+      keys: []
+      values: []
     health: 100
     maxHealth: 100
     faction: 3
-    prefabPath: 
     targetID: 
     propertyList: []
     propertyDescriptions: []
     propertyValues: []
     transfers: 0
     slots: 0
-    targetDir: 0
     IsCurrentCharacter: 0
-    IsFacingLeft: 0
     terminalVelocity: 0
     TurretDefaultFace: 0
     Experience: 0
     TriggerUsed: 0
     triggerString: 
   recreated: 0
-  PrefabPath: 
 --- !u!114 &114845752184036596
 MonoBehaviour:
   m_ObjectHideFlags: 1

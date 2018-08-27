@@ -21,12 +21,12 @@ public class Fish : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 		if (m_movt.Submerged) {
-			m_physics.SetGravityScale (GravityInWater);
+			m_physics.SetGravityForce (GravityInWater);
 			m_physics.Floating = true;
 			m_movt.SetMoveSpeed( MoveSpeedInWater );
 			JustOutWater = true;
 		} else {
-			m_physics.SetGravityScale (GravityOutWater);
+			m_physics.SetGravityForce (GravityOutWater);
 			m_physics.Floating = false;
 			m_movt.SetMoveSpeed( MoveSpeedOutWater );
 			if (JustOutWater) {

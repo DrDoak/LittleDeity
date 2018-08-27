@@ -7,6 +7,7 @@ using UnityEngine.EventSystems;
 [RequireComponent (typeof (PhysicsSS))]
 [RequireComponent (typeof (AnimatorSprite))]
 [RequireComponent (typeof (Attackable))]
+[RequireComponent (typeof (SpriteOrientation))]
 public class Fighter : MonoBehaviour
 {
 	[HideInInspector]

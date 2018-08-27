@@ -193,9 +193,10 @@ public class SaveObjManager : MonoBehaviour{
 		return m_instance.m_checkRegister (go);
 	}
 
+
 	public string GenerateID (GameObject go, string prefabName) {
-		string xID = (Mathf.CeilToInt(go.transform.position.x/3f)*3).ToString ();
-		string yID = (Mathf.CeilToInt(go.transform.position.y/3f)*3).ToString ();
+		string xID = (Mathf.CeilToInt(go.GetComponent<PersistentItem>().StartPosition.x/1f)*1).ToString ();
+		string yID = (Mathf.CeilToInt(go.GetComponent<PersistentItem>().StartPosition.y/1f)*1).ToString ();
 		string id = "";
 		foreach (char c in go.name) {
 			if (!c.Equals ('(') && !c.Equals(' ')) {

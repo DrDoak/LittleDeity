@@ -25,8 +25,6 @@ GameObject:
   - component: {fileID: 114999472180008380}
   - component: {fileID: 114133116660456962}
   - component: {fileID: 114246059079885532}
-  - component: {fileID: 114651942498261426}
-  - component: {fileID: 114652899261689798}
   m_Layer: 8
   m_Name: Crate
   m_TagString: Player
@@ -41,8 +39,8 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1830176236672522}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 22.4, y: -14.85, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 4}
+  m_LocalPosition: {x: 11.238157, y: -9.472786, z: 0}
+  m_LocalScale: {x: 1.5, y: 1.5, z: 4}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
@@ -103,11 +101,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6cecf518dba7e8f429d2dc6df9ba9177, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_health: 30
+  Health: 100
   MaxHealth: 30
   Alive: 1
   DeathTime: 0
-  m_currDeathTime: 0
   Faction: 3
   Resistences: []
   DisplayHealth: 1
@@ -124,45 +121,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Faction: 3
---- !u!114 &114651942498261426
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1830176236672522}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7209baf354a64e1408f7faeb13592322, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_properties: []
-  HolderName: SameAsObject
-  MaxSlots: 4
-  NumTransfers: 2
-  m_toRemove: []
-  SubmergedHitbox: {fileID: 0}
-  EffectColor: {r: 1, g: 1, b: 1, a: 1}
---- !u!114 &114652899261689798
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1830176236672522}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 956b3ceaf744d5042a732c7a743b2220, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  Stealable: 1
-  Viewable: 1
-  Stackable: 0
-  InstantUse: 0
-  value: 0
-  PropertyName: None
-  Description: No description provided.
-  icon: {fileID: 0}
-  m_flameDamage: 0
-  inWater: 0
 --- !u!114 &114999472180008380
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -179,17 +137,15 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 256
   DecelerationRatio: 1
-  OnGround: 1
+  TerminalVelocity: -5
+  GravityForce: -1
+  ReactToWater: 1
   Floating: 0
   MaxClimbAngle: 80
-  TrueVelocity: {x: 0, y: 0, z: 0}
-  m_inputedMove: {x: 0, y: 0}
-  TerminalVelocity: -5
-  GravityScale: -1
-  FacingLeft: 0
-  ReactToWater: 1
-  UseBuoyancy: 0
   BuoyancyScale: -1
+  OnGround: 1
+  FacingLeft: 0
+  TrueVelocity: {x: 0, y: 0, z: 0}
 --- !u!212 &212002935821308758
 SpriteRenderer:
   m_ObjectHideFlags: 1

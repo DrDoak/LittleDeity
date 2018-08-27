@@ -49,7 +49,7 @@ public class WaterHitbox : MonoBehaviour {
 	{
 		if (other.GetComponent<PhysicsSS> () && m_overlappingControl.Contains(other.gameObject.GetComponent<PhysicsSS>())) {
 			other.GetComponent<PhysicsSS> ();
-			//phys.GravityScale *= 1.4f;
+			//phys.GravityForce *= 1.4f;
 			if (other.GetComponent<PropertyHolder> ()) {
 				
 				other.GetComponent<PropertyHolder> ().SubmergedHitbox = null;

@@ -76,3 +76,11 @@ public class GameManager : MonoBehaviour
 		return (Property)GetComponentInChildren (sysType);
 	}
 }
+
+/*
+ * if (InputManager.GetButtonDown ("Quicksave")) {
+			SaveObjManager.Instance.SaveProfile ("QuickSave");
+			TextboxManager.StartSequence ("~QuickSave Successful");
+		} else if (InputManager.GetButtonDown ("Quickload")) {
+			PauseGame.QuickLoad ();
+		}*/

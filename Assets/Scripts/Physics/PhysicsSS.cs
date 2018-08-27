@@ -26,7 +26,7 @@ public class PhysicsSS : MonoBehaviour
 	//Persistent Stats
 	public float DecelerationRatio = 1.0f;
 	public float TerminalVelocity = -1f;
-	public float GravityScale = -1.0f;
+	public float GravityForce = -1.0f;
 	public bool ReactToWater = true;
 	private bool Submerged = false;
 	public bool Floating = false;
@@ -61,6 +61,9 @@ public class PhysicsSS : MonoBehaviour
 		m_boxCollider.offset = new Vector2(m_boxCollider.offset.x, m_boxCollider.offset.y + m_skinWidth);
 		m_canMove = true;
 		m_lastPosition = transform.position;
+
+		if (GetComponent<PersistentItem> () != null)
+			GetComponent<PersistentItem> ().InitializeSaveLoadFuncs (storeData,loadData);
 	}
 
 	internal void Start() {
@@ -117,9 +120,9 @@ public class PhysicsSS : MonoBehaviour
 			m_velocity.y += BuoyancyScale * Time.fixedDeltaTime;
 		} else if (m_velocity.y > TerminalVelocity && !Floating){
 			if (!m_collisions.below && m_gravityCancelTime <= 0f) {
-				m_velocity.y += GravityScale * Time.fixedDeltaTime;
+				m_velocity.y += GravityForce * Time.fixedDeltaTime;
 			} else if (m_collisions.below) {
-				m_velocity.y += GravityScale * Time.fixedDeltaTime * 6f;
+				m_velocity.y += GravityForce * Time.fixedDeltaTime * 6f;
 			}
 		}
 		m_velocity += m_accumulatedVelocity * Time.fixedDeltaTime;
@@ -421,8 +424,8 @@ public class PhysicsSS : MonoBehaviour
 		return newV;
 	}
 
-	public void SetGravityScale(float gravScale) {
-		GravityScale = gravScale;
+	public void SetGravityForce(float gravScale) {
+		GravityForce = gravScale;
 	}
 
 	private bool JumpThruTag( GameObject obj ) {
@@ -434,5 +437,15 @@ public class PhysicsSS : MonoBehaviour
 		FacingLeft = left;
 		if (GetComponent<SpriteOrientation> () != null)
 			GetComponent<SpriteOrientation> ().SetDirection (left);
+	}
+
+	private void storeData(CharData d) {
+		d.PersistentBools["FacingLeft"] = FacingLeft;
+		d.PersistentFloats["TerminalVelocity"] = TerminalVelocity;
+	}
+
+	private void loadData(CharData d) {
+		SetDirection( d.PersistentBools["FacingLeft"]);
+		TerminalVelocity = d.PersistentFloats["TerminalVelocity"];
 	}
 }
