@@ -110,8 +110,8 @@ public class GUIHandler : MonoBehaviour {
 	public void OnSetPlayer(BasicMovement bm) {
 		ClearPropIcons ();
 		CurrentTarget = bm.gameObject;
-		foreach (Property p in bm.GetComponents<Property>()) {
+		/*foreach (Property p in bm.GetComponents<Property>()) {
 			AddPropIcon (p);
-		}
+		}*/
 	}
 }

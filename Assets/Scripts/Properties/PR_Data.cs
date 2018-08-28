@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class PR_Data : Property {
 
+	public int Experience = 0;
 	GameObject fx;
 
 	public override void OnAddProperty()
@@ -26,7 +27,7 @@ public class PR_Data : Property {
 		} else {
 			eh = FindObjectOfType<ExperienceHolder> ();
 		}
-		while (expDropped < value) {
+		while (expDropped < Experience) {
 			GameObject go = Instantiate (GameManager.Instance.FXExperience, transform.position, Quaternion.identity);
 			if (eh != null) {
 				go.GetComponent<ChaseTarget> ().Target = eh.GetComponent<PhysicsSS> ();
@@ -36,7 +37,7 @@ public class PR_Data : Property {
 			expDropped += 50;
 		}
 		if (eh != null)
-			eh.AddExperience ((int)value);
+			eh.AddExperience ((int)Experience);
 		FindObjectOfType<AudioManager> ().PlayClipAtPos (FXHit.Instance.SFXHeal,transform.position,0.25f,0f,0.25f);
 		GetComponent<PropertyHolder> ().RequestRemoveProperty ("Data");
 	}

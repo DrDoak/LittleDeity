@@ -5,45 +5,44 @@ using UnityEngine;
 public class TextboxTrigger : Interactable {
 	
 	public bool typeText = true;
-	public bool autoTrigger = true;
+
 	public bool ClearAllSequence = true;
 	public bool Skippable = false;
 	public DialogueSound soundType = DialogueSound.SPOKEN;
-	float interval = 2.0f;
-	float currentInterval = 0.0f;
 
-	// Update is called once per frame
-	void Update () {
-		mUpdate ();
+	[TextArea(3,8)]
+	public string TextboxString;
+
+	void Start() {
+		if (GetComponent<PersistentItem> () != null)
+			GetComponent<PersistentItem> ().InitializeSaveLoadFuncs (storeData,loadData);
 	}
-	protected void mUpdate() {
-		if (currentInterval > 0.0f) {
-			currentInterval -= Time.deltaTime;
-		}
+
+	void Update () {
 		destroyAfterUse ();
 	}
+
 	void OnDrawGizmos() {
 		Gizmos.color = new Color (1, 0, 1, .5f);
 		Gizmos.DrawCube (transform.position, transform.localScale);
 	}
-	internal void OnTriggerEnter2D(Collider2D other) {
-		if (autoTrigger && other.gameObject.GetComponent<BasicMovement> () && currentInterval <= 0.0f) {
-			triggerText ();
-		}
-	}
-	protected virtual void triggerText() {
-		TriggerUsed = true;
-		currentInterval = interval;
+
+	protected override void onTrigger(GameObject interactor) {
 		if (ClearAllSequence)
 			TextboxManager.ClearAllSequences ();
 		TextboxManager.SetSoundType (soundType);
 		if (ClearAllSequence)
 			TextboxManager.ClearAllSequences ();
-		TextboxManager.StartSequence (value,null,Skippable);
+		TextboxManager.StartSequence (TextboxString,null,Skippable);
 	}
-	/* public override void onInteract(BasicMovement interactor) {
-		if (!autoTrigger) {
-			triggerText ();
-		}
-	} */
+
+	private void storeData(CharData d) {
+		d.PersistentBools["TriggerUsed"] = TriggerUsed;
+		d.PersistentStrings ["TextboxString"] = TextboxString;
+	}
+
+	private void loadData(CharData d) {
+		TriggerUsed = d.PersistentBools ["TriggerUsed"];
+		TextboxString = d.PersistentStrings ["TextboxString"];
+	}
 }

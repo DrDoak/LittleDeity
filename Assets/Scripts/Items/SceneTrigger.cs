@@ -4,11 +4,12 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 
 public enum RoomDirection {
+	AUTO,
+	NEUTRAL,
 	LEFT,
 	RIGHT,
 	UP,
 	DOWN,
-	NEUTRAL
 }
 
 public class SceneTrigger : Interactable {
@@ -22,18 +23,15 @@ public class SceneTrigger : Interactable {
 	public RoomDirection dir;
 
 	void Update () {}
+
 	void OnDrawGizmos() {
 		Gizmos.color = new Color (1, 1, 0, .5f);
 		Gizmos.DrawCube (transform.position, transform.localScale);
 	}
-	internal void OnTriggerEnter2D(Collider2D other) {
-		if (onContact && other.gameObject.GetComponent<BasicMovement> () ) {
-			changeRoom (other.gameObject);
-		}
-	}
-	protected virtual void changeRoom(GameObject go) {
-		if (go.GetComponent<BasicMovement> ()) {
-			if (go.GetComponent<Attackable> ().Alive == false)
+
+	protected override void onTrigger(GameObject interactor){
+		if (interactor.GetComponent<BasicMovement> ()) {
+			if (interactor.GetComponent<Attackable> ().Alive == false)
 				return;
 			TriggerUsed = true;
 			if (TriggerID != "none") {
@@ -42,9 +40,9 @@ public class SceneTrigger : Interactable {
 				if (TargetTriggerID == "none") {
 					realTarget = TriggerID;
 				}
-				if (realDir == RoomDirection.NEUTRAL) {
-					float diffX = transform.position.x - go.transform.position.x;
-					float diffY = transform.position.y - go.transform.position.y;
+				if (realDir == RoomDirection.AUTO) {
+					float diffX = transform.position.x - interactor.transform.position.x;
+					float diffY = transform.position.y - interactor.transform.position.y;
 					if (Mathf.Abs (diffX) > Mathf.Abs (diffY)) {
 						if (diffX < 0f) {
 							realDir = RoomDirection.LEFT;
@@ -59,19 +57,18 @@ public class SceneTrigger : Interactable {
 						}
 					}
 				}
-				if (go.GetComponent<PersistentItem>() != null)
-					SaveObjManager.MoveItem (go, sceneName, realTarget,realDir);
-			} else if (Vector2.Equals(Vector2.zero,newPos) && (go.GetComponent<PersistentItem>() != null)){
-				SaveObjManager.MoveItem (go, sceneName, go.gameObject.transform.position);
-			} else if (go.GetComponent<PersistentItem>() != null) {
-				SaveObjManager.MoveItem (go, sceneName, newPos);
+				if (interactor.GetComponent<PersistentItem>() != null)
+					SaveObjManager.MoveItem (interactor, sceneName, realTarget,realDir);
+			} else if (Vector2.Equals(Vector2.zero,newPos) && (interactor.GetComponent<PersistentItem>() != null)){
+				SaveObjManager.MoveItem (interactor, sceneName, interactor.gameObject.transform.position);
+			} else if (interactor.GetComponent<PersistentItem>() != null) {
+				SaveObjManager.MoveItem (interactor, sceneName, newPos);
 			}
-			if (go.GetComponent<BasicMovement> ().IsCurrentPlayer) {
+			if (interactor.GetComponent<BasicMovement> ().IsCurrentPlayer) {
 				//GameManager.Instance.LoadRoom (sceneName);
 				Initiate.Fade (sceneName, Color.black, 5.0f);
 			}
-			Destroy (go);
-		} else {
+			Destroy (interactor);
 		}
 	}
 }

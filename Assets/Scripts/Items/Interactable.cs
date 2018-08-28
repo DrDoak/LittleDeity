@@ -5,21 +5,30 @@ using UnityEngine;
 public class Interactable : MonoBehaviour
 {
 	
-	public Interactor Actor;
+	//public Interactor Actor;
 	public string InteractionString;
-	public bool HoldTrigger;
-	public bool PressTrigger;
+
+	public bool autoTrigger = true;
+	public float TriggerRefresh = 2.0f;
+	float lastTimeTriggered = 0.0f;
+
 	public bool oneTime = true;
 	public bool TriggerUsed = false;
-	[TextArea(3,8)]
-	public string value;
+
+
+	//public bool HoldTrigger;
+	//public bool PressTrigger;
+
 
 	void Start()
 	{
-		Actor = null;
+		lastTimeTriggered = -TriggerRefresh;
+		//Actor = null;
 		//Will become true if the interactor presses/holds the interaction key while in this interactable's area
-		HoldTrigger = false;
-		PressTrigger = false;
+		//HoldTrigger = false;
+		//PressTrigger = false;
+		if (GetComponent<PersistentItem> () != null)
+			GetComponent<PersistentItem> ().InitializeSaveLoadFuncs (storeData,loadData);
 	}
 
 	void Update() {
@@ -29,9 +38,27 @@ public class Interactable : MonoBehaviour
 		if (oneTime && TriggerUsed)
 			Destroy (gameObject);
 	}
-	private void OnTriggerEnter2D(Collider2D collision)
+
+	protected virtual void onTrigger(GameObject interactor) { }
+
+	internal void OnTriggerEnter2D(Collider2D other)
 	{
-		if (Actor = collision.gameObject.GetComponent<Interactor>())
-			Actor.PromptedInteraction = this;
+		if (autoTrigger && other.gameObject.GetComponent<BasicMovement> () && 
+			Time.timeSinceLevelLoad - lastTimeTriggered >= TriggerRefresh) {
+			lastTimeTriggered = Time.timeSinceLevelLoad;
+			TriggerUsed = true;
+			onTrigger (other.gameObject);
+		}
+		/*
+		 * if (Actor = collision.gameObject.GetComponent<Interactor>())
+			Actor.PromptedInteraction = this;*/
+	}
+
+	private void storeData(CharData d) {
+		d.PersistentBools["TriggerUsed"] = TriggerUsed;
+	}
+
+	private void loadData(CharData d) {
+		TriggerUsed = d.PersistentBools ["TriggerUsed"];
 	}
 }

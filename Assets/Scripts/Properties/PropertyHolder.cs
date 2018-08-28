@@ -20,6 +20,8 @@ public class PropertyHolder : MonoBehaviour {
 	void Awake () {
 		m_properties = new List<Property> ();
 		m_toRemove = new List<string> ();
+		if (GetComponent<PersistentItem> () != null)
+			GetComponent<PersistentItem> ().InitializeSaveLoadFuncs (storeData,loadData);
 	}
 
 	void Start() {
@@ -198,4 +200,40 @@ public class PropertyHolder : MonoBehaviour {
 		am.RemoveSound (ac);
 	}
 
+
+	private void storeData(CharData d) {
+		Property[] pL = GetComponents<Property> ();
+		string allPs = "";
+		for (int i = 0; i < pL.Length; i++) {
+			pL [i].OnSave (d);
+			allPs += pL [i].GetType ().ToString ();
+			allPs += ",";
+		}
+		d.PersistentStrings["Properties"] = allPs;
+		d.PersistentInt["NumTransfers"] = NumTransfers;
+		d.PersistentInt["MaxSlots"] = MaxSlots;
+		//Debug.Log ("Saving: "); //d.PersistentStrings["Properties"]);
+	}
+
+	private void loadData(CharData d) {
+		//Debug.Log ("Loading: " + d.PersistentStrings["Properties"]);
+
+		NumTransfers = d.PersistentInt["NumTransfers"];
+
+		MaxSlots = d.PersistentInt["MaxSlots"];
+		GetComponent<PropertyHolder> ().ClearProperties ();
+		string lastProp = "";
+		for (int i = 0; i < d.PersistentStrings["Properties"].Length; i++) {
+			char l = d.PersistentStrings ["Properties"].ToCharArray () [i];
+			if (l == ',') {
+				Type t = Type.GetType (lastProp);
+				AddProperty (lastProp);
+				Property p = (Property)gameObject.GetComponent (t);
+				p.OnLoad (d);
+				lastProp = "";
+			} else {
+				lastProp += l;
+			}
+		}
+	}
 }

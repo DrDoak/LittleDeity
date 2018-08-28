@@ -49,10 +49,7 @@ public class PersistentItem : MonoBehaviour {
 	}
 	public void StoreData() {
 		m_onSave (data);
-		/*if (GetComponent<Interactable>()) {
-			data.TriggerUsed = GetComponent<Interactable> ().TriggerUsed;
-			data.triggerString = GetComponent<Interactable> ().value;
-		}
+		/*
 		if (GetComponent<Turret> ())
 			data.TurretDefaultFace = GetComponent<Turret> ().DefaultFaceLeft;
 		if (GetComponent<PropertyHolder> ()) {
@@ -70,10 +67,7 @@ public class PersistentItem : MonoBehaviour {
 			data.propertyValues = allVs;
 			data.transfers = GetComponent<PropertyHolder> ().NumTransfers;
 			data.slots = GetComponent<PropertyHolder> ().MaxSlots;
-		}
-
-		if (GetComponent<ExperienceHolder> ())
-			data.Experience = GetComponent<ExperienceHolder> ().Experience;*/
+		}*/
 	}
 
 	private void loadBasic(CharData d) {
@@ -99,13 +93,6 @@ public class PersistentItem : MonoBehaviour {
 				p.Description = data.propertyDescriptions [i];
 				p.value = data.propertyValues [i];
 			}
-		}
-		if (GetComponent<ExperienceHolder> ()) {
-			GetComponent<ExperienceHolder> ().Experience = data.Experience;
-		}
-		if (GetComponent<Interactable>()) {
-			GetComponent<Interactable> ().TriggerUsed = data.TriggerUsed;
-			GetComponent<Interactable> ().value = data.triggerString;
 		}*/
 	}
 	public void InitializeSaveLoadFuncs(LoadFunction onSave, LoadFunction onLoad) {

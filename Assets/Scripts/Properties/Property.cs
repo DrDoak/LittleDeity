@@ -21,6 +21,9 @@ public class Property : MonoBehaviour, ICustomMessageTarget
 	public virtual void OnAddProperty() { }
 	public virtual void OnRemoveProperty() {}
 
+	public virtual void OnSave(CharData d) {}
+	public virtual void OnLoad(CharData d) {}
+
 	public virtual void OnWaterEnter(WaterHitbox waterCollided) { }
 	public virtual void OnWaterExit(WaterHitbox waterCollided) {}
 
@@ -28,7 +31,6 @@ public class Property : MonoBehaviour, ICustomMessageTarget
 	public bool Viewable = true;
 	public bool Stackable = false;
 	public bool InstantUse = false;
-	public float value = 0f;
 
 	public string PropertyName = "";
 	public virtual string DefaultPropertyName {get {return "None";}}
@@ -55,8 +57,6 @@ public class Property : MonoBehaviour, ICustomMessageTarget
 			PropertyName = p.PropertyName;
 		if (Description == "")
 			Description = p.Description;
-		if (value == 0f)
-			value = p.value;
 		icon = p.icon;;
 	}
 }

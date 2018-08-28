@@ -4,19 +4,20 @@ using UnityEngine;
 
 public class PR_HealthPack : Property {
 
+	public int HealthValue = 25;
+
 	public override void OnAddProperty()
 	{
 		if (GetComponent<ExperienceHolder>() != null) {
 			m_giveHealth ();
 		}
 	}
-		
 
 	void m_giveHealth() {
 		if (GetComponent<PropertyHolder> ().HasProperty ("Biological")) {
-			GetComponent<Attackable> ().DamageObj (-value * 2f);
+			GetComponent<Attackable> ().DamageObj (-HealthValue * 2f);
 		} else {
-			GetComponent<Attackable> ().DamageObj (-value);
+			GetComponent<Attackable> ().DamageObj (-HealthValue);
 		}
 		GetComponent<PropertyHolder> ().RequestRemoveProperty ("HealthPack");
 	}

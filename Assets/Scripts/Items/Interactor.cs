@@ -19,7 +19,7 @@ public class Interactor : MonoBehaviour
 
 	void Update()
 	{
-		if (PromptedInteraction)
+		/*if (PromptedInteraction)
 		{
 			if (m_col.IsTouching(PromptedInteraction.gameObject.GetComponent<Collider2D>()))
 			{
@@ -43,6 +43,6 @@ public class Interactor : MonoBehaviour
 				PromptedInteraction = null;
 				m_promptUI.text = "";
 			}
-		}
+		}*/
 	}
 }
