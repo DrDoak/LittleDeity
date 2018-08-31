@@ -29,15 +29,16 @@ public class AnimatorSprite : MonoBehaviour
 	{
 		if (m_currentAnim == stateName || m_currentAnim == "none")
 			return true;
-
 		if (m_states.Contains(stateName))
 			return SetAndPlay(stateName);
 		
-		if (m_anim.HasState(0, Animator.StringToHash(stateName)))
-		{
+		if (m_anim.HasState(0, Animator.StringToHash(stateName))) {
 			m_states.Add(stateName);
 			return SetAndPlay(stateName);
 		}
+		Debug.Log ("Does not have anim: " + stateName);
+		foreach (string s in m_states)
+			Debug.Log (s);
 		return false;
 	}
 

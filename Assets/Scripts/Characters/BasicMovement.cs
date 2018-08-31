@@ -74,6 +74,7 @@ public class BasicMovement : MonoBehaviour
 
 	private PhysicsSS m_followObj;
 	private bool m_autonomy = true;
+	public bool Autonomy { get { return m_autonomy; } private set { m_autonomy = value; } }
 
 	public FootstepInfo m_FootStepInfo;
 
@@ -321,6 +322,11 @@ public class BasicMovement : MonoBehaviour
 
 	public void SetMoveSpeed(float moveSpeed) {
 		MoveSpeed = moveSpeed;
+	}
+
+	public void SetAutonomy(bool isAutonomous) {
+		m_autonomy = isAutonomous;
+		m_inputMove = new Vector2(0f, 0f);
 	}
 
 	private void setJumpData(float jumpHeight) {

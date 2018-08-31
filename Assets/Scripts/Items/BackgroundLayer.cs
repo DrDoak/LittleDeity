@@ -25,7 +25,7 @@ public class BackgroundLayer : MonoBehaviour {
 		m_viewZone = BackgroundSize * 2f;
 		m_leftIndex = 0;
 		m_rightIndex = m_pieces.Length - 1;
-		m_lastCamPos = new Vector2(0f,0f);
+		m_lastCamPos = new Vector2(transform.position.x,transform.position.y);
 	}
 	
 	// The Background Layer MUST update after the camera in order to have stable scrolling.

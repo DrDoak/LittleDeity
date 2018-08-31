@@ -18,6 +18,10 @@ public class TextboxManager : MonoBehaviour {
 	public GameObject textboxStaticPrefab;
 	public GameObject textboxFullPrefab;
 	public GameObject SkipTextPrefab;
+
+	public GameObject DialogueBoxPrefab;
+	public GameObject DialogueOptionPrefab;
+
 	public DialogueSound nextSoundType;
 	List<DialogueSequence> m_currentSequences;
 
@@ -37,11 +41,6 @@ public class TextboxManager : MonoBehaviour {
 			return;
 		}
 		m_currentSequences = new List<DialogueSequence> ();
-	}
-
-	// Use this for initialization
-	void Start () {
-		//TextboxColor = new Color (1.0f, 0.0f, 0.0f, 0.5f);
 	}
 
 	public static void StartSequence(string text,GameObject speaker = null, bool Skippable = false) {
@@ -68,35 +67,34 @@ public class TextboxManager : MonoBehaviour {
 		int i = startingChar;
 		int currIndent = 0;
 		bool full = false;
+		int specialSequenceDepth = 0;
 		while (i < text.Length) {
 			char lastC = text.ToCharArray () [i];
 			newSeq.rawText += lastC;
-			if (lastText.Length == 0 && lastC == '\t') {
-				currIndent += 1;
-			} else {
-				if (currIndent < indLevel) {
-					break;
-				}
-				if (lastText.Length == 0 && lastC == ' ') {
-				} else if (lastText.Length == 0 && lastC == '-') {
-					DialogueSequence newS = parseSequence (text, i, indLevel + 1, newSeq);
-					i += newS.numChars;
-				} else if (lastC == '~') {
-					full = true;
-				} else if (lastC == '\n' || lastC == '|') {
-					if (lastText.Length > 0) {
-						if (lastAnim == "none") {
-							du.addTextbox (lastText,full);
-						} else {
-							du.addTextbox (lastText, lastAnim,full);
-						}
-						full = false;
+			du.RawText += lastC;
+			if (lastC == '<')
+				specialSequenceDepth++;
+			else if (lastC == '>')
+				specialSequenceDepth--;
+			if (lastText.Length == 0 && lastC == ' ') {
+			} else if (lastText.Length == 0 && lastC == '-') {
+				DialogueSequence newS = parseSequence (text, i, indLevel + 1, newSeq);
+				i += newS.numChars;
+			} else if (lastC == '~') {
+				full = true;
+			} else if (specialSequenceDepth == 0 && (lastC == '\n' || lastC == '|')) {
+				if (lastText.Length > 0) {
+					if (lastAnim == "none") {
+						du.addTextbox (lastText,full);
+					} else {
+						du.addTextbox (lastText, lastAnim,full);
 					}
-					currIndent = 0;
-					lastText = "";
-				} else {
-					lastText += lastC;
+					full = false;
 				}
+				currIndent = 0;
+				lastText = "";
+			} else {
+				lastText += lastC;
 			}
 			newSeq.numChars += 1;
 			i += 1;
@@ -109,6 +107,21 @@ public class TextboxManager : MonoBehaviour {
 		subDS.Add (du);
 		newSeq.allDUnits = subDS;
 		return newSeq;
+	}
+
+	public static string TrimSpecialSequences(string s) {
+		bool inSpecial = false;
+		string trimmedStr = "";
+		for (int i = 0; i < s.Length; i++) {
+			char c = s.ToCharArray () [i];
+			if (c == '<')
+				inSpecial = true;
+			else if (c == '>')
+				inSpecial = false;
+			else if (!inSpecial)
+				trimmedStr += c;
+		}
+		return trimmedStr;
 	}
 
 	public static void SetSoundType(DialogueSound ds) {
@@ -162,9 +175,7 @@ public class TextboxManager : MonoBehaviour {
 	}
 
 	public Vector2 findPosition(Vector2 startLocation) {
-		//Vector2 newPos;
 		float targetY = startLocation.y + 5f;
-		//newPos.y = targetY;
 		return new Vector2 (startLocation.x, targetY);
 	}
 	public void setPauseAfterType(float time) {
@@ -174,7 +185,7 @@ public class TextboxManager : MonoBehaviour {
 		textSpeed = time;
 	}
 	public static void ClearAllSequences() {
-		Debug.Log ("Clearing: " + Instance.m_currentSequences.Count);
+		//Debug.Log ("Clearing: " + Instance.m_currentSequences.Count);
 		foreach (DialogueSequence ds in Instance.m_currentSequences) {
 			if (ds != null) {
 				ds.CloseSequence ();
@@ -186,11 +197,3 @@ public class TextboxManager : MonoBehaviour {
 		return InputManager.GetAction ("Keyboard", action).Bindings [0].Positive.ToString ();
 	}
 }
-
-/*
- * else if (!specialGroup && false && lastText.Length < 18) { //&& lastC == ':' 
-					ds = new DialogueUnit ();
-					subDS.Add (ds);
-					//Debug.Log (targetCharName);
-					lastText = "";
-				}*/

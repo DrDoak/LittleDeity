@@ -10,7 +10,7 @@ public class Interactable : MonoBehaviour
 
 	public bool autoTrigger = true;
 	public float TriggerRefresh = 2.0f;
-	float lastTimeTriggered = 0.0f;
+	public float lastTimeTriggered = 0.0f;
 
 	public bool oneTime = true;
 	public bool TriggerUsed = false;

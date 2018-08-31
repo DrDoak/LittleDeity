@@ -10,7 +10,7 @@ public class DialogueUnit  {
 
 	public bool finished = false;
 	int currentElement = 0;
-	string unparsed;
+	public string RawText;
 	//List<Fighter> modifiedAnims;
 	public GameObject Speaker;
 
@@ -72,8 +72,11 @@ public class DialogueUnit  {
 		if (currentTB)
 			GameObject.Destroy (currentTB.gameObject);
 		finished = true;
-		foreach (BasicMovement bm in FrozenCharacters.Keys)
-			bm.IsCurrentPlayer = FrozenCharacters[bm];
+		foreach (BasicMovement bm in FrozenCharacters.Keys) {
+			bm.IsCurrentPlayer = FrozenCharacters [bm];
+			if (bm.GetComponent<Fighter> () != null)
+				bm.GetComponent<Fighter> ().SetPause (false);
+		}
 	}
 
 	void runEvent() {}

@@ -18,9 +18,7 @@ public class TextboxTrigger : Interactable {
 			GetComponent<PersistentItem> ().InitializeSaveLoadFuncs (storeData,loadData);
 	}
 
-	void Update () {
-		destroyAfterUse ();
-	}
+	void Update () { destroyAfterUse (); }
 
 	void OnDrawGizmos() {
 		Gizmos.color = new Color (1, 0, 1, .5f);

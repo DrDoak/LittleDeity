@@ -12,7 +12,6 @@ public class SkipText : MonoBehaviour {
 		PauseGame.CanPause = !DisablePause;
 	}
 
-	// Update is called once per frame
 	void Update () {
 		if (SingleSequence) {
 			if (toSkip == null || toSkip.finished)

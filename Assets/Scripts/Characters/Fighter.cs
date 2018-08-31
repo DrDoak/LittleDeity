@@ -27,6 +27,7 @@ public class Fighter : MonoBehaviour
 	private float m_animationSpeed = 2f;
 
 	private Dictionary<HitboxInfo, float> m_queuedHitboxes = new Dictionary<HitboxInfo, float> ();
+	private bool m_pauseAnim = false;
 
 	[HideInInspector]
 	public AudioClip AttackSound;
@@ -75,10 +76,13 @@ public class Fighter : MonoBehaviour
 		updateQueueHitboxes();
 		if (ProgressAttack())
 			return;
-		ProgressWalkOrIdleAnimation();
+		if (!m_pauseAnim)
+			ProgressWalkOrIdleAnimation();
 	}
 	
-	
+	public void SetPause(bool p) {
+		m_pauseAnim = p;
+	}
 	private bool ProgressStun()
 	{
 		if (StunTime <= 0.0f)
