@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using Luminosity.IO;
 
 [RequireComponent (typeof (HitboxMaker))]
 [RequireComponent (typeof (PhysicsSS))]
@@ -12,6 +13,8 @@ public class Fighter : MonoBehaviour
 {
 	[HideInInspector]
 	public Dictionary<string,AttackInfo> Attacks = new Dictionary<string,AttackInfo>();
+
+	public Dictionary<string, string> Aliases = new Dictionary<string, string>();
 
 	public bool AutoOrientSprite = true;
 	public string IdleAnimation = "idle";
@@ -44,7 +47,11 @@ public class Fighter : MonoBehaviour
 
 	internal void Start()
 	{
-		AttackInfo[] at = GetComponents<AttackInfo>();
+		AttackInfo[] at1 = GetComponentsInChildren<AttackInfo> ();
+		AttackInfo[] at2 =  GetComponents<AttackInfo>();
+		var at = new AttackInfo[at1.Length + at2.Length];
+		at1.CopyTo(at, 0);
+		at2.CopyTo(at, at1.Length); 
 		foreach (AttackInfo a in at)
 		{
 			if (!Attacks.ContainsKey(a.AttackName))
@@ -52,6 +59,10 @@ public class Fighter : MonoBehaviour
 				Attacks.Add(a.AttackName, a);
 				a.AddListener(OnAttackProgressed);
 			}
+		}
+		string[] defaultAttacks = new string[]{ "neutral", "up", "down", "side", "air", "air_up", "air_down", "air_side" };
+		foreach (string s in defaultAttacks) {
+			Aliases ["i_" + s] = s;
 		}
 	}
 	public void QueueHitbox(HitboxInfo hi, float delay) {
@@ -78,6 +89,42 @@ public class Fighter : MonoBehaviour
 			return;
 		if (!m_pauseAnim)
 			ProgressWalkOrIdleAnimation();
+		if (canAttack ()) {
+			if (GetComponent<BasicMovement> ().IsCurrentPlayer)
+				CheckInputs ();
+		}
+	}
+
+	bool canAttack() {
+		return (GetComponent<Fighter> ().StunTime <= 0 && GetComponent<BasicMovement> ().Autonomy);
+	}
+	void CheckInputs() {
+		if (InputManager.GetButton ("Ability1")) {
+			Fighter f = GetComponent<Fighter> ();
+			if (GetComponent<PhysicsSS> ().OnGround) {
+				if (InputManager.GetButton("Up"))
+					f.TryAttack(new string[]{"i_up","i_neutral"});
+				else if (InputManager.GetButton ("Down"))
+					f.TryAttack(new string[]{"i_down","i_neutral"});
+				else if (InputManager.GetButton("Left") || InputManager.GetButton("Right"))
+					f.TryAttack(new string[]{"i_side","i_neutral"});
+				else 
+					f.TryAttack(new string[]{"i_neutral"});
+			} else {
+				if (InputManager.GetButton("Up"))
+					f.TryAttack(new string[]{"i_air_up","i_air","i_up","i_neutral"});
+				else if (InputManager.GetButton ("Down"))
+					f.TryAttack(new string[]{"i_air_down","i_air","i_down","i_neutral"});
+				else if (InputManager.GetButton("Left") || InputManager.GetButton("Right"))
+					f.TryAttack(new string[]{"i_air_side","i_air","i_side","i_neutral"});
+				else 
+					f.TryAttack(new string[]{"i_air","i_neutral"});
+			}
+		}
+	}
+
+	public void SetBind(string bindName, string attackName) { 
+		GetComponent<Fighter>().Aliases [bindName] = attackName;
 	}
 	
 	public void SetPause(bool p) {
@@ -223,17 +270,19 @@ public class Fighter : MonoBehaviour
 	public AttackInfo TryAttack(string[] attackList)
 	{
 		foreach (string s in attackList) {
-			if (Attacks.ContainsKey(s)) {
-				AttackInfo ai = TryAttack (s);
-				Debug.Log (ai);
-				if (ai != null)
-					return ai;
-			}
+			AttackInfo ai = TryAttack (s);
+			if (ai != null)
+				return ai;
 		}
 		return null;
 	}
 
 	public AttackInfo TryAttack(string attackName) {
+		Debug.Log ("Try Attacking " + attackName);
+		if (Aliases.ContainsKey (attackName)) {
+			Debug.Log ("Found alias for: " + attackName + " changed to : " + Aliases[attackName]);
+			attackName = Aliases [attackName];
+		}
 		if (IsAttacking () || !Attacks.ContainsKey (attackName) || StunTime > 0.0f)
 			return null;
 		m_currentAttack = Attacks[attackName];

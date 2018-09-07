@@ -78,8 +78,8 @@ public class Observer : MonoBehaviour {
 
 	internal void OnSight(Observable o) {
 		ExecuteEvents.Execute<ICustomMessageTarget> (gameObject, null, (x, y) => x.OnSight (o));
-		if (GetComponent<AIFighter>()) {
-			GetComponent<AIFighter> ().OnSight (o);
+		if (GetComponent<AIBase>()) {
+			GetComponent<AIBase> ().OnSight (o);
 		}
 		o.addObserver (this);
 		VisibleObjs.Add (o);

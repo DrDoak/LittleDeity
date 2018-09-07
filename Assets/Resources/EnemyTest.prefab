@@ -70,7 +70,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1614439459565114}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 19.19, y: -14.4, z: 0}
+  m_LocalPosition: {x: 80.50356, y: -11.042942, z: 0}
   m_LocalScale: {x: 1.5, y: 1.5, z: 4}
   m_Children:
   - {fileID: 4416458896656566}
@@ -126,14 +126,14 @@ BoxCollider2D:
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.45, y: 0.5}
-    oldSize: {x: 1.28, y: 1.28}
+    oldSize: {x: 2, y: 2}
     newSize: {x: 1, y: 1}
     adaptiveTilingThreshold: 0.5
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 0.3, y: 0.8}
+  m_Size: {x: 0.4, y: 1.5}
   m_EdgeRadius: 0
 --- !u!95 &95953607618594930
 Animator:
@@ -163,7 +163,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7bc35a6c28df4004bb8322b02cfc574c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_currentAnim: 
 --- !u!114 &114057275778421492
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -177,15 +176,105 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   AttackName: default
   m_HitboxInfo:
-    IsHitboxCreater: 0
-    HitboxScale: {x: 1, y: 1}
+  - HitboxScale: {x: 1, y: 1}
     HitboxOffset: {x: 0, y: 0}
     Damage: 10
     Stun: 0.3
     HitboxDuration: 0.5
     Knockback: {x: 10, y: 10}
+    FixedKnockback: 1
     Element: 0
     ApplyProps: 1
+    FollowCharacter: 1
+    Delay: 0
+  - HitboxScale: {x: 1, y: 1}
+    HitboxOffset: {x: 0, y: 0}
+    Damage: 10
+    Stun: 0.3
+    HitboxDuration: 0.5
+    Knockback: {x: 10, y: 10}
+    FixedKnockback: 1
+    Element: 0
+    ApplyProps: 1
+    FollowCharacter: 1
+    Delay: 0
+  - HitboxScale: {x: 1, y: 1}
+    HitboxOffset: {x: 0, y: 0}
+    Damage: 10
+    Stun: 0.3
+    HitboxDuration: 0.5
+    Knockback: {x: 10, y: 10}
+    FixedKnockback: 1
+    Element: 0
+    ApplyProps: 1
+    FollowCharacter: 1
+    Delay: 0
+  - HitboxScale: {x: 1, y: 1}
+    HitboxOffset: {x: 0, y: 0}
+    Damage: 10
+    Stun: 0.3
+    HitboxDuration: 0.5
+    Knockback: {x: 10, y: 10}
+    FixedKnockback: 1
+    Element: 0
+    ApplyProps: 1
+    FollowCharacter: 1
+    Delay: 0
+  - HitboxScale: {x: 1, y: 1}
+    HitboxOffset: {x: 0, y: 0}
+    Damage: 10
+    Stun: 0.3
+    HitboxDuration: 0.5
+    Knockback: {x: 10, y: 10}
+    FixedKnockback: 1
+    Element: 0
+    ApplyProps: 1
+    FollowCharacter: 1
+    Delay: 0
+  - HitboxScale: {x: 1, y: 1}
+    HitboxOffset: {x: 0, y: 0}
+    Damage: 10
+    Stun: 0.3
+    HitboxDuration: 0.5
+    Knockback: {x: 10, y: 10}
+    FixedKnockback: 1
+    Element: 0
+    ApplyProps: 1
+    FollowCharacter: 1
+    Delay: 0
+  - HitboxScale: {x: 1, y: 1}
+    HitboxOffset: {x: 0, y: 0}
+    Damage: 10
+    Stun: 0.3
+    HitboxDuration: 0.5
+    Knockback: {x: 10, y: 10}
+    FixedKnockback: 1
+    Element: 0
+    ApplyProps: 1
+    FollowCharacter: 1
+    Delay: 0
+  - HitboxScale: {x: 1, y: 1}
+    HitboxOffset: {x: 0, y: 0}
+    Damage: 10
+    Stun: 0.3
+    HitboxDuration: 0.5
+    Knockback: {x: 10, y: 10}
+    FixedKnockback: 1
+    Element: 0
+    ApplyProps: 1
+    FollowCharacter: 1
+    Delay: 0
+  - HitboxScale: {x: 1, y: 1}
+    HitboxOffset: {x: 0, y: 0}
+    Damage: 10
+    Stun: 0.3
+    HitboxDuration: 0.5
+    Knockback: {x: 10, y: 10}
+    FixedKnockback: 1
+    Element: 0
+    ApplyProps: 1
+    FollowCharacter: 1
+    Delay: 0
   m_AttackAnimInfo:
     AnimSpeed: 0.75
     StartUpTime: 0.75
@@ -196,6 +285,7 @@ MonoBehaviour:
   m_AIInfo:
     Frequency: 0.5
     UniqueAIPrediction: 1
+    AutoAttack: 0
     AIPredictionHitbox: {x: 6, y: 0.5}
     AIPredictionOffset: {x: 3.5, y: 0}
   m_SoundInfo:
@@ -249,7 +339,6 @@ MonoBehaviour:
   Viewable: 1
   Stackable: 0
   InstantUse: 0
-  value: 0
   PropertyName: None
   Description: No description provided.
   icon: {fileID: 0}
@@ -265,11 +354,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6cecf518dba7e8f429d2dc6df9ba9177, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_health: 100
+  Health: 100
   MaxHealth: 100
   Alive: 1
   DeathTime: 2
-  m_currDeathTime: 0
   Faction: 2
   Resistences: []
   DisplayHealth: 1
@@ -285,13 +373,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7209baf354a64e1408f7faeb13592322, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_properties: []
   HolderName: Guard
   MaxSlots: 4
   NumTransfers: 2
-  m_toRemove: []
   SubmergedHitbox: {fileID: 0}
-  EffectColor: {r: 1, g: 1, b: 1, a: 1}
 --- !u!114 &114482614744153130
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -308,17 +393,15 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 256
   DecelerationRatio: 1
-  OnGround: 1
+  TerminalVelocity: -5
+  GravityForce: -1
+  ReactToWater: 1
   Floating: 0
   MaxClimbAngle: 80
-  TrueVelocity: {x: 0, y: 0, z: 0}
-  m_inputedMove: {x: 0, y: 0}
-  TerminalVelocity: -5
-  GravityScale: -1
-  FacingLeft: 0
-  ReactToWater: 1
-  UseBuoyancy: 0
   BuoyancyScale: -1
+  OnGround: 1
+  FacingLeft: 0
+  TrueVelocity: {x: 0, y: 0, z: 0}
 --- !u!114 &114492024420699440
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -330,36 +413,28 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 92acc23af4626be4fa32c868acac10d0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  saveID: autoID
-  pos: {x: 0, y: 0, z: 0}
-  zRot: 0
-  targetID: none
-  targetDir: 4
-  healthVal: 0
   data:
     regID: Not Assigned
+    prefabPath: 
     name: 
     pos: {x: 0, y: 0, z: 0}
     zRot: 0
-    health: 100
-    maxHealth: 100
-    faction: 3
-    prefabPath: 
-    targetID: 
-    propertyList: []
-    propertyDescriptions: []
-    propertyValues: []
-    transfers: 0
-    slots: 0
+    PersistentInt:
+      keys: []
+      values: 
+    PersistentFloats:
+      keys: []
+      values: []
+    PersistentStrings:
+      keys: []
+      values: []
+    PersistentBools:
+      keys: []
+      values: 
     targetDir: 0
-    IsCurrentCharacter: 0
-    IsFacingLeft: 0
-    TurretDefaultFace: 0
-    Experience: 0
-    TriggerUsed: 0
-    triggerString: 
+    targetID: 
   recreated: 0
-  PrefabPath: EnemyTest
+  StartPosition: {x: 0, y: 0, z: 0}
 --- !u!114 &114503039921728846
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -447,10 +522,10 @@ MonoBehaviour:
   Viewable: 1
   Stackable: 0
   InstantUse: 0
-  value: 100
   PropertyName: Data
   Description: Combat knowledge and experience.
   icon: {fileID: 0}
+  Experience: 0
 --- !u!114 &114849852270695784
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -462,8 +537,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 54ae262720e27452baf2f574fc31d83a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  allAttacks: []
-  CurrentTarget: {fileID: 0}
 --- !u!114 &114866621826105684
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -488,20 +561,20 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   IsCurrentPlayer: 0
-  JumpHeight: 3
-  TimeToJumpApex: 0.4
+  m_jumpHeight: 4
   VariableJumpHeight: 0
-  variableJumpApplied: 0
-  MoveSpeed: 4
-  jumpVector: {x: 0, y: 0}
-  m_inputMove: {x: 0, y: 0}
+  m_moveSpeed: 8
+  m_jumpVector: {x: 0, y: 0}
   m_minDistance: 3
   m_abandonDistance: 20
-  Submerged: 0
   CanJump: 1
-  m_stuckTime: 0
-  PlayFootsteps: 0
-  footstepInterval: 0.25
+  m_FootStepInfo:
+    PlayFootsteps: 0
+    FootStepClip: {fileID: 0}
+    FootStepVolume: 0.3
+    FootStepPitchVariation: 0.25
+    FootStepVolumeVariation: 0
+    FootstepInterval: 0.75
 --- !u!212 &212579261813204232
 SpriteRenderer:
   m_ObjectHideFlags: 1

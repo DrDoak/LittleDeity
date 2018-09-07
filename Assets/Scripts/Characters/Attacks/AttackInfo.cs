@@ -41,6 +41,7 @@ public class SoundInfo {
 public class AIInfo {
 	public float Frequency = 0.5f;
 	public bool UniqueAIPrediction = false;
+	public bool AutoAttack = false;
 	public Vector2 AIPredictionHitbox = Vector2.zero;
 	public Vector2 AIPredictionOffset = Vector2.zero;
 }

@@ -48,7 +48,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1000013670716774}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 2.42, y: -15.23, z: 0}
+  m_LocalPosition: {x: 93.6, y: -11.6, z: 0}
   m_LocalScale: {x: 1.5, y: 1.5, z: 4}
   m_Children: []
   m_Father: {fileID: 0}
@@ -226,7 +226,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3a149c2d7c3a0444e92bac7a1c729bdc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  AttackName: melee
+  AttackName: neutral
   m_HitboxInfo:
   - HitboxScale: {x: 1, y: 1}
     HitboxOffset: {x: 0, y: 0}
@@ -337,6 +337,7 @@ MonoBehaviour:
   m_AIInfo:
     Frequency: 0.5
     UniqueAIPrediction: 0
+    AutoAttack: 0
     AIPredictionHitbox: {x: 2.5, y: 1}
     AIPredictionOffset: {x: 1, y: -0.5}
   m_SoundInfo:
