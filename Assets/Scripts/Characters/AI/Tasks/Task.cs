@@ -46,7 +46,7 @@ public class Task : MonoBehaviour {
 		}
 	}
 
-	public void OnHit(Hitbox hb) { 
+	public void OnHit(HitInfo hb) { 
 		foreach (Transition t in TransitionsFrom) {
 			t.OnHit (hb);
 		}

@@ -47,7 +47,7 @@ public class PR_Flaming : Property
        // if (Time.time > time_tracker)
         //{
           //  time_tracker += flaming_period;
-			GetComponent<Attackable>().TakeHit(fireSurround);
+		GetComponent<Attackable>().TakeHit(fireSurround.ToHitInfo());
 			//GetComponent<Attackable>().TakeHit(fireSurround);
         //}
 		fireSurround.Element = oldEle;

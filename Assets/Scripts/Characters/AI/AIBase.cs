@@ -33,7 +33,7 @@ public class AIBase : MonoBehaviour {
 		}
 	}
 
-	public void OnHit(Hitbox hb) { 
+	public void OnHit(HitInfo hb) { 
 		m_currentTask.OnHit (hb);
 		foreach (Transition t in GenericTransitions[m_currentTask.MyTaskType]) {
 			t.OnHit (hb);
@@ -50,7 +50,6 @@ public class AIBase : MonoBehaviour {
 	}
 
 	public void TransitionToTask(Task t) {
-		Debug.Log ("Transitioning to task: " + t.name);
 		if (m_currentTask != null)
 			m_currentTask.SetActive (false);
 		m_currentTask = t;
@@ -87,7 +86,6 @@ public class AIBase : MonoBehaviour {
 	}
 
 	void addTransitions(List<Transition> lt) {
-		Debug.Log ("Adding generics: " + lt.Count);
 		foreach (Transition t in lt) {
 			t.MasterAI = this;
 			if (!GenericTransitions [t.OriginType].Contains (t))

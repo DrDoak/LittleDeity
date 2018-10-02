@@ -8,7 +8,7 @@ public class Property : MonoBehaviour, ICustomMessageTarget
 {
 
     public virtual void OnCreation() { }
-	public virtual void OnHit(Hitbox hb, GameObject attacker) { }
+	public virtual void OnHit(HitInfo hi, GameObject attacker) { }
 	public virtual void OnHitConfirm(Hitbox myHitbox, GameObject objectHit, HitResult hr) { }
 	public virtual void OnSight(Observable observedObj) { }
     public virtual void OnDeath() { }
@@ -16,6 +16,7 @@ public class Property : MonoBehaviour, ICustomMessageTarget
     public virtual void OnCollision() { }
 
 	public virtual void OnAttack() { }
+	public virtual void OnControllableChange(bool isControllable) { }
 	public virtual void OnHitboxCreate (Hitbox hitboxCreated) {}
 
 	public virtual void OnAddProperty() { }

@@ -61,11 +61,21 @@ public class Attackable : MonoBehaviour
 		}
 		AddResistence (ElementType.BIOLOGICAL, 100f, false, false);
 	}
-	internal void Start() {		
-		if (DisplayHealth) {
-			m_display = Instantiate (UIList.Instance.HealthBarPrefab, this.transform).GetComponent<HealthDisplay>();
-			m_display.SetMaxHealth (MaxHealth);
+
+	internal void Start() {
+		if (DisplayHealth && GetComponent<BasicMovement>() != null && GetComponent<BasicMovement>().IsCurrentPlayer) {
+			UIBarInfo ubi = new UIBarInfo ();
+			ubi.FillColor = Color.red;
+			ubi.UILabel = "Health";
+			ubi.funcUpdate = UpdateHealthValues;
+			ubi.target = gameObject;
+			FindObjectOfType<GUIHandler> ().AddUIBar (ubi);
 		}
+	}
+
+	void UpdateHealthValues(UIBarInfo ubi) {
+		ubi.element.GetComponent<UIBar> ().UpdateValues (Mathf.Round(ubi.target.GetComponent<Attackable>().Health), 
+			Mathf.Round(ubi.target.GetComponent<Attackable>().MaxHealth));
 	}
 
 	private void CheckDeath()
@@ -175,20 +185,20 @@ public class Attackable : MonoBehaviour
 		return m_fullResistences [element];
 	}
 
-	private void ApplyHitToPhysicsSS(Hitbox hb)
+	private void ApplyHitToPhysicsSS(HitInfo hi)
 	{
-		Resistence r = GetAverageResistences (hb.Element);
-		Vector2 kb = hb.Knockback - (hb.Knockback * Mathf.Min(1f,(r.KnockbackResist/100f)));
+		Resistence r = GetAverageResistences (hi.Element);
+		Vector2 kb = hi.Knockback - (hi.Knockback * Mathf.Min(1f,(r.KnockbackResist/100f)));
 		if (!m_movementController)
 			return;
 
-		if (hb.IsFixedKnockback)
+		if (hi.IsFixedKnockback)
 		{
 			m_movementController.AddToVelocity(kb);
 			return;
 		}
 
-		Vector3 hitVector = transform.position - hb.transform.position;
+		Vector3 hitVector = transform.position - hi.mHitbox.transform.position;
 		float angle = Mathf.Atan2(hitVector.y,hitVector.x); //*180.0f / Mathf.PI;
 		Vector2 force = new Vector2(Mathf.Cos(angle), Mathf.Sin(angle));
 		force.Scale(new Vector2(kb.magnitude, kb.magnitude));
@@ -221,31 +231,34 @@ public class Attackable : MonoBehaviour
 				GetComponent<PhysicsSS>().AddToVelocity (force*Time.deltaTime);
 		}
 	}
-	public HitResult TakeHit(Hitbox hb)
+	public HitResult TakeHit(Hitbox hb) {
+		return TakeHit (hb.ToHitInfo ());
+	}
+	public HitResult TakeHit(HitInfo hi)
 	{
-		ExecuteEvents.Execute<ICustomMessageTarget> (gameObject, null, (x, y) => x.OnHit (hb, hb.Creator));
-		HitboxDoT hd = hb as HitboxDoT;
+		ExecuteEvents.Execute<ICustomMessageTarget> (gameObject, null, (x, y) => x.OnHit (hi, hi.Creator));
+		HitboxDoT hd = hi.mHitbox as HitboxDoT;
 		if (hd != null) {
 			TakeDoT (hd);
 			return HitResult.NONE;
 		}
 		if (GetComponent<AIBase>()) {
-			GetComponent<AIBase> ().OnHit (hb);
+			GetComponent<AIBase> ().OnHit (hi);
 		}
-		Resistence r =  GetAverageResistences(hb.Element);
+		Resistence r =  GetAverageResistences(hi.Element);
 		float d;
-		d = hb.Damage - (hb.Damage * (r.Percentage / 100f));
+		d = hi.Damage - (hi.Damage * (r.Percentage / 100f));
 		d = DamageObj (d);
 
-		ApplyHitToPhysicsSS(hb);
-		float s = hb.Stun - (hb.Stun * Mathf.Min(1f,(r.StunResist/100f)));
-		if (hb.Stun > 0f && m_fighter) {
+		ApplyHitToPhysicsSS(hi);
+		float s = hi.Stun - (hi.Stun * Mathf.Min(1f,(r.StunResist/100f)));
+		if (hi.Stun > 0f && m_fighter) {
 			if (s <= 0f)
 				return HitResult.BLOCKED;
-			m_fighter.RegisterStun (s, true, hb);
+			m_fighter.RegisterStun (s, true, hi);
 		}
 		if (Health <= 0f) {
-			Killer = hb.Creator;
+			Killer = hi.Creator;
 		}
 		if (d == 0f) {
 			return HitResult.NONE;

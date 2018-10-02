@@ -20,6 +20,8 @@ public class HitboxInfo {
 	public Vector2 HitboxScale = new Vector2 (1.0f, 1.0f);
 	public Vector2 HitboxOffset = new Vector2(0f,0f);
 	public float Damage = 10.0f;
+	public float FocusDamage = -1f;
+	public float Penetration = 0.0f;
 	public float Stun = 0.3f;
 	public float HitboxDuration = 0.5f;
 	public Vector2 Knockback = new Vector2(10.0f,10.0f);
@@ -51,7 +53,9 @@ public class AttackInfo : MonoBehaviour
 	private AttackState m_progress;
 	private float m_timeSinceStart = 0.0f;
 	private Dictionary<AttackState, float> m_progressEndTimes;
+	private Dictionary<AttackState, Action> m_inTickFunctions;
 	private Dictionary<AttackState, Action> m_progressCalls;
+	private float m_AttackDelay = 0.0f;
 
 	public AttackState CurrentProgress { get { return m_progress; } }
 	private event AttackProgress ProgressEvent = delegate {};
@@ -79,6 +83,14 @@ public class AttackInfo : MonoBehaviour
 			{ AttackState.RECOVERY,  m_AttackAnimInfo.StartUpTime +  m_AttackAnimInfo.AttackTime +  m_AttackAnimInfo.RecoveryTime },
 			{ AttackState.INACTIVE, 0 }
 		};
+		m_AttackDelay = 0f;
+		m_inTickFunctions= new Dictionary<AttackState, Action>()
+		{
+			{ AttackState.STARTUP, StartUpTick},
+			{ AttackState.ATTACK, AttackTick },
+			{ AttackState.RECOVERY, RecoveryTick },
+			{ AttackState.INACTIVE, ConcludeTick },
+		};		
 		m_progressCalls = new Dictionary<AttackState, Action>()
 		{
 			{ AttackState.STARTUP, OnStartUp},
@@ -95,8 +107,9 @@ public class AttackInfo : MonoBehaviour
 
 	public void Progress()
 	{
+		m_inTickFunctions [m_progress] ();
 		m_timeSinceStart += Time.deltaTime;
-		if (m_timeSinceStart < m_progressEndTimes [m_progress])
+		if (m_timeSinceStart < m_progressEndTimes [m_progress] + m_AttackDelay)
 			return;
 		m_progressCalls[NextInProgression()]();
 		ProgressEvent.Invoke(m_progress);
@@ -108,19 +121,21 @@ public class AttackInfo : MonoBehaviour
 		return m_progress;
 	}
 
+	public void DelayCurrentAttack(float delay) {
+		m_AttackDelay += delay;
+	}
+
 	public void ResetAndProgress()
 	{
 		m_timeSinceStart = 0;
+		m_AttackDelay = 0f;
 		m_progress = AttackState.INACTIVE;
 		Progress();
 	}
 
 	public virtual void OnHitConfirm(GameObject other, Hitbox hb, HitResult hr) {}
 
-	public virtual void OnInterrupt(float stunTime, bool successfulHit, Hitbox hb)
-	{
-		
-	}
+	public virtual void OnInterrupt(float stunTime, bool successfulHit, HitInfo hi) {}
 
 	protected virtual void OnStartUp()
 	{
@@ -141,15 +156,17 @@ public class AttackInfo : MonoBehaviour
 			FindObjectOfType<AudioManager> ().PlayClipAtPos (m_SoundInfo.AttackSoundFX,transform.position,0.5f,0f,0.25f);
 	}
 
-	protected virtual void OnRecovery()
-	{
-	}
+	protected virtual void OnRecovery() {} 
 
-	protected virtual void OnConclude()
-	{
-	}
+	protected virtual void OnConclude() {}
 
-	private void createHitboxes()
+
+	protected virtual void StartUpTick() { } 
+	protected virtual void AttackTick() { } 
+	protected virtual void RecoveryTick() {	} 
+	protected virtual void ConcludeTick() { } 
+
+	protected void createHitboxes()
 	{
 		//m_hitboxMaker.AddHitType(HitType);
 		foreach (HitboxInfo hi in m_HitboxInfo) {

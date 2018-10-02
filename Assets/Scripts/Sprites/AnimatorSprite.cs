@@ -14,6 +14,11 @@ public class AnimatorSprite : MonoBehaviour
 	{
 		m_states = new List<string>();
 		m_anim = GetComponent<Animator>();
+		if (FindObjectOfType<LightSettings> () != null &&
+		    FindObjectOfType<LightSettings> ().UseLighting) {
+			GetComponent<SpriteRenderer> ().material.shader = FindObjectOfType<LightSettings> ().lightingShader;
+			transform.position = new Vector3 (transform.position.x, transform.position.y,  -1f * (GetComponent<Renderer> ().sortingOrder) / 32);
+		}
 	}
 
 	public void Play(string[] stateNames)
@@ -37,8 +42,6 @@ public class AnimatorSprite : MonoBehaviour
 			return SetAndPlay(stateName);
 		}
 		Debug.Log ("Does not have anim: " + stateName);
-		foreach (string s in m_states)
-			Debug.Log (s);
 		return false;
 	}
 

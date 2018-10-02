@@ -38,14 +38,14 @@ public class PR_Biological : Property
 		GetComponent<Attackable>().RemoveResistence(bioVulnerability);
     }
 		
-	public override void OnHit(Hitbox hb, GameObject attacker) { 
+	public override void OnHit(HitInfo hi, GameObject attacker) { 
 		if (!GetComponent<PropertyHolder> ().HasProperty ("Parasite")) {
-			if (hb.HasElement(ElementType.BIOLOGICAL)) {
-				HitboxDoT hd = hb as HitboxDoT;
+			if (hi.mHitbox.HasElement(ElementType.BIOLOGICAL)) {
+				HitboxDoT hd = hi.mHitbox as HitboxDoT;
 				if (hd != null) {
-					m_bioDamage += (Time.deltaTime * hb.Damage);
+					m_bioDamage += (Time.deltaTime * hi.Damage);
 				} else {
-					m_bioDamage += hb.Damage;
+					m_bioDamage += hi.Damage;
 				}
 				if (m_bioDamage >= BIO_THREASHOLD) {
 					GetComponent<PropertyHolder> ().AddProperty ("PR_Poison");

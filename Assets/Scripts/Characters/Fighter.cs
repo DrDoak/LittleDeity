@@ -21,6 +21,7 @@ public class Fighter : MonoBehaviour
 	public string WalkAnimation = "walk";
 	public string HurtAnimation = "hit";
 	public string AirAnimation = "air";
+	public string JumpAnimation = "air";
 
 	private PhysicsSS m_physics;
 	private AnimatorSprite m_anim;
@@ -195,10 +196,14 @@ public class Fighter : MonoBehaviour
 		m_anim.SetSpeed(1.0f);
 	}
 
-	private void ProgressWalkOrIdleAnimation()
+	public void ProgressWalkOrIdleAnimation()
 	{
 		if (!m_physics.OnGround) {
-			m_anim.Play (AirAnimation);
+			if (m_physics.TrueVelocity.y > 0f) {
+				m_anim.Play (new string[]{JumpAnimation,AirAnimation});
+			} else {
+				m_anim.Play (AirAnimation);
+			}
 		} else {
 			if (m_physics.IsAttemptingMovement ())
 				m_anim.Play (WalkAnimation);
@@ -231,10 +236,11 @@ public class Fighter : MonoBehaviour
 		return m_currentAttack != null && m_currentAttack.CurrentProgress != AttackState.INACTIVE;
 	}
 
-	public void RegisterStun(float st, bool defaultStun, Hitbox hb)
+	public void RegisterStun(float st, bool defaultStun, HitInfo hi)
 	{
+
 		if (m_currentAttack != null) {
-			m_currentAttack.OnInterrupt (StunTime, defaultStun, hb);
+			m_currentAttack.OnInterrupt (StunTime, defaultStun, hi);
 		}
 		if (defaultStun) {
 			StartHitState (st);
@@ -278,9 +284,9 @@ public class Fighter : MonoBehaviour
 	}
 
 	public AttackInfo TryAttack(string attackName) {
-		Debug.Log ("Try Attacking " + attackName);
+		//Debug.Log ("Trying attacK: " + attackName);
 		if (Aliases.ContainsKey (attackName)) {
-			Debug.Log ("Found alias for: " + attackName + " changed to : " + Aliases[attackName]);
+			//Debug.Log ("Found alias for: " + attackName + " changed to : " + Aliases[attackName]);
 			attackName = Aliases [attackName];
 		}
 		if (IsAttacking () || !Attacks.ContainsKey (attackName) || StunTime > 0.0f)

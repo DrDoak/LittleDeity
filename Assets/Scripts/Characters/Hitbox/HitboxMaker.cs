@@ -60,6 +60,8 @@ public class HitboxMaker : MonoBehaviour
 			newBox.SetScale ((m_physics == null) ? hbi.HitboxScale : m_physics.OrientVectorToDirection(hbi.HitboxScale,false));
 		}
 		newBox.Damage = hbi.Damage;
+		newBox.FocusDamage = hbi.FocusDamage;
+		newBox.Penetration = hbi.Penetration;
 		newBox.Duration = hbi.HitboxDuration;
 		newBox.Knockback = (m_physics == null) ? hbi.Knockback : m_physics.OrientVectorToDirection(hbi.Knockback);
 		newBox.IsFixedKnockback = hbi.FixedKnockback;

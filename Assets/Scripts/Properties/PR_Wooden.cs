@@ -45,16 +45,16 @@ public class PR_Wooden : Property {
 		}
 	}
 
-	public override void OnHit(Hitbox hb, GameObject attacker) { 
+	public override void OnHit(HitInfo hi, GameObject attacker) { 
 		if (!GetComponent<PropertyHolder> ().HasProperty ("Flaming")) {
 			//Debug.Log ("Does not have flaming");
-			if (hb.HasElement(ElementType.FIRE)) {
+			if (hi.HasElement(ElementType.FIRE)) {
 				//Debug.Log ("has flaming");
-				HitboxDoT hd = hb as HitboxDoT;
+				HitboxDoT hd = hi.mHitbox as HitboxDoT;
 				if (hd != null) {
-					m_flameDamage += (Time.deltaTime * hb.Damage);
+					m_flameDamage += (Time.deltaTime * hi.Damage);
 				} else {
-					m_flameDamage += hb.Damage;
+					m_flameDamage += hi.Damage;
 				}
 				if (m_flameDamage >= FLAME_THREASHOLD) {
 					GetComponent<PropertyHolder> ().AddProperty ("PR_Flaming");

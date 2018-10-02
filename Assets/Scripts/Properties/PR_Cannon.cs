@@ -10,8 +10,8 @@ public class PR_Cannon : Property {
 		}
 	}
 
-	public override void OnHit(Hitbox hb, GameObject attacker) { 
-		if (hb.HasElement(ElementType.FIRE)) {
+	public override void OnHit(HitInfo hi, GameObject attacker) { 
+		if (hi.HasElement(ElementType.FIRE)) {
 			GetComponent<Fighter> ().TryAttack ("fire");
 		}
 	}

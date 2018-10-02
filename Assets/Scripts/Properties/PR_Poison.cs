@@ -49,7 +49,7 @@ public class PR_Poison : Property {
 			}
 			if (Time.timeSinceLevelLoad > time_tracker) {
 				time_tracker = Time.timeSinceLevelLoad + bio_period;
-				GetComponent<Attackable> ().TakeHit (bioSurround);
+				GetComponent<Attackable> ().TakeHit (bioSurround.ToHitInfo());
 				GameObject.Instantiate (FXHit.Instance.FXHitBiological, transform.position, Quaternion.identity);
 			}
 			bioSurround.Element = oldEle;

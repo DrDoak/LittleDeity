@@ -2,6 +2,7 @@
 using System.Collections;
 using UnityEngine.UI;
 using Luminosity.IO;
+using UnityEngine.EventSystems;
 
 [RequireComponent (typeof (PhysicsSS))]
 [RequireComponent (typeof (Attackable))]
@@ -27,6 +28,8 @@ public class BasicMovement : MonoBehaviour
 	private const float DOUBLE_TAP_DROP_INTERVAL = 0.2f;
 
 	public bool IsCurrentPlayer = false;
+	bool m_savedCurrentPlayer = false;
+
 	[SerializeField]
 	private float m_jumpHeight = 4.0f;
 	public float JumpHeight { get { return m_jumpHeight; } private set { m_jumpHeight = value; } }
@@ -55,7 +58,7 @@ public class BasicMovement : MonoBehaviour
 	public Vector2 m_jumpVector;
 
 	// Movement tracking
-	private Vector2 m_inputMove;
+	public Vector2 m_inputMove;
 	protected bool m_jumpDown;
 	protected bool m_jumpHold;
 	private Vector3 m_targetPoint;
@@ -86,8 +89,28 @@ public class BasicMovement : MonoBehaviour
 	{
 		m_physics = GetComponent<PhysicsSS>();
 		if (CanJump)
-			setJumpData (JumpHeight);
+			SetJumpHeight (JumpHeight);
+		m_savedCurrentPlayer = IsCurrentPlayer;
+	}
 
+	internal void Start()
+	{
+		if (GetComponent<BasicMovement>().IsCurrentPlayer) {
+			UIBarInfo ubi = new UIBarInfo ();
+			ubi.FillColor = Color.green;
+			ubi.UILabel = "Speed";
+			ubi.funcUpdate = UpdateSpeedValues;
+			ubi.target = gameObject;
+			ubi.DisplayMode = UIBarDisplayMode.BASE;
+			ubi.useScale = false;
+			FindObjectOfType<GUIHandler> ().AddUIBar (ubi);
+		}
+		ExecuteEvents.Execute<ICustomMessageTarget> (gameObject, null, (x, y) => x.OnControllableChange (IsCurrentPlayer));
+	}
+
+	void UpdateSpeedValues(UIBarInfo ubi) {
+		ubi.element.GetComponent<UIBar> ().UpdateValues (Mathf.Abs(Mathf.Round(ubi.target.GetComponent<PhysicsSS>().TrueVelocity.x * 100f)), 
+			20f);
 	}
 		
 		
@@ -102,6 +125,14 @@ public class BasicMovement : MonoBehaviour
 		if (m_FootStepInfo.PlayFootsteps)
 			PlayStepSounds ();
 		MoveSmoothly();
+		currentPlayerControl ();
+	}
+
+	private void currentPlayerControl() {
+		if (m_savedCurrentPlayer != IsCurrentPlayer) {
+			ExecuteEvents.Execute<ICustomMessageTarget> (gameObject, null, (x, y) => x.OnControllableChange (IsCurrentPlayer));
+			m_savedCurrentPlayer = IsCurrentPlayer;
+		}
 	}
 
 	private void PlayStepSounds() {
@@ -127,19 +158,20 @@ public class BasicMovement : MonoBehaviour
 			m_inputMove.y += 1f;
 		if (InputManager.GetButton ("Down")) {
 			m_inputMove.y -= 1f;
-			if (InputManager.GetButtonDown ("Down")) {
-				//Debug.Log (Time.timeSinceLevelLoad + " : " + m_lastDownTime);
+			/*if (InputManager.GetButtonDown ("Down")) {
+				UIActionText uai = new UIActionText ();
+				uai.text = "TEST";
+				FindObjectOfType<GUIHandler> ().AddText (uai);
 				if (Time.timeSinceLevelLoad - m_lastDownTime < DOUBLE_TAP_DROP_INTERVAL)
 					m_physics.setDropTime (0.2f);
 				m_lastDownTime = Time.timeSinceLevelLoad;
-			}
+			}*/
 		}
 		m_jumpDown = InputManager.GetButtonDown ("Jump");
 		m_jumpHold = InputManager.GetButton ("Jump");
 		if (CanJump)
 			JumpMovement ();
 		SetDirectionFromInput();
-
 	}
 
 	protected void JumpMovement() {
@@ -169,6 +201,7 @@ public class BasicMovement : MonoBehaviour
 			m_targetPoint = m_followObj.transform.position;
 		}
 		MoveToPoint(m_targetPoint);
+		SetDirectionFromInput();
 	}
 
 
@@ -329,8 +362,9 @@ public class BasicMovement : MonoBehaviour
 		m_inputMove = new Vector2(0f, 0f);
 	}
 
-	private void setJumpData(float jumpHeight) {
+	public void SetJumpHeight(float jumpHeight) {
 		m_jumpVector.y = (-m_physics.GravityForce * (8f * Mathf.Sqrt (jumpHeight))) + 9f;
+		m_jumpHeight = jumpHeight;
 	}
 
 	private void storeData(CharData d) {

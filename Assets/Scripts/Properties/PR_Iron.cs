@@ -57,4 +57,5 @@ public class PR_Iron : Property {
 		if (GetComponent<BasicMovement>() != null)
 			GetComponent<BasicMovement> ().SetMoveSpeed (GetComponent<BasicMovement> ().MoveSpeed / 2f);
 	}
+
 }

@@ -29,7 +29,7 @@ public class Transition : MonoBehaviour {
 	public void Init() {
 	}
 
-	public virtual void OnHit(Hitbox hb) {}
+	public virtual void OnHit(HitInfo hb) {}
 
 	public virtual void OnSight(Observable o) {}
 

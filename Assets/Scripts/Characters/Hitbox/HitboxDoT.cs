@@ -14,7 +14,7 @@ public class HitboxDoT : Hitbox {
 	protected override void Tick() {
 		if (!m_hasDuration || Duration > 0.0f) {
 			foreach(Attackable a in m_overlappingControl) {
-				a.TakeHit (this);
+				a.TakeHit (ToHitInfo());
 			}
 			Duration = Duration - Time.deltaTime;
 		} else if (m_hasDuration) {

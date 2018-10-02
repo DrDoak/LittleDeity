@@ -5,11 +5,41 @@ public enum HitResult { NONE, HIT,HEAL, BLOCKED, REFLECTED };
 
 public enum ElementType { PHYSICAL, FIRE, BIOLOGICAL, PSYCHIC, LIGHTNING };
 
+public class HitInfo  {
+	public float Damage = 10f;
+	public float FocusDamage = 10f;
+	public float Penetration = 0f;
+	public Vector2 Knockback = new Vector2();
+	public bool IsFixedKnockback = false;
+	public float Stun = 0f;
+	public List<ElementType> Element = new List<ElementType>();
+	public Hitbox mHitbox;
+
+	public GameObject Creator;
+	public GameObject target;
+
+	public bool HasElement(ElementType element) {
+		foreach (ElementType et in Element) {
+			if (et == element)
+				return true;
+		}
+		return false;
+	}
+}
 public class Hitbox : MonoBehaviour {
 
 	[SerializeField]
 	private float m_damage = 10.0f;
 	public float Damage { get { return m_damage; } set { m_damage = value; } }
+
+	[SerializeField]
+	private float m_focusDamage = -1f;
+	public float FocusDamage { get { return m_focusDamage; } set { m_focusDamage = value; } }
+
+	[SerializeField]
+	private float m_penetration = 0.0f;
+	public float Penetration { get { return m_penetration; } set { m_penetration = value; } }
+
 
 	[SerializeField]
 	private float m_duration = 1.0f;
@@ -49,7 +79,7 @@ public class Hitbox : MonoBehaviour {
 	private GameObject m_followObj;
 
 	[SerializeField]
-	private Vector2 m_followOffset;
+	public Vector2 m_followOffset;
 
 	[SerializeField]
 	private List<Collider2D> m_upRightDownLeftColliders;
@@ -62,6 +92,9 @@ public class Hitbox : MonoBehaviour {
 	virtual public void Init()
 	{
 		m_creatorPhysics = Creator.GetComponent<PhysicsSS>();
+		if (m_focusDamage == -1f)
+			m_focusDamage = m_damage;
+		
 		if (m_isRandomKnockback)
 			RandomizeKnockback ();
 		m_hasDuration = m_duration > 0;
@@ -104,6 +137,11 @@ public class Hitbox : MonoBehaviour {
 		m_knockbackRanges = new Vector4 (minX, maxX, minY, maxY);
 	}
 
+	public HitboxInfo ToHitboxInfo() {
+		HitboxInfo hbi = new HitboxInfo ();
+		return hbi;
+
+	}
 	private void MaintainOrDestroyHitbox()
 	{
 		if (m_duration <= 0.0f) {
@@ -130,7 +168,10 @@ public class Hitbox : MonoBehaviour {
 			return HitResult.NONE;
 		if (IsRandomKnockback)
 			RandomizeKnockback();
-		HitResult r = atkObj.TakeHit(this);
+		HitInfo newHI = ToHitInfo ();
+		newHI.Knockback = new Vector2 (Knockback.x, Knockback.y);
+		newHI.target = atkObj.gameObject;
+		HitResult r = atkObj.TakeHit(newHI);
 		m_collidedObjs.Add (atkObj);
 
 		if (!m_overlappingControl.Contains (atkObj))
@@ -142,9 +183,23 @@ public class Hitbox : MonoBehaviour {
 		return r;
 	}
 
+	public virtual HitInfo ToHitInfo() {
+		HitInfo hi = new HitInfo ();
+		hi.Damage = Damage;
+		hi.FocusDamage = FocusDamage;
+		hi.Stun = Stun;
+		hi.Element = m_elementList;
+		hi.Penetration = Penetration;
+
+		hi.Creator = Creator;
+		hi.mHitbox = this;
+		return hi;
+	}
+
 	protected bool canAttack(Attackable atkObj) {
 		return !(!atkObj || (atkObj.gameObject == Creator) || m_collidedObjs.Contains (atkObj) || !atkObj.CanAttack (Faction));
 	}
+		
 	internal HitResult OnTriggerEnter2D(Collider2D other)
 	{
 		OnHitObject (other);

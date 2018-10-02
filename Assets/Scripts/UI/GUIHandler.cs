@@ -12,16 +12,21 @@ public class GUIHandler : MonoBehaviour {
 	public GameObject MenuProperty;
 	public GameObject SelectionProperty;
 	public TransferMenu MTransferMenu;
+	public GameObject ActionTextPrefab;
 
-	public Slider P1HealthBar;
+	//public Slider HealthBarPrefab;
+	public GameObject UIBarPrefab;
 	public GameObject CurrentTarget;
 	public TextMeshProUGUI ExpText;
 
 	private List<GameObject> PropertyLists;
+	private Dictionary<string, UIBarInfo> uibars = new Dictionary<string, UIBarInfo>();
 
 	public GameObject IconPropertyPrefab;
 	public Sprite UnknownPropertyIcon;
 
+	GameObject m_actionTextHolder;
+	private List<UIActionText> m_actionTextList;
 	Dictionary<string,GameObject> m_iconList;
 
 	void Awake () {
@@ -32,28 +37,80 @@ public class GUIHandler : MonoBehaviour {
 		}
 		PropertyLists = new List<GameObject> ();
 		m_iconList = new Dictionary<string,GameObject>();
+		m_actionTextList = new List<UIActionText> ();
 	}
 	void Update() {
-		if (CurrentTarget != null) {
-			var P1Controller = CurrentTarget.GetComponent<Attackable> ();
-
-			P1HealthBar.value = P1Controller.Health;
-			P1HealthBar.maxValue = P1Controller.MaxHealth;
-			Vector3 oS = P1HealthBar.GetComponent<RectTransform> ().localScale;
-			P1HealthBar.GetComponent<RectTransform> ().localScale =new Vector3((P1Controller.MaxHealth / 100f),oS.y,oS.z);
-			if (CurrentTarget.GetComponent<ExperienceHolder> () != null) {
-				var exp = CurrentTarget.GetComponent<ExperienceHolder> ();
-				ExpText.text = "Data: " + exp.VisualExperience + "\nNext: " + Leveller.Instance.NextLevel;
+		foreach (UIBarInfo u in uibars.Values) {
+			u.funcUpdate (u);
+		}
+		List<UIActionText> newL = new List<UIActionText> ();
+		foreach (UIActionText uat in m_actionTextList) {
+			float life = Time.timeSinceLevelLoad - uat.timeCreated;
+			if (life > uat.timeToDisplay) {
+				Destroy (uat.element);
+			} else {
+				int pads = Mathf.RoundToInt (Mathf.Max (0f, 40f - (40f * life / 0.2f)));
+				uat.element.GetComponent<TextMeshProUGUI> ().text = uat.text.PadLeft(pads);
+				Color c = uat.element.GetComponent<TextMeshProUGUI> ().color;
+				float remaininglife = (uat.timeCreated + uat.timeToDisplay) - Time.timeSinceLevelLoad;
+				if (remaininglife < 0.2f) {
+					uat.element.GetComponent<TextMeshProUGUI> ().color = new Color (c.r, c.g, c.b, Mathf.Max (0f, 1f * remaininglife / 0.2f));
+				} else {
+					uat.element.GetComponent<TextMeshProUGUI> ().color = new Color (c.r, c.g, c.b, Mathf.Min (1f, (1f * life / 0.2f)));
+				}
+				newL.Add (uat);
 			}
 		}
+		m_actionTextList = newL;
 	}
+
+	public void AddUIBar(UIBarInfo uib) {
+		if (uib.id == "SameAsLabel")
+			uib.id = uib.UILabel;
+		RemoveUIBar (uib.id);
+		GameObject newBar = Instantiate (UIBarPrefab,transform.Find("Canvas").Find("UI_Bar_List"));
+		uib.element = newBar;
+		UIBar uibar = uib.element.GetComponent<UIBar> ();
+		uibar.Initialize (uib);
+		uibars.Add (uib.id, uib);
+	}
+
+	public void RemoveUIBar(string id) {
+		if (uibars.ContainsKey (id)) {
+			Destroy (uibars [id].element);
+			uibars.Remove (id);
+		}
+	}
+
+	public void AddText(UIActionText uai) {
+		uai.timeCreated = Time.timeSinceLevelLoad;
+		GameObject go = Instantiate (ActionTextPrefab, transform.Find("Canvas").Find("ActionText"));
+		go.GetComponent<TextMeshProUGUI> ().text = uai.text.PadLeft(40);
+		go.GetComponent<TextMeshProUGUI> ().color = new Color (uai.textColor.r, uai.textColor.r, uai.textColor.b, 0f);
+
+		uai.element = go;
+		m_actionTextList.Add (uai);
+	}
+
+	public void ReplaceText(UIActionText uai) {
+		List<UIActionText> newL = new List<UIActionText> ();
+		foreach (UIActionText uat in m_actionTextList) {
+			if (uai.id == uat.id)
+				Destroy (uat.element);
+			else
+				newL.Add (uat);
+		}
+		m_actionTextList = newL;
+		AddText (uai);
+	}
+
 	public void SetHUD(bool active) {
 		if (!active) {
-			P1HealthBar.gameObject.SetActive( false);
+			//HealthBarPrefab.gameObject.SetActive( false);
 			ExpText.gameObject.SetActive( false );
 			transform.GetChild (0).Find ("PropList").gameObject.SetActive (false);
 		} else {
-			P1HealthBar.gameObject.SetActive( true);
+			//HealthBarPrefab.gameObject.SetActive( true);
 			ExpText.gameObject.SetActive( true );
 			transform.GetChild (0).Find ("PropList").gameObject.SetActive (true);
 		}

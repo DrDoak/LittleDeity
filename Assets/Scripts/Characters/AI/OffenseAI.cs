@@ -62,7 +62,6 @@ public class OffenseAI : MonoBehaviour {
 		if (Random.value < (aggression * 0.1f)) {
 			foreach (AttackInfo ainfo in allAttacks) {
 				float xDiff = Mathf.Abs(transform.position.x  + (dir * ainfo.m_AIInfo.AIPredictionOffset.x) - otherPos.x);
-				Debug.Log (xDiff);
 				float yDiff = Mathf.Abs(transform.position.y + ainfo.m_AIInfo.AIPredictionOffset.y - otherPos.y);
 				if ((ainfo.m_AIInfo.AIPredictionHitbox.x) +
 					(ainfo.m_AIInfo.AIPredictionHitbox.x) * Random.Range (0f, 1f - spacing) > xDiff &&
