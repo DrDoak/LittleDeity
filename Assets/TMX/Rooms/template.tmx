@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" tiledversion="1.1.5" orientation="orthogonal" renderorder="right-down" width="50" height="50" tilewidth="32" tileheight="32" infinite="0" nextobjectid="16">
+<map version="1.0" tiledversion="1.1.6" orientation="orthogonal" renderorder="right-down" width="50" height="50" tilewidth="32" tileheight="32" infinite="0" nextobjectid="16">
  <properties>
   <property name="unity:scale" value="0.03125"/>
  </properties>
@@ -7,7 +7,7 @@
  <tileset firstgid="31" source="../../../../a-matter-of-perspective/Spark and The Digital Daydream/Assets/Sprites/Tiles/forest_tileset_test.tsx"/>
  <layer name="Background1" width="50" height="50">
   <properties>
-   <property name="unity:sortingOrder" type="int" value="-3"/>
+   <property name="unity:sortingOrder" type="int" value="1"/>
   </properties>
   <data encoding="csv">
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -64,7 +64,7 @@
  </layer>
  <layer name="Background2" width="50" height="50">
   <properties>
-   <property name="unity:sortingOrder" type="int" value="-4"/>
+   <property name="unity:sortingOrder" type="int" value="2"/>
   </properties>
   <data encoding="csv">
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -121,7 +121,7 @@
  </layer>
  <layer name="Background3" width="50" height="50">
   <properties>
-   <property name="unity:sortingOrder" type="int" value="-3"/>
+   <property name="unity:sortingOrder" type="int" value="3"/>
   </properties>
   <data encoding="csv">
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -178,7 +178,7 @@
  </layer>
  <layer name="Foreground1" width="50" height="50">
   <properties>
-   <property name="unity:sortingOrder" type="int" value="3"/>
+   <property name="unity:sortingOrder" type="int" value="11"/>
   </properties>
   <data encoding="csv">
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -235,7 +235,7 @@
  </layer>
  <layer name="Foreground2" width="50" height="50">
   <properties>
-   <property name="unity:sortingOrder" type="int" value="4"/>
+   <property name="unity:sortingOrder" type="int" value="12"/>
   </properties>
   <data encoding="csv">
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
