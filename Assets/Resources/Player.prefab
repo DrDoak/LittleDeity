@@ -8,15 +8,15 @@ Prefab:
     m_TransformParent: {fileID: 0}
     m_Modifications: []
     m_RemovedComponents: []
-  m_ParentPrefab: {fileID: 0}
+  m_SourcePrefab: {fileID: 0}
   m_RootGameObject: {fileID: 1000013670716774}
-  m_IsPrefabParent: 1
+  m_IsPrefabAsset: 1
 --- !u!1 &1000013670716774
 GameObject:
   m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  serializedVersion: 5
+  serializedVersion: 6
   m_Component:
   - component: {fileID: 4000010357641300}
   - component: {fileID: 212358539921992486}
@@ -31,12 +31,18 @@ GameObject:
   - component: {fileID: 114845752184036596}
   - component: {fileID: 114407925808802884}
   - component: {fileID: 114506322611810582}
-  - component: {fileID: 114499401245312444}
   - component: {fileID: 114691824885118858}
   - component: {fileID: 114983406726242728}
   - component: {fileID: 114138203638233118}
   - component: {fileID: 114958252470441854}
-  m_Layer: 9
+  - component: {fileID: 114951146504601230}
+  - component: {fileID: 114652727837255026}
+  - component: {fileID: 114520000269745710}
+  - component: {fileID: 114897077006168818}
+  - component: {fileID: 114159316688085556}
+  - component: {fileID: 114376063918390810}
+  - component: {fileID: 114958416000837484}
+  m_Layer: 0
   m_Name: Player
   m_TagString: Player
   m_Icon: {fileID: 0}
@@ -46,11 +52,11 @@ GameObject:
 --- !u!4 &4000010357641300
 Transform:
   m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1000013670716774}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 62.92, y: -11.34, z: 0}
+  m_LocalRotation: {x: 0, y: 0, z: 0.000008726646, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: -1}
   m_LocalScale: {x: 1.5, y: 1.5, z: 4}
   m_Children: []
   m_Father: {fileID: 0}
@@ -60,7 +66,7 @@ Transform:
 Rigidbody2D:
   serializedVersion: 4
   m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1000013670716774}
   m_BodyType: 1
@@ -79,7 +85,7 @@ Rigidbody2D:
 --- !u!61 &61000013016729168
 BoxCollider2D:
   m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1000013670716774}
   m_Enabled: 1
@@ -105,7 +111,7 @@ BoxCollider2D:
 Animator:
   serializedVersion: 3
   m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1000013670716774}
   m_Enabled: 1
@@ -118,10 +124,11 @@ Animator:
   m_WarningMessage: 
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorControllerStateOnDisable: 0
 --- !u!114 &114138203638233118
 MonoBehaviour:
   m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1000013670716774}
   m_Enabled: 1
@@ -139,10 +146,76 @@ MonoBehaviour:
   MaxFocus: 100
   FocusRegainRate: 30
   FocusRegainDelay: 5
+--- !u!114 &114159316688085556
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1000013670716774}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b5f0d0e634227ab47a6d5b0465702c06, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  AttackName: chase_up
+  m_HitboxInfo:
+  - HitboxScale: {x: 2, y: 2}
+    HitboxOffset: {x: 0, y: 0}
+    Damage: 10
+    FocusDamage: 0
+    Penetration: 0
+    Stun: 1
+    HitboxDuration: 0.2
+    Knockback: {x: 2, y: -3}
+    FixedKnockback: 1
+    ResetKnockback: 1
+    Element: 0
+    ApplyProps: 1
+    FollowCharacter: 1
+    FreezeTime: 0
+    Delay: 0
+  m_AttackAnimInfo:
+    AnimSpeed: 0.5
+    StartUpTime: 0.2
+    AttackTime: 0.05
+    RecoveryTime: 0.5
+    StartUpAnimation: down_s
+    RecoveryAnimation: down_r
+  m_AIInfo:
+    Frequency: 0.5
+    UniqueAIPrediction: 0
+    AutoAttack: 0
+    AIPredictionHitbox: {x: 0, y: 0}
+    AIPredictionOffset: {x: 0, y: 0}
+    DrawPredictionHitbox: 0
+  m_SoundInfo:
+    StartupSoundFX: {fileID: 0}
+    AttackSoundFX: {fileID: 0}
+  m_stanceInfo:
+    CanChangeDirection: 0
+    CanMove: 0
+    CanJump: 0
+    IdleAnimation: melee_s
+    WalkAnimation: walk
+    AirAnimation: air
+    speedModifier: 0.5
+    jumpModifier: 1
+    Holdable: 0
+    HasMaxTime: 0
+    MaxTime: 1
+  m_flyInfo:
+    Target: {x: 0, y: 0, z: 0}
+    AttackRange: 2
+    MaxTargetSpeed: {x: 0.4, y: 0.4}
+    AttackDash: {x: 0, y: 3}
+    AttackDashDuration: 0.1
+    Decceleration: -1
+    FlyToHalberd: 1
+    FlyAnim: jump
 --- !u!114 &114183775052015364
 MonoBehaviour:
   m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1000013670716774}
   m_Enabled: 1
@@ -150,7 +223,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6cecf518dba7e8f429d2dc6df9ba9177, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Health: 120
+  m_health: 100
   MaxHealth: 120
   Alive: 1
   DeathTime: 2
@@ -158,10 +231,11 @@ MonoBehaviour:
   Resistences: []
   DisplayHealth: 1
   Killer: {fileID: 0}
+  DeathFX: {fileID: 0}
 --- !u!114 &114223702759941158
 MonoBehaviour:
   m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1000013670716774}
   m_Enabled: 1
@@ -183,10 +257,11 @@ MonoBehaviour:
   OnGround: 1
   FacingLeft: 0
   TrueVelocity: {x: 0, y: 0, z: 0}
+  BottomCollided: 0
 --- !u!114 &114300482907652120
 MonoBehaviour:
   m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1000013670716774}
   m_Enabled: 1
@@ -197,7 +272,7 @@ MonoBehaviour:
 --- !u!114 &114319908791872480
 MonoBehaviour:
   m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1000013670716774}
   m_Enabled: 1
@@ -214,6 +289,8 @@ MonoBehaviour:
   m_minDistance: 1
   m_abandonDistance: 10
   CanJump: 1
+  CurrentAirJumps: 0
+  MidAirJumps: 0
   m_FootStepInfo:
     PlayFootsteps: 1
     FootStepClip: {fileID: 0}
@@ -221,10 +298,32 @@ MonoBehaviour:
     FootStepPitchVariation: 0.25
     FootStepVolumeVariation: 0
     FootstepInterval: 0.5
+--- !u!114 &114376063918390810
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1000013670716774}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 02d8afa55e04f0d4785b0bd0d9894266, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Stealable: 1
+  Viewable: 1
+  Stackable: 0
+  InstantUse: 0
+  PropertyName: 
+  Description: 
+  icon: {fileID: 0}
+  MaxHeight: 3
+  MinHeight: 0
+  Width: 4.03
+  VerticalRayCount: 4
 --- !u!114 &114407925808802884
 MonoBehaviour:
   m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1000013670716774}
   m_Enabled: 1
@@ -238,158 +337,13 @@ MonoBehaviour:
   HurtAnimation: hit
   AirAnimation: air
   JumpAnimation: air
+  LandAnimation: land
   AttackSound: {fileID: 0}
   StunTime: 0
---- !u!114 &114499401245312444
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1000013670716774}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3a149c2d7c3a0444e92bac7a1c729bdc, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  AttackName: down
-  m_HitboxInfo:
-  - HitboxScale: {x: 1, y: 1}
-    HitboxOffset: {x: 0, y: 0}
-    Damage: 10
-    FocusDamage: -1
-    Penetration: 0
-    Stun: 0.3
-    HitboxDuration: 0.5
-    Knockback: {x: 10, y: 10}
-    FixedKnockback: 1
-    Element: 0
-    ApplyProps: 1
-    FollowCharacter: 1
-    Delay: 0
-  - HitboxScale: {x: 1, y: 1}
-    HitboxOffset: {x: 0, y: 0}
-    Damage: 10
-    FocusDamage: -1
-    Penetration: 0
-    Stun: 0.3
-    HitboxDuration: 0.5
-    Knockback: {x: 10, y: 10}
-    FixedKnockback: 1
-    Element: 0
-    ApplyProps: 1
-    FollowCharacter: 1
-    Delay: 0
-  - HitboxScale: {x: 1, y: 1}
-    HitboxOffset: {x: 0, y: 0}
-    Damage: 10
-    FocusDamage: -1
-    Penetration: 0
-    Stun: 0.3
-    HitboxDuration: 0.5
-    Knockback: {x: 10, y: 10}
-    FixedKnockback: 1
-    Element: 0
-    ApplyProps: 1
-    FollowCharacter: 1
-    Delay: 0
-  - HitboxScale: {x: 1, y: 1}
-    HitboxOffset: {x: 0, y: 0}
-    Damage: 10
-    FocusDamage: -1
-    Penetration: 0
-    Stun: 0.3
-    HitboxDuration: 0.5
-    Knockback: {x: 10, y: 10}
-    FixedKnockback: 1
-    Element: 0
-    ApplyProps: 1
-    FollowCharacter: 1
-    Delay: 0
-  - HitboxScale: {x: 1, y: 1}
-    HitboxOffset: {x: 0, y: 0}
-    Damage: 10
-    FocusDamage: -1
-    Penetration: 0
-    Stun: 0.3
-    HitboxDuration: 0.5
-    Knockback: {x: 10, y: 10}
-    FixedKnockback: 1
-    Element: 0
-    ApplyProps: 1
-    FollowCharacter: 1
-    Delay: 0
-  - HitboxScale: {x: 1, y: 1}
-    HitboxOffset: {x: 0, y: 0}
-    Damage: 10
-    FocusDamage: -1
-    Penetration: 0
-    Stun: 0.3
-    HitboxDuration: 0.5
-    Knockback: {x: 10, y: 10}
-    FixedKnockback: 1
-    Element: 0
-    ApplyProps: 1
-    FollowCharacter: 1
-    Delay: 0
-  - HitboxScale: {x: 1, y: 1}
-    HitboxOffset: {x: 0, y: 0}
-    Damage: 10
-    FocusDamage: -1
-    Penetration: 0
-    Stun: 0.3
-    HitboxDuration: 0.5
-    Knockback: {x: 10, y: 10}
-    FixedKnockback: 1
-    Element: 0
-    ApplyProps: 1
-    FollowCharacter: 1
-    Delay: 0
-  - HitboxScale: {x: 1, y: 1}
-    HitboxOffset: {x: 0, y: 0}
-    Damage: 10
-    FocusDamage: -1
-    Penetration: 0
-    Stun: 0.3
-    HitboxDuration: 0.5
-    Knockback: {x: 10, y: 10}
-    FixedKnockback: 1
-    Element: 0
-    ApplyProps: 1
-    FollowCharacter: 1
-    Delay: 0
-  - HitboxScale: {x: 1, y: 1}
-    HitboxOffset: {x: 0, y: 0}
-    Damage: 10
-    FocusDamage: -1
-    Penetration: 0
-    Stun: 0.3
-    HitboxDuration: 0.5
-    Knockback: {x: 10, y: 10}
-    FixedKnockback: 1
-    Element: 0
-    ApplyProps: 1
-    FollowCharacter: 1
-    Delay: 0
-  m_AttackAnimInfo:
-    AnimSpeed: 1
-    StartUpTime: 0.5
-    AttackTime: 0
-    RecoveryTime: 0.5
-    StartUpAnimation: melee2_s
-    RecoveryAnimation: melee2_r
-  m_AIInfo:
-    Frequency: 0.5
-    UniqueAIPrediction: 0
-    AutoAttack: 0
-    AIPredictionHitbox: {x: 2.5, y: 1}
-    AIPredictionOffset: {x: 1, y: -0.5}
-  m_SoundInfo:
-    StartupSoundFX: {fileID: 0}
-    AttackSoundFX: {fileID: 8300000, guid: ce3a750d395e7cc42941ee7427b916bb, type: 3}
 --- !u!114 &114506322611810582
 MonoBehaviour:
   m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1000013670716774}
   m_Enabled: 1
@@ -398,10 +352,55 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Faction: 3
+--- !u!114 &114520000269745710
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1000013670716774}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 978ae77387a53214b81f0488de404458, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  AttackName: sneutral
+  m_HitboxInfo: []
+  m_AttackAnimInfo:
+    AnimSpeed: 0.5
+    StartUpTime: 0.15
+    AttackTime: 0.05
+    RecoveryTime: 0.1
+    StartUpAnimation: toss_s
+    RecoveryAnimation: toss_r
+  m_AIInfo:
+    Frequency: 0.5
+    UniqueAIPrediction: 0
+    AutoAttack: 0
+    AIPredictionHitbox: {x: 0, y: 0}
+    AIPredictionOffset: {x: 0, y: 0}
+    DrawPredictionHitbox: 0
+  m_SoundInfo:
+    StartupSoundFX: {fileID: 0}
+    AttackSoundFX: {fileID: 0}
+  TargetTime: 0
+--- !u!114 &114652727837255026
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1000013670716774}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 52bfab74673cc394c8c5ac13a352f833, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  MaxRange: 9
+  CurrentTarget: {fileID: 0}
+  m_halberd: {fileID: 0}
 --- !u!114 &114667538344402448
 MonoBehaviour:
   m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1000013670716774}
   m_Enabled: 1
@@ -412,7 +411,7 @@ MonoBehaviour:
 --- !u!114 &114691824885118858
 MonoBehaviour:
   m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1000013670716774}
   m_Enabled: 1
@@ -445,7 +444,7 @@ MonoBehaviour:
 --- !u!114 &114845752184036596
 MonoBehaviour:
   m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1000013670716774}
   m_Enabled: 1
@@ -454,10 +453,142 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   movt: {fileID: 114223702759941158}
+--- !u!114 &114897077006168818
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1000013670716774}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b5f0d0e634227ab47a6d5b0465702c06, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  AttackName: chase_down
+  m_HitboxInfo:
+  - HitboxScale: {x: 2, y: 2}
+    HitboxOffset: {x: 0, y: 0}
+    Damage: 20
+    FocusDamage: 0
+    Penetration: 0
+    Stun: 1
+    HitboxDuration: 0.2
+    Knockback: {x: 2, y: 30}
+    FixedKnockback: 1
+    ResetKnockback: 1
+    Element: 0
+    ApplyProps: 1
+    FollowCharacter: 1
+    FreezeTime: 0
+    Delay: 0
+  m_AttackAnimInfo:
+    AnimSpeed: 0.75
+    StartUpTime: 0.2
+    AttackTime: 0.05
+    RecoveryTime: 0.5
+    StartUpAnimation: up_s
+    RecoveryAnimation: up_r
+  m_AIInfo:
+    Frequency: 0.5
+    UniqueAIPrediction: 0
+    AutoAttack: 0
+    AIPredictionHitbox: {x: 0, y: 0}
+    AIPredictionOffset: {x: 0, y: 0}
+    DrawPredictionHitbox: 0
+  m_SoundInfo:
+    StartupSoundFX: {fileID: 0}
+    AttackSoundFX: {fileID: 0}
+  m_stanceInfo:
+    CanChangeDirection: 0
+    CanMove: 0
+    CanJump: 0
+    IdleAnimation: melee2_s
+    WalkAnimation: walk
+    AirAnimation: air
+    speedModifier: 0.5
+    jumpModifier: 1
+    Holdable: 0
+    HasMaxTime: 0
+    MaxTime: 1
+  m_flyInfo:
+    Target: {x: 0, y: 0, z: 0}
+    AttackRange: 2
+    MaxTargetSpeed: {x: 0.4, y: 0.4}
+    AttackDash: {x: 0, y: -1}
+    AttackDashDuration: 0.2
+    Decceleration: -1
+    FlyToHalberd: 1
+    FlyAnim: jump
+--- !u!114 &114951146504601230
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1000013670716774}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b5f0d0e634227ab47a6d5b0465702c06, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  AttackName: chase
+  m_HitboxInfo:
+  - HitboxScale: {x: 3.5, y: 2}
+    HitboxOffset: {x: 1, y: 0}
+    Damage: 10
+    FocusDamage: 0
+    Penetration: 0
+    Stun: 1
+    HitboxDuration: 0.2
+    Knockback: {x: 2, y: 10}
+    FixedKnockback: 1
+    ResetKnockback: 1
+    Element: 0
+    ApplyProps: 1
+    FollowCharacter: 1
+    FreezeTime: 0
+    Delay: 0
+  m_AttackAnimInfo:
+    AnimSpeed: 1
+    StartUpTime: 0.2
+    AttackTime: 0.05
+    RecoveryTime: 0.5
+    StartUpAnimation: melee_s
+    RecoveryAnimation: melee_r
+  m_AIInfo:
+    Frequency: 0.5
+    UniqueAIPrediction: 0
+    AutoAttack: 0
+    AIPredictionHitbox: {x: 0, y: 0}
+    AIPredictionOffset: {x: 0, y: 0}
+    DrawPredictionHitbox: 0
+  m_SoundInfo:
+    StartupSoundFX: {fileID: 0}
+    AttackSoundFX: {fileID: 0}
+  m_stanceInfo:
+    CanChangeDirection: 0
+    CanMove: 0
+    CanJump: 0
+    IdleAnimation: jump
+    WalkAnimation: jump
+    AirAnimation: jump
+    speedModifier: 0.5
+    jumpModifier: 1
+    Holdable: 0
+    HasMaxTime: 0
+    MaxTime: 1
+  m_flyInfo:
+    Target: {x: 0, y: 0, z: 0}
+    AttackRange: 2
+    MaxTargetSpeed: {x: 0.4, y: 0.4}
+    AttackDash: {x: -10, y: 1}
+    AttackDashDuration: 0.15
+    Decceleration: -1
+    FlyToHalberd: 1
+    FlyAnim: jump
 --- !u!114 &114958252470441854
 MonoBehaviour:
   m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1000013670716774}
   m_Enabled: 1
@@ -467,23 +598,25 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   AttackName: neutral
   m_HitboxInfo:
-  - HitboxScale: {x: 3, y: 2}
-    HitboxOffset: {x: 1.5, y: -0.5}
+  - HitboxScale: {x: 3, y: 3}
+    HitboxOffset: {x: 1.5, y: 0}
     Damage: 10
     FocusDamage: 10
     Penetration: 0
     Stun: 1
-    HitboxDuration: 0.2
-    Knockback: {x: 10, y: 0}
+    HitboxDuration: 0.1
+    Knockback: {x: 4, y: 10}
     FixedKnockback: 1
+    ResetKnockback: 1
     Element: 0
     ApplyProps: 0
     FollowCharacter: 1
+    FreezeTime: 0
     Delay: 0
   m_AttackAnimInfo:
     AnimSpeed: 0.5
     StartUpTime: 0
-    AttackTime: 0.2
+    AttackTime: 0.1
     RecoveryTime: 0
     StartUpAnimation: melee_s
     RecoveryAnimation: melee_s
@@ -493,6 +626,7 @@ MonoBehaviour:
     AutoAttack: 0
     AIPredictionHitbox: {x: 0, y: 0}
     AIPredictionOffset: {x: 0, y: 0}
+    DrawPredictionHitbox: 0
   m_SoundInfo:
     StartupSoundFX: {fileID: 0}
     AttackSoundFX: {fileID: 0}
@@ -500,7 +634,7 @@ MonoBehaviour:
     CanChangeDirection: 1
     CanMove: 1
     CanJump: 1
-    IdleAnimation: idle
+    IdleAnimation: idle_armed
     WalkAnimation: run
     AirAnimation: air
     speedModifier: 1.2
@@ -511,9 +645,42 @@ MonoBehaviour:
   m_autoAttack:
     RefreshTime: 0.3
     AttackAnimations:
-    - melee_r
-    - melee2_r
+    - slash_fast
+    - slash_fast_2
+    - toss_r
+    - toss2_r
+    EnableUpDown: 1
+    UpAttackAnimations:
+    - up_r
+    DownAttackAnimations:
+    - down_r
     AttackAnimationTime: 0.3
+    MaxTargetSpeed: {x: 0.25, y: 0.6}
+    Decceleration: -1
+    up_WeaponPos:
+      name: slash
+      pos: {x: 0, y: 1}
+      zRot: 90
+      zAngleVariance: 30
+      scale: {x: 1, y: 1.5}
+      scaleVariance: {x: 0.3, y: 0.5}
+      xRot: 0
+      accel: 0
+      TimeToReachRotation: 0
+      timeInPosition: 0.3
+      AnimSpeed: 1
+    down_WeaponPos:
+      name: slash
+      pos: {x: 0, y: -2}
+      zRot: -90
+      zAngleVariance: 0
+      scale: {x: 1, y: 1.5}
+      scaleVariance: {x: 0.3, y: 0.5}
+      xRot: 0
+      accel: 0
+      TimeToReachRotation: 0
+      timeInPosition: 0.3
+      AnimSpeed: 1
   m_weaponPos:
     name: slash
     pos: {x: 2, y: 0}
@@ -523,12 +690,64 @@ MonoBehaviour:
     scaleVariance: {x: 0.4, y: 0.1}
     xRot: 0
     accel: 0
+    TimeToReachRotation: 0
     timeInPosition: 0.3
     AnimSpeed: 1
+--- !u!114 &114958416000837484
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1000013670716774}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b5f0d0e634227ab47a6d5b0465702c06, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  AttackName: chase_noatk
+  m_HitboxInfo: []
+  m_AttackAnimInfo:
+    AnimSpeed: 1
+    StartUpTime: 0
+    AttackTime: 0
+    RecoveryTime: 0
+    StartUpAnimation: melee_s
+    RecoveryAnimation: melee_r
+  m_AIInfo:
+    Frequency: 0.5
+    UniqueAIPrediction: 0
+    AutoAttack: 0
+    AIPredictionHitbox: {x: 0, y: 0}
+    AIPredictionOffset: {x: 0, y: 0}
+    DrawPredictionHitbox: 0
+  m_SoundInfo:
+    StartupSoundFX: {fileID: 0}
+    AttackSoundFX: {fileID: 0}
+  m_stanceInfo:
+    CanChangeDirection: 0
+    CanMove: 0
+    CanJump: 0
+    IdleAnimation: jump
+    WalkAnimation: jump
+    AirAnimation: jump
+    speedModifier: 0.5
+    jumpModifier: 1
+    Holdable: 0
+    HasMaxTime: 0
+    MaxTime: 10
+  m_flyInfo:
+    Target: {x: 0, y: 0, z: 0}
+    AttackRange: 2
+    MaxTargetSpeed: {x: 0.4, y: 0.4}
+    AttackDash: {x: -10, y: 1}
+    AttackDashDuration: 0.15
+    Decceleration: -1
+    FlyToHalberd: 1
+    FlyAnim: jump
 --- !u!114 &114983406726242728
 MonoBehaviour:
   m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1000013670716774}
   m_Enabled: 1
@@ -543,7 +762,7 @@ MonoBehaviour:
 --- !u!212 &212358539921992486
 SpriteRenderer:
   m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1000013670716774}
   m_Enabled: 1
@@ -553,8 +772,9 @@ SpriteRenderer:
   m_MotionVectors: 1
   m_LightProbeUsage: 0
   m_ReflectionProbeUsage: 0
+  m_RenderingLayerMask: 4294967295
   m_Materials:
-  - {fileID: 10754, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: 24bcaacf9a8d75a4bb30612ab4c968fc, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -573,7 +793,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 5
   m_Sprite: {fileID: 21300000, guid: 6bae4656ea1e1bc4fb323fec8d3c1236, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -584,3 +804,4 @@ SpriteRenderer:
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
+  m_SpriteSortPoint: 0

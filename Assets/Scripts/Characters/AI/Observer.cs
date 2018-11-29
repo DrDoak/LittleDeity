@@ -9,7 +9,7 @@ public class Observer : MonoBehaviour {
 	public float detectionRange = 15.0f;
 
 	public List<Observable> VisibleObjs = new List<Observable>();
-	float sinceLastScan;
+	float nextScan;
 	float scanInterval = 0.5f;
 	float postLineVisibleTime = 3.0f;
 
@@ -18,14 +18,13 @@ public class Observer : MonoBehaviour {
 	void Start () {
 		m_lastTimeSeen = new Dictionary<Observable,float> ();
 		m = GetComponent<PhysicsSS> ();
-		sinceLastScan = UnityEngine.Random.Range (0.0f, scanInterval);
+		nextScan = UnityEngine.Random.Range (Time.timeSinceLevelLoad,Time.timeSinceLevelLoad + scanInterval);
 	}
 
 	void Update() {
-		if (sinceLastScan > scanInterval) {
+		if (Time.timeSinceLevelLoad > nextScan) {
 			scanForEnemies ();
 		}
-		sinceLastScan += Time.deltaTime;
 	}
 
 	void scanForEnemies() {
@@ -73,7 +72,7 @@ public class Observer : MonoBehaviour {
 				}
 			}
 		}
-		sinceLastScan = 0f;
+		nextScan = Time.timeSinceLevelLoad + scanInterval;
 	}
 
 	internal void OnSight(Observable o) {

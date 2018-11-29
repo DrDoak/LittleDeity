@@ -4,13 +4,14 @@ using UnityEngine;
 
 public class ChaseTarget : MonoBehaviour {
 
-	public PhysicsSS Target;
+	public GameObject Target;
 	public Vector2 StartingVel = new Vector2();
 
 	public bool Active = true;
 	public bool Accelerate = true;
 	public Vector2 MaxSpeed = new Vector2 (1.0f, 1.0f);
 	public float Decceleration = 0.5f;
+	public float WarpDistance = 5.0f;
 	float m_currentDelay = 0.0f;
 	Vector3 m_offset = new Vector2 ();
 	Vector3 m_currentTarget;
@@ -42,12 +43,18 @@ public class ChaseTarget : MonoBehaviour {
 	[SerializeField]
 	float m_Delay = 0.5f;
 
+	[SerializeField]
+	float m_autoRotateSpeed = 0.0f;
+
+	private float angle = 0f;
+
 	void Start () {
 		m_sprite = GetComponent<SpriteRenderer> ();
 		m_currentTarget = new Vector2 ();
 		m_speed = new Vector2 ();
 
 		//trail = GetComponent<TrailRenderer> ();
+		angle = transform.rotation.eulerAngles.z;
 	}
 
 	// Update is called once per frame
@@ -62,6 +69,9 @@ public class ChaseTarget : MonoBehaviour {
 		if (Target != null) {
 			m_currentTarget = Target.transform.position + m_offset;
 			float d = Vector3.Distance (m_currentTarget, transform.position);
+			if (d > WarpDistance) {
+				transform.position = m_currentTarget;
+			}
 			if (d < PURSUE_DISTANCE) {
 				chaseTarget ();
 			}
@@ -71,6 +81,10 @@ public class ChaseTarget : MonoBehaviour {
 
 		} else if (m_isDestroyWhenTargetGone) {
 			Destroy (gameObject);
+		}
+		if (m_autoRotateSpeed != 0f) {
+			angle += m_autoRotateSpeed;
+			transform.rotation = Quaternion.Euler(new Vector3(transform.rotation.x,transform.rotation.y,angle));
 		}
 	}
 
@@ -108,11 +122,15 @@ public class ChaseTarget : MonoBehaviour {
 		transform.Translate (m_speed,Space.World);
 	}
 
-	public void SetTargetOffset(PhysicsSS t, Vector2 offset) {
+	public void SetTargetOffset(GameObject t, Vector2 offset) {
 		Target = t;
 		m_offset = offset;
 	}
 	void orientToSpeed(Vector2 speed) {
 		m_sprite.transform.rotation = Quaternion.Euler (new Vector3(0f,0f,Mathf.Rad2Deg * Mathf.Atan2 (speed.y, speed.x)));
+	}
+
+	public void SetAutoRotate(float speed) {
+		m_autoRotateSpeed = speed;
 	}
 }

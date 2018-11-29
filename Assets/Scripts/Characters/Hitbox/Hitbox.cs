@@ -11,12 +11,15 @@ public class HitInfo  {
 	public float Penetration = 0f;
 	public Vector2 Knockback = new Vector2();
 	public bool IsFixedKnockback = false;
+	public bool ResetKnockback = true;
 	public float Stun = 0f;
+	public float FreezeTime = 0f;
 	public List<ElementType> Element = new List<ElementType>();
 	public Hitbox mHitbox;
 
 	public GameObject Creator;
 	public GameObject target;
+	public float LastTimeHit;
 
 	public bool HasElement(ElementType element) {
 		foreach (ElementType et in Element) {
@@ -25,7 +28,11 @@ public class HitInfo  {
 		}
 		return false;
 	}
+	public float TimeSinceLastHit() {
+		return Time.timeSinceLevelLoad - LastTimeHit;
+	}
 }
+
 public class Hitbox : MonoBehaviour {
 
 	[SerializeField]
@@ -53,6 +60,10 @@ public class Hitbox : MonoBehaviour {
 	public bool IsFixedKnockback { get { return m_isFixedKnockback; } set { m_isFixedKnockback = value; } }
 
 	[SerializeField]
+	private bool m_resetKnockback = true;
+	public bool IsResetKnockback { get { return m_resetKnockback; } set { m_resetKnockback = value; } }
+
+	[SerializeField]
 	private Vector2 m_knockback = new Vector2(0.0f,40.0f);
 	public Vector2 Knockback { get { return m_knockback; } set { m_knockback = value; } }
 
@@ -64,6 +75,9 @@ public class Hitbox : MonoBehaviour {
 	private bool m_isRandomKnockback = false;
 	public bool IsRandomKnockback { get { return m_isRandomKnockback; } set { m_isRandomKnockback = value; } }
 
+	[SerializeField]
+	private float m_FreezeTime = 0f;
+	public float FreezeTime { get { return m_FreezeTime; } set { m_FreezeTime = value; } }
 
 	//private ElementType m_element = ElementType.PHYSICAL;
 	[SerializeField]
@@ -88,6 +102,9 @@ public class Hitbox : MonoBehaviour {
 	private Vector4 m_knockbackRanges;
 	public List<Attackable> m_collidedObjs = new List<Attackable> ();
 	public List<Attackable> m_overlappingControl = new List<Attackable> (); 
+	public bool HitboxActive { get { return m_hitboxActive; } private set { m_hitboxActive = value; } }
+
+	private bool m_hitboxActive = true;
 
 	virtual public void Init()
 	{
@@ -100,6 +117,8 @@ public class Hitbox : MonoBehaviour {
 		m_hasDuration = m_duration > 0;
 		Tick();
 		//Debug.Log ("Hitbox initialized");
+		if (m_elementList.Count == 0)
+			m_elementList.Add (ElementType.PHYSICAL);
 	}
 
 	virtual internal void Update()
@@ -128,6 +147,13 @@ public class Hitbox : MonoBehaviour {
 	{
 		m_followObj = obj;
 		m_followOffset = offset;
+		Vector3 newOffset = new Vector3 (offset.x, offset.y, 0f);
+		if (m_followObj.GetComponent<PhysicsSS> () != null &&
+		    m_followObj.GetComponent<PhysicsSS> ().FacingLeft) {
+			newOffset.x *= -1f;
+			//Debug.Log ("Reverse");
+		}
+		m_followOffset = newOffset;
 	}
 
 	public void SetKnockbackRanges (float minX, float maxX,float minY, float maxY)
@@ -169,6 +195,7 @@ public class Hitbox : MonoBehaviour {
 		if (IsRandomKnockback)
 			RandomizeKnockback();
 		HitInfo newHI = ToHitInfo ();
+		newHI.LastTimeHit = Time.timeSinceLevelLoad;
 		newHI.Knockback = new Vector2 (Knockback.x, Knockback.y);
 		newHI.target = atkObj.gameObject;
 		HitResult r = atkObj.TakeHit(newHI);
@@ -177,7 +204,7 @@ public class Hitbox : MonoBehaviour {
 		if (!m_overlappingControl.Contains (atkObj))
 			m_overlappingControl.Add (atkObj);
 		if (Creator != null) {
-			Creator.GetComponent<HitboxMaker> ().RegisterHit (atkObj.gameObject, this, r);
+			Creator.GetComponent<HitboxMaker> ().RegisterHit (atkObj.gameObject, newHI, r);
 		}
 		CreateHitFX ( atkObj.gameObject, Knockback, r);
 		return r;
@@ -190,6 +217,11 @@ public class Hitbox : MonoBehaviour {
 		hi.Stun = Stun;
 		hi.Element = m_elementList;
 		hi.Penetration = Penetration;
+		hi.IsFixedKnockback = IsFixedKnockback;
+		hi.ResetKnockback = m_resetKnockback;
+		//Debug.Log (hi.ResetKnockback);
+		hi.FreezeTime = m_FreezeTime;
+		//Debug.Log ("MFreeze: " + m_FreezeTime);
 
 		hi.Creator = Creator;
 		hi.mHitbox = this;
@@ -202,6 +234,8 @@ public class Hitbox : MonoBehaviour {
 		
 	internal HitResult OnTriggerEnter2D(Collider2D other)
 	{
+		if (!m_hitboxActive)
+			return HitResult.NONE;
 		OnHitObject (other);
 		return OnAttackable (other.gameObject.GetComponent<Attackable> ());
 	}
@@ -217,6 +251,8 @@ public class Hitbox : MonoBehaviour {
 			collidedObjs.Remove (other.gameObject.GetComponent<Attackable> ());
 		}
 		*/
+		if (!m_hitboxActive)
+			return;
 		if (other.gameObject.GetComponent<Attackable> () 
 			&& m_overlappingControl.Contains(other.gameObject.GetComponent<Attackable>())) {
 			m_overlappingControl.Remove (other.gameObject.GetComponent<Attackable> ());
@@ -328,5 +364,11 @@ public class Hitbox : MonoBehaviour {
 				break;
 			}
 		}
+	}
+
+	public virtual void SetHitboxActive(bool a) {
+		m_hitboxActive = a;
+		m_collidedObjs.Clear ();
+		m_overlappingControl.Clear ();
 	}
 }

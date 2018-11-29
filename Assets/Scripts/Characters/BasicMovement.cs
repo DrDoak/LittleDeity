@@ -70,6 +70,8 @@ public class BasicMovement : MonoBehaviour
 	private bool m_submerged = false;
 	public bool Submerged { get { return m_submerged; } set { m_submerged = value; } }
 	public bool CanJump = true;
+	public int CurrentAirJumps = 0;
+	public int MidAirJumps = 0;
 	private float m_lastJump = 0.0f;
 	private float m_stuckTime = 0.0f;
 	private float m_jumpThruStuckTime = 0.0f;
@@ -126,8 +128,13 @@ public class BasicMovement : MonoBehaviour
 			PlayStepSounds ();
 		MoveSmoothly();
 		currentPlayerControl ();
+		ResetJumps ();
 	}
 
+	private void ResetJumps() {
+		if (m_physics.OnGround)
+			CurrentAirJumps = MidAirJumps;
+	}
 	private void currentPlayerControl() {
 		if (m_savedCurrentPlayer != IsCurrentPlayer) {
 			ExecuteEvents.Execute<ICustomMessageTarget> (gameObject, null, (x, y) => x.OnControllableChange (IsCurrentPlayer));
@@ -167,6 +174,7 @@ public class BasicMovement : MonoBehaviour
 				m_lastDownTime = Time.timeSinceLevelLoad;
 			}*/
 		}
+
 		m_jumpDown = InputManager.GetButtonDown ("Jump");
 		m_jumpHold = InputManager.GetButton ("Jump");
 		if (CanJump)
@@ -181,12 +189,13 @@ public class BasicMovement : MonoBehaviour
 			}
 			else {
 				AttemptJump ();
+
 			}
 		}
 		float dt = (Time.timeSinceLevelLoad - m_lastJump);
 		if (VariableJumpHeight && dt > 0.1f && dt < 0.2f && m_jumpHold && !m_variableJumpApplied) {
 			m_variableJumpApplied = true;
-			applyJumpVector (new Vector2(1f, 0.35f));
+			ApplyJumpVector (new Vector2(1f, 0.35f));
 		}
 	}
 	private void NpcMovement()
@@ -228,28 +237,39 @@ public class BasicMovement : MonoBehaviour
 		SetDirectionFromInput ();
 	}
 
-	private void AttemptJump() {
+	public bool CanBasicJump() {
 		if ((Time.timeSinceLevelLoad - m_lastJump) < MIN_JUMP_INTERVAL)
-			return;
+			return false;
 
-		if (!m_submerged && !m_physics.OnGround)
+		if (!m_submerged && !m_physics.OnGround && CurrentAirJumps <= 0)
+			return false;
+
+		return true;
+	}
+	private void AttemptJump() {
+		ExecuteEvents.Execute<ICustomMessageTarget> (gameObject, null, (x, y) => x.OnJump());
+		if (!CanBasicJump ())
 			return;
 
 		if (m_submerged) {
 			if (m_physics.TrueVelocity.y < 0.05f) 
-				applyJumpVector (new Vector2 (1f, 0.6f));
+				ApplyJumpVector (new Vector2 (1f, 0.6f));
 		} else if (VariableJumpHeight) {
-			applyJumpVector (new Vector2 (1f, 0.8f));
+			ApplyJumpVector (new Vector2 (1f, 0.8f));
 		} else {
-			applyJumpVector (new Vector2 (1f, 1f));
+			ApplyJumpVector (new Vector2 (1f, 1f));
 		}
 
 		FindObjectOfType<AudioManager> ().PlayClipAtPos (FXBody.Instance.SFXJump,transform.position,0.3f,0f,0.25f);
 		m_lastJump = Time.timeSinceLevelLoad;
 		m_variableJumpApplied = false;
+
+		m_physics.AddArtificialVelocity (new Vector2 (0f, -0.75f * m_physics.TrueVelocity.y));
+		if (!m_physics.OnGround)
+			CurrentAirJumps -= 1;
 	}
 	
-	private void applyJumpVector(Vector2 scale) {
+	public void ApplyJumpVector(Vector2 scale) {
 		float y = m_jumpVector.y;
 		Vector2 jv = new Vector2 (m_jumpVector.x, y ); //- Mathf.Max (0, m_physics.TrueVelocity.y / Time.deltaTime));
 		jv.x *= scale.x;
@@ -257,6 +277,12 @@ public class BasicMovement : MonoBehaviour
 		m_physics.AddSelfForce (jv, 0f);
 	}
 
+	public void FacePoint(Vector3 point) {
+		if (point.x > transform.position.x)
+			m_physics.SetDirection (false);
+		else
+			m_physics.SetDirection (true);
+	}
 	public void MoveToPoint(Vector3 point) {
 		m_inputMove = new Vector2(0,0);
 
@@ -350,7 +376,6 @@ public class BasicMovement : MonoBehaviour
 		m_targetSet = false;
 		m_targetObj = false;
 		m_followObj = null;
-		m_minDistance = 0.2f;
 	}
 
 	public void SetMoveSpeed(float moveSpeed) {

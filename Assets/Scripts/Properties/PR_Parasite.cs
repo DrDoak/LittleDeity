@@ -9,7 +9,7 @@ public class PR_Parasite : Property {
     float parasite_period = 0.1f;
 
 
-    public override void OnHitConfirm(Hitbox myHitbox, GameObject objectHit, HitResult hr)
+	public override void OnHitConfirm(HitInfo myHitbox, GameObject objectHit, HitResult hr)
     {
         objectHit.GetComponent<Attackable>().DamageObj(myHitbox.Damage);  // double damage
     }

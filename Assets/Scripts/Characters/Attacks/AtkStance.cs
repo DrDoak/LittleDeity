@@ -36,6 +36,7 @@ public class AtkStance : AttackInfo {
 	protected float m_time_in_stance = 0;
 
 	protected override void OnStartUp() {
+		old_can_move = GetComponent<PhysicsSS> ().CanMove;
 	}
 
 	protected override void OnRecovery() {
@@ -79,13 +80,12 @@ public class AtkStance : AttackInfo {
 		bm.SetJumpHeight (bm.JumpHeight * m_stanceInfo.jumpModifier);
 		bm.CanJump = m_stanceInfo.CanJump;
 
-		old_can_move = GetComponent<PhysicsSS> ().CanMove;
+
 		GetComponent<PhysicsSS> ().CanMove = m_stanceInfo.CanMove;
 		m_time_in_stance = 0f;
 	}
 
 	protected virtual void OnStanceEnd() {
-		//Debug.Log ("Ending Stance");
 		Fighter f = GetComponent<Fighter> ();
 		f.AirAnimation = old_air;
 		f.WalkAnimation = old_walk;

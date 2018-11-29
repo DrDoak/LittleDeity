@@ -26,9 +26,11 @@ public class HitboxInfo {
 	public float HitboxDuration = 0.5f;
 	public Vector2 Knockback = new Vector2(10.0f,10.0f);
 	public bool FixedKnockback = true;
+	public bool ResetKnockback = true;
 	public ElementType Element = ElementType.PHYSICAL;
 	public bool ApplyProps = true;
 	public bool FollowCharacter = true;
+	public float FreezeTime = 0.0f;
 	public float Delay = 0.0f;
 }
 
@@ -46,6 +48,15 @@ public class AIInfo {
 	public bool AutoAttack = false;
 	public Vector2 AIPredictionHitbox = Vector2.zero;
 	public Vector2 AIPredictionOffset = Vector2.zero;
+	public bool DrawPredictionHitbox = false;
+}
+
+[System.Serializable]
+public class SentimentAttack {
+	public int RequiredMinSentiment = 0;
+	public int ConsumedSentiment = 0;
+	public bool DrainOnWhiff = true;
+	public bool TransferSentiment = false;
 }
 
 public class AttackInfo : MonoBehaviour
@@ -66,6 +77,7 @@ public class AttackInfo : MonoBehaviour
 	public AttackAnimInfo m_AttackAnimInfo;
 	public AIInfo m_AIInfo;
 	public SoundInfo m_SoundInfo;
+	public SentimentAttack m_SentimentInfo;
 
 	protected PhysicsSS m_physics;
 	protected HitboxMaker m_hitboxMaker;
@@ -133,7 +145,7 @@ public class AttackInfo : MonoBehaviour
 		Progress();
 	}
 
-	public virtual void OnHitConfirm(GameObject other, Hitbox hb, HitResult hr) {}
+	public virtual void OnHitConfirm(GameObject other, HitInfo hb, HitResult hr) {}
 
 	public virtual void OnInterrupt(float stunTime, bool successfulHit, HitInfo hi) {}
 
@@ -178,6 +190,19 @@ public class AttackInfo : MonoBehaviour
 //		Vector2 offset = m_physics.OrientVectorToDirection(m_HitboxInfo.HitboxOffset);
 //		m_hitboxMaker.CreateHitbox(m_HitboxInfo.HitboxScale, offset, m_HitboxInfo.Damage,
 //			m_HitboxInfo.Stun, m_HitboxInfo.HitboxDuration, m_HitboxInfo.Knockback, true, true,m_HitboxInfo.Element,m_HitboxInfo.ApplyProps);
+	}
+
+	void OnDrawGizmos() {
+		if (m_AIInfo.DrawPredictionHitbox) {
+			Gizmos.color = new Color (0, 0, 1, .25f);
+			if (m_AIInfo.UniqueAIPrediction) {
+				Vector2 off = GetComponent<PhysicsSS> ().OrientVectorToDirection (m_AIInfo.AIPredictionOffset);
+				Gizmos.DrawCube (transform.position + new Vector3(off.x,off.y,0f), new Vector3 (m_AIInfo.AIPredictionHitbox.x, m_AIInfo.AIPredictionHitbox.y, 0f));
+			} else {
+				Vector2 off = GetComponent<PhysicsSS> ().OrientVectorToDirection (m_HitboxInfo[0].HitboxOffset);
+				Gizmos.DrawCube (transform.position + new Vector3(off.x,off.y,0f), new Vector3 (m_HitboxInfo[0].HitboxScale.x, m_HitboxInfo[0].HitboxScale.y, 0f));
+			}
+		}
 	}
 }
 

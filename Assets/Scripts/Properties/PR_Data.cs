@@ -30,7 +30,7 @@ public class PR_Data : Property {
 		while (expDropped < Experience) {
 			GameObject go = Instantiate (GameManager.Instance.FXExperience, transform.position, Quaternion.identity);
 			if (eh != null) {
-				go.GetComponent<ChaseTarget> ().Target = eh.GetComponent<PhysicsSS> ();
+				go.GetComponent<ChaseTarget> ().Target = eh.gameObject;
 
 			}
 			go.GetComponent<ChaseTarget> ().StartingVel = new Vector2 (Random.Range (-10f, 10f), 10f);

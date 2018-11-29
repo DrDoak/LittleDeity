@@ -47,6 +47,6 @@ public class AtkDash : AttackInfo
 
 	private void VerticalMomentumCancel(float time) {
 		m_physics.CancelVerticalMomentum ();
-		m_physics.DisableGravity (m_AttackAnimInfo.StartUpTime);
+		m_physics.DisableGravity (time);
 	}
 }

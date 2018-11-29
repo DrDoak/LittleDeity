@@ -9,13 +9,15 @@ public interface ICustomMessageTarget : IEventSystemHandler
 	void OnCreation();
 	void OnControllableChange (bool isControllable);
 	void OnHit(HitInfo hi, GameObject attacker);
-	void OnHitConfirm (Hitbox myHitbox, GameObject objectHit, HitResult hr);
+	void OnHitConfirm (HitInfo myHitbox, GameObject objectHit, HitResult hr);
 	void OnSight(Observable observedObj);
 	void OnDeath();
 	void OnUpdate();
 	void OnCollision();
 	void OnAttack();
 	void OnHitboxCreate (Hitbox hitboxCreated);
+
+	void OnJump();
 
 	void OnWaterEnter(WaterHitbox waterCollided);
 	void OnWaterExit (WaterHitbox waterCollided);

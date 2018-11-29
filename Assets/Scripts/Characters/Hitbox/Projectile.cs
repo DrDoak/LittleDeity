@@ -54,4 +54,9 @@ public class Projectile : Hitbox {
 		return (obj.CompareTag ("JumpThru") || (obj.transform.parent != null &&
 			obj.transform.parent.CompareTag ("JumpThru")));
 	}
+
+	public override void SetHitboxActive(bool a) {
+		base.SetHitboxActive (a);
+		m_numPenetrated = 0;
+	}
 }

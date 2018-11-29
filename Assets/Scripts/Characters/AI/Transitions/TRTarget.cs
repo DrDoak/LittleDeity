@@ -13,7 +13,7 @@ public class TRTarget : Transition {
 		if (o.GetComponent<Attackable> () &&
 		    MasterAI.GetComponent<Attackable> ().CanAttack (
 			    o.GetComponent<Attackable> ().Faction)) {
-			GetComponent<Task> ().Target = o.gameObject;
+			TargetTask.Target = o.gameObject;
 			TriggerTransition ();
 		}
 	}

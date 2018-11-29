@@ -8,6 +8,7 @@ public class AnimatorSprite : MonoBehaviour
 {
 	private Animator m_anim;
 	private List<string> m_states;
+	public string CurrentAnimation { get { return m_currentAnim; } private set { m_currentAnim = value; } }
 	private string m_currentAnim = "";
 
 	internal void Awake()
@@ -16,7 +17,7 @@ public class AnimatorSprite : MonoBehaviour
 		m_anim = GetComponent<Animator>();
 		if (FindObjectOfType<LightSettings> () != null &&
 		    FindObjectOfType<LightSettings> ().UseLighting) {
-			GetComponent<SpriteRenderer> ().material.shader = FindObjectOfType<LightSettings> ().lightingShader;
+			GetComponent<SpriteRenderer> ().material = FindObjectOfType<LightSettings> ().lightingMaterial;
 			transform.position = new Vector3 (transform.position.x, transform.position.y,  -1f * (GetComponent<Renderer> ().sortingOrder) / 32);
 		}
 	}
@@ -41,7 +42,7 @@ public class AnimatorSprite : MonoBehaviour
 			m_states.Add(stateName);
 			return SetAndPlay(stateName);
 		}
-		Debug.Log ("Does not have anim: " + stateName);
+		//Debug.Log ("Does not have anim: " + stateName);
 		return false;
 	}
 

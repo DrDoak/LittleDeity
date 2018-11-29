@@ -22,16 +22,21 @@ public class Fighter : MonoBehaviour
 	public string HurtAnimation = "hit";
 	public string AirAnimation = "air";
 	public string JumpAnimation = "air";
+	public string LandAnimation = "land";
 
+	private Dictionary<Attackable,HitInfo> m_hitTargets;
 	private PhysicsSS m_physics;
 	private AnimatorSprite m_anim;
 	private Attackable m_attackable;
 	private AttackInfo m_currentAttack = null;
+	public Dictionary<Attackable,HitInfo> AttackHistory { get { return m_hitTargets; } private set { m_hitTargets = value; } }
 
 	private float m_animationSpeed = 2f;
 
 	private Dictionary<HitboxInfo, float> m_queuedHitboxes = new Dictionary<HitboxInfo, float> ();
 	private bool m_pauseAnim = false;
+
+	private bool m_haveMovedOnGround = false;
 
 	[HideInInspector]
 	public AudioClip AttackSound;
@@ -44,6 +49,7 @@ public class Fighter : MonoBehaviour
 		m_anim = GetComponent<AnimatorSprite>();
 		m_physics = GetComponent<PhysicsSS>();
 		m_attackable = GetComponent<Attackable>();
+		m_hitTargets = new Dictionary<Attackable,HitInfo> ();
 	}
 
 	internal void Start()
@@ -61,7 +67,8 @@ public class Fighter : MonoBehaviour
 				a.AddListener(OnAttackProgressed);
 			}
 		}
-		string[] defaultAttacks = new string[]{ "neutral", "up", "down", "side", "air", "air_up", "air_down", "air_side" };
+		string[] defaultAttacks = new string[]{ "neutral", "up", "down", "side", "air", "air_up", "air_down", "air_side",
+			"sneutral", "sup", "sdown", "sside", "sair", "sair_up", "sair_down", "sair_side" };
 		foreach (string s in defaultAttacks) {
 			Aliases ["i_" + s] = s;
 		}
@@ -122,6 +129,29 @@ public class Fighter : MonoBehaviour
 					f.TryAttack(new string[]{"i_air","i_neutral"});
 			}
 		}
+
+		if (InputManager.GetButton ("Ability2")) {
+			Fighter f = GetComponent<Fighter> ();
+			if (GetComponent<PhysicsSS> ().OnGround) {
+				if (InputManager.GetButton("Up"))
+					f.TryAttack(new string[]{"i_sup","i_sneutral"});
+				else if (InputManager.GetButton ("Down"))
+					f.TryAttack(new string[]{"i_dsown","i_sneutral"});
+				else if (InputManager.GetButton("Left") || InputManager.GetButton("Right"))
+					f.TryAttack(new string[]{"i_sside","i_sneutral"});
+				else 
+					f.TryAttack(new string[]{"i_sneutral"});
+			} else {
+				if (InputManager.GetButton("Up"))
+					f.TryAttack(new string[]{"i_sair_up","i_sair","i_sup","i_sneutral"});
+				else if (InputManager.GetButton ("Down"))
+					f.TryAttack(new string[]{"i_sair_down","i_sair","i_sdown","i_sneutral"});
+				else if (InputManager.GetButton("Left") || InputManager.GetButton("Right"))
+					f.TryAttack(new string[]{"i_sair_side","i_sair","i_sside","i_sneutral"});
+				else 
+					f.TryAttack(new string[]{"i_sair","i_sneutral"});
+			}
+		}
 	}
 
 	public void SetBind(string bindName, string attackName) { 
@@ -170,7 +200,7 @@ public class Fighter : MonoBehaviour
 				OnAttackRecover();
 				break;
 			case AttackState.INACTIVE:
-				OnAttackEnd();
+				EndAttack();
 				break;
 		}
 	}
@@ -189,7 +219,7 @@ public class Fighter : MonoBehaviour
 		m_anim.Play(m_currentAttack.m_AttackAnimInfo.RecoveryAnimation, true);
 	}
 
-	private void OnAttackEnd()
+	public void EndAttack()
 	{
 		m_physics.CanMove = true;
 		m_currentAttack = null;
@@ -199,16 +229,23 @@ public class Fighter : MonoBehaviour
 	public void ProgressWalkOrIdleAnimation()
 	{
 		if (!m_physics.OnGround) {
+			m_haveMovedOnGround = false;
 			if (m_physics.TrueVelocity.y > 0f) {
 				m_anim.Play (new string[]{JumpAnimation,AirAnimation});
 			} else {
 				m_anim.Play (AirAnimation);
 			}
 		} else {
-			if (m_physics.IsAttemptingMovement ())
+			if (m_physics.IsAttemptingMovement ()) {
 				m_anim.Play (WalkAnimation);
-			else
-				m_anim.Play (IdleAnimation);
+				m_haveMovedOnGround = true;
+			} else {
+				if ( !m_haveMovedOnGround && m_physics.TimeCollided[Direction.DOWN] < 0.45f) {
+					m_anim.Play (new string[]{LandAnimation,IdleAnimation});
+				} else {
+					m_anim.Play (IdleAnimation);
+				}
+			}
 		}
 	}
 
@@ -250,18 +287,21 @@ public class Fighter : MonoBehaviour
 	void StartHitState(float st)
 	{
 		//Debug.Log ("Starting Hit State with Stun: "+ st);
-		OnAttackEnd();
+		EndAttack();
 		StunTime = st;
 		m_physics.CanMove = false;
 	}
 
-	public void RegisterHit(GameObject otherObj,Hitbox hb, HitResult hr)
+	public void RegisterHit(GameObject otherObj,HitInfo hi, HitResult hr)
 	{
 		//Debug.Log ("Collision: " + this + " " + otherObj);
-		ExecuteEvents.Execute<ICustomMessageTarget> (gameObject, null, (x, y) => x.OnHitConfirm (hb, otherObj, hr));
+		ExecuteEvents.Execute<ICustomMessageTarget> (gameObject, null, (x, y) => x.OnHitConfirm (hi, otherObj, hr));
 		//Debug.Log ("Registering hit with: " + otherObj);
+		if (otherObj.GetComponent<Attackable> () != null) {
+			m_hitTargets [otherObj.GetComponent<Attackable> ()] = hi;
+		}
 		if (m_currentAttack != null)
-			m_currentAttack.OnHitConfirm(otherObj,hb,hr);
+			m_currentAttack.OnHitConfirm(otherObj,hi,hr);
 	}
 
 	public void EndStun()
@@ -294,7 +334,7 @@ public class Fighter : MonoBehaviour
 		m_currentAttack = Attacks[attackName];
 		m_physics.CanMove = false;
 		m_currentAttack.ResetAndProgress();
-		ExecuteEvents.Execute<ICustomMessageTarget> (gameObject, null, (x, y) => x.OnAttack ());
+		ExecuteEvents.Execute<ICustomMessageTarget> (gameObject, null, (x, y) => x.OnAttack (m_currentAttack));
 		return m_currentAttack;
 	}
 

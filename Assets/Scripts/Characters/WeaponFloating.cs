@@ -5,6 +5,7 @@ using UnityEngine;
 [System.Serializable]
 public class WeaponPosition {
 	public string name;
+	public string Animation = "slash";
 	public Vector2 pos;
 	public float zRot;
 	public float zAngleVariance = 0f;
@@ -12,12 +13,15 @@ public class WeaponPosition {
 	public Vector2 scaleVariance = new Vector2();
 	public float xRot;
 	public bool accel;
+	public float TimeToReachRotation = 0f;
 	public float timeInPosition = 0.3f;
 	public float AnimSpeed = 0f;
 }
 public class WeaponFloating : MonoBehaviour {
 
+	public float TargetAngle;
 	public float angle = 0f;
+	public float RotationSpeed = 180f;
 	public float base_angle = 0f;
 
 	public float sprite_angle = 0f;
@@ -35,8 +39,11 @@ public class WeaponFloating : MonoBehaviour {
 	private ChaseTarget m_chase;
 	public GameObject m_target;
 
-	private bool m_slashing = false;
+	protected bool m_slashing = false;
 	private float m_timeStopSlash = 0.0f;
+	private float m_trueRotationSpeed = 0.0f;
+	private string m_weaponFX;
+
 	private WeaponPosition m_currentWeaponPos;
 
 	// Use this for initialization
@@ -50,7 +57,6 @@ public class WeaponFloating : MonoBehaviour {
 		foreach (WeaponPosition wp in WeaponPos) {
 			m_weaponDict [wp.name] = wp;
 		}
-		//m_chase.Active = false;
 	}
 	
 	// Update is called once per frame
@@ -63,7 +69,11 @@ public class WeaponFloating : MonoBehaviour {
 		}
 	}
 
-	void standardSprite() {
+	protected void standardSprite() {
+		if (m_target.GetComponent<AnimatorSprite> () != null) {
+			updateState (new string[]{m_target.GetComponent<AnimatorSprite> ().CurrentAnimation });
+			return;
+		} 
 		PhysicsSS m_physics = m_target.GetComponent<PhysicsSS> ();
 		if (!m_physics.OnGround) {
 			if (m_physics.TrueVelocity.y > 0f) {
@@ -79,7 +89,7 @@ public class WeaponFloating : MonoBehaviour {
 		}
 	}
 
-	void updateState(string[] sList) {
+	protected void updateState(string[] sList) {
 		foreach (string s in sList) {
 			if (m_weaponDict.ContainsKey (s)) {
 				updateState (m_weaponDict [s]);
@@ -88,8 +98,18 @@ public class WeaponFloating : MonoBehaviour {
 		}
 	}
 
-	void setAnimState(WeaponPosition wp) {
-		angle = wp.zRot + Random.Range (-wp.zAngleVariance / 2f, wp.zAngleVariance / 2f);
+	void setAnimState(WeaponPosition wp, bool instantRotate = false) {
+		if (instantRotate) {
+			angle = wp.zRot + Random.Range (-wp.zAngleVariance / 2f, wp.zAngleVariance / 2f);
+			TargetAngle = angle;
+		} else {
+			TargetAngle = wp.zRot + Random.Range (-wp.zAngleVariance / 2f, wp.zAngleVariance / 2f);
+		}
+		if (wp.TimeToReachRotation != 0f) {
+			m_trueRotationSpeed = (TargetAngle - angle) / wp.TimeToReachRotation;
+		} else {
+			m_trueRotationSpeed = RotationSpeed;
+		}
 		float xScale = wp.scale.x + Random.Range(-wp.scaleVariance.x/2f, wp.scaleVariance.x/2f);
 		float yScale = wp.scale.y + Random.Range(-wp.scaleVariance.y/2f, wp.scaleVariance.y/2f);
 		transform.localScale = new Vector3 (xScale,yScale, 1f);
@@ -105,6 +125,11 @@ public class WeaponFloating : MonoBehaviour {
 		if ( m_currentWeaponPos != wp)
 			setAnimState (wp);
 		Vector2 off = wp.pos;
+		if (Mathf.Abs (TargetAngle - angle) < Mathf.Abs (Time.deltaTime * m_trueRotationSpeed))
+			angle += (TargetAngle - angle);
+		else
+			angle +=  Time.deltaTime * m_trueRotationSpeed;
+		//angle %= 360;
 		float drawAngle = angle;
 		if (m_target.GetComponent<PhysicsSS> ().FacingLeft) {
 			off.x *= -1f;
@@ -113,20 +138,20 @@ public class WeaponFloating : MonoBehaviour {
 		} else {
 			m_sprite.flipX = false;
 		}
-		m_chase.SetTargetOffset (m_target.GetComponent<PhysicsSS> (), off);
+		m_chase.SetTargetOffset (m_target, off);
 		m_chase.Accelerate = wp.accel;
 		transform.rotation = Quaternion.Euler (new Vector3(0f,0f, drawAngle + base_angle));
 	}
 
-	void updateStandardSprite() {
+	protected void updateStandardSprite() {
 		sAngle = ((sprite_angle + 1) % 360f) / 360f;
 		m_animator.Play ("normal", -1, sAngle);
 		//transform.position = m_target.transform.position + new Vector3(currentOffset.x,currentOffset.y,0f);
 	}
 
-	void ExecuteFX() {
+	protected void ExecuteFX() {
 		updateState (m_currentWeaponPos);
-		m_animator.Play ("slash",-1);
+		m_animator.Play (m_weaponFX,-1);
 		if (Time.timeSinceLevelLoad > m_timeStopSlash) {
 			StopSlashFX ();
 		}
@@ -136,8 +161,9 @@ public class WeaponFloating : MonoBehaviour {
 		m_animator.Play ("normal", -1, sAngle);
 		m_timeStopSlash = Time.timeSinceLevelLoad + wp.timeInPosition;
 		m_slashing = true;
-		setAnimState (wp);
-		Debug.Log ("Anim Speed: " + wp.AnimSpeed);
+		m_weaponFX = wp.Animation;
+		setAnimState (wp,true);
+		//Debug.Log ("Anim Speed: " + wp.AnimSpeed);
 	}
 
 	void StopSlashFX () {

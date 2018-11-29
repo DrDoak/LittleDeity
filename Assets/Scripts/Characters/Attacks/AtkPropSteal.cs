@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class AtkPropSteal : AttackInfo {
-	public override void OnHitConfirm(GameObject other, Hitbox hb, HitResult hr) {
+	public override void OnHitConfirm(GameObject other, HitInfo hb, HitResult hr) {
 		//Debug.Log ("Hit Confirm with: " + other);
 		if (other.GetComponent<PropertyHolder> () != null) {
 			PropertyHolder other_ph = other.GetComponent<PropertyHolder> ();

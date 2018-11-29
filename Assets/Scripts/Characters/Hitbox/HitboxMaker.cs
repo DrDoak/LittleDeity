@@ -66,9 +66,11 @@ public class HitboxMaker : MonoBehaviour
 		newBox.Knockback = (m_physics == null) ? hbi.Knockback : m_physics.OrientVectorToDirection(hbi.Knockback);
 		newBox.IsFixedKnockback = hbi.FixedKnockback;
 		newBox.Stun = hbi.Stun;
+		newBox.FreezeTime = hbi.FreezeTime;
 		newBox.AddElement(hbi.Element);
 		newBox.Creator = gameObject;
 		newBox.Faction = Faction;
+		newBox.IsResetKnockback = hbi.ResetKnockback;
 		if (hbi.FollowCharacter)
 			newBox.SetFollow (gameObject,hbi.HitboxOffset);
 		if (hbi.ApplyProps)
@@ -213,10 +215,10 @@ public class HitboxMaker : MonoBehaviour
 			Destroy(hb.gameObject);
 	}
 
-	public void RegisterHit(GameObject otherObj, Hitbox hb, HitResult hr)
+	public void RegisterHit(GameObject otherObj, HitInfo hi, HitResult hr)
 	{
 		if (m_fighter)
-			m_fighter.RegisterHit (otherObj,hb,hr);
+			m_fighter.RegisterHit (otherObj,hi,hr);
 	}
 
 }

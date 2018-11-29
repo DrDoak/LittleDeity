@@ -9,18 +9,20 @@ public class Property : MonoBehaviour, ICustomMessageTarget
 
     public virtual void OnCreation() { }
 	public virtual void OnHit(HitInfo hi, GameObject attacker) { }
-	public virtual void OnHitConfirm(Hitbox myHitbox, GameObject objectHit, HitResult hr) { }
+	public virtual void OnHitConfirm(HitInfo myHitbox, GameObject objectHit, HitResult hr) { }
 	public virtual void OnSight(Observable observedObj) { }
     public virtual void OnDeath() { }
     public virtual void OnUpdate() { }
     public virtual void OnCollision() { }
 
-	public virtual void OnAttack() { }
+	public virtual void OnAttack(AttackInfo ai) { }
 	public virtual void OnControllableChange(bool isControllable) { }
 	public virtual void OnHitboxCreate (Hitbox hitboxCreated) {}
 
 	public virtual void OnAddProperty() { }
 	public virtual void OnRemoveProperty() {}
+
+	public virtual void OnJump() {}
 
 	public virtual void OnSave(CharData d) {}
 	public virtual void OnLoad(CharData d) {}

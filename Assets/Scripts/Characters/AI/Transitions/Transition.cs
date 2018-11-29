@@ -12,9 +12,9 @@ public class Transition : MonoBehaviour {
 	public AIBase MasterAI;
 
 	public TaskType OriginType;
-	public Task Origin;
+	public Task OriginTask;
 	public TaskType TargetType;
-	public Task Target;
+	public Task TargetTask;
 
 	// Use this for initialization
 	void Start () {
@@ -29,14 +29,16 @@ public class Transition : MonoBehaviour {
 	public void Init() {
 	}
 
+	public virtual void OnUpdate() {}
+
 	public virtual void OnHit(HitInfo hb) {}
 
 	public virtual void OnSight(Observable o) {}
 
 	public void TriggerTransition() {
 		if (TypeOfTransition == TransitionType.FROM_THIS_TASK) {
-			if (Target != null)
-				MasterAI.TransitionToTask (Target);
+			if (TargetTask != null)
+				MasterAI.TransitionToTask (TargetTask);
 			else
 				MasterAI.TransitionToTask (TargetType);
 		} else {

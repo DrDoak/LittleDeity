@@ -21,7 +21,11 @@ public class Attackable : MonoBehaviour
 {
 	private const float BOTTOM_OF_WORLD = -1000f;
 
-	public float Health = 100.0f;
+	[HideInInspector]
+	public float Health { get { return m_health; } private set { m_health = value; } }
+
+	[SerializeField]
+	private float m_health = 100.0f;
 	public float MaxHealth = 100.0f;
 
 	public bool Alive = true;
@@ -36,13 +40,14 @@ public class Attackable : MonoBehaviour
 
 	public bool DisplayHealth = true;
 	public GameObject Killer;
+	public GameObject DeathFX;
 	private HealthDisplay m_display;
 
 	internal void Awake()
 	{
 		m_movementController = GetComponent<PhysicsSS>();
 		m_fighter = GetComponent<Fighter>();
-		Health = Mathf.Min (Health, MaxHealth);
+		m_health = Mathf.Min (Health, MaxHealth);
 		m_currDeathTime = 0.0f;
 		InitResistences ();
 		if (GetComponent<PersistentItem> () != null)
@@ -87,6 +92,9 @@ public class Attackable : MonoBehaviour
 			ExecuteEvents.Execute<ICustomMessageTarget> (gameObject, null, (x, y) => x.OnDeath ());
 			if (GetComponent<BasicMovement> () && GetComponent<BasicMovement> ().IsCurrentPlayer)
 				PauseGame.OnPlayerDeath ();
+			if (DeathFX != null) {
+				Instantiate (DeathFX, transform.position,Quaternion.identity);
+			}
 			Destroy (gameObject);
 		}
 		GetComponent<SpriteRenderer>().color = Color.Lerp (Color.white, Color.black, (m_currDeathTime) / DeathTime);
@@ -188,12 +196,15 @@ public class Attackable : MonoBehaviour
 	private void ApplyHitToPhysicsSS(HitInfo hi)
 	{
 		Resistence r = GetAverageResistences (hi.Element);
+		m_movementController.FreezeInAir (hi.FreezeTime);
+		
 		Vector2 kb = hi.Knockback - (hi.Knockback * Mathf.Min(1f,(r.KnockbackResist/100f)));
 		if (!m_movementController)
 			return;
-
 		if (hi.IsFixedKnockback)
 		{
+			if (kb.y != 0f && hi.ResetKnockback)
+				m_movementController.CancelVerticalMomentum ();
 			m_movementController.AddToVelocity(kb);
 			return;
 		}
@@ -247,6 +258,7 @@ public class Attackable : MonoBehaviour
 		}
 		Resistence r =  GetAverageResistences(hi.Element);
 		float d;
+		//Debug.Log ("Damage; " + hi.Damage + " r: " + r.Percentage);
 		d = hi.Damage - (hi.Damage * (r.Percentage / 100f));
 		d = DamageObj (d);
 
@@ -310,9 +322,15 @@ public class Attackable : MonoBehaviour
 			newR.StunResist += pr.StunResist;
 			numResists ++;
 		}
-		newR.Percentage /= numResists;
-		newR.KnockbackResist /= numResists;
-		newR.StunResist /= numResists;
+		if (numResists > 0) {
+			newR.Percentage /= numResists;
+			newR.KnockbackResist /= numResists;
+			newR.StunResist /= numResists;
+		} else {
+			newR.Percentage = 0f;
+			newR.KnockbackResist = 0f;
+			newR.StunResist = 0f;
+		}
 		return newR;
 	}
 

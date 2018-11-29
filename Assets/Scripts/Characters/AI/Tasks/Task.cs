@@ -28,16 +28,21 @@ public class Task : MonoBehaviour {
 		TransitionsFrom = new List<Transition> ();
 
 		foreach (Transition t in GetComponents<Transition>()) {
-			if (t.TypeOfTransition == TransitionType.FROM_THIS_TASK)
+			if (t.TypeOfTransition == TransitionType.FROM_THIS_TASK) {
+				t.OriginTask = this;
 				TransitionsFrom.Add (t);
-			else
+			} else {
+				t.TargetTask = this;
 				TransitionsTo.Add (t);
+			}
 		}
 	}
 	
 	// Update is called once per frame
 	public void OnUpdate () {
-		
+		foreach (Transition t in TransitionsFrom) {
+			t.OnUpdate ();
+		}
 	}
 
 	public void OnSight(Observable o) { 

@@ -21,7 +21,7 @@ public class CameraFollow : MonoBehaviour {
 	float lookAheadDirX;
 	float smoothLookVelocityX;
 	float smoothVelocityY;
-	const float DISTANCE_SNAP = 20f;
+	public float distance_snap = 20f;
 
 	bool lookAheadStopped;
 
@@ -38,7 +38,7 @@ public class CameraFollow : MonoBehaviour {
 	void Update() {
 		if (target != null) {
 			focusArea.Update (target.GetComponent<Collider2D> ().bounds, minVertex, maxVertex, UseCameraLimits);
-			if (Vector3.Distance (target.transform.position, transform.position) > DISTANCE_SNAP) {
+			if (Vector3.Distance (target.transform.position, transform.position) > distance_snap) {
 				transform.position = target.transform.position;
 			}
 		} else {
@@ -73,10 +73,10 @@ public class CameraFollow : MonoBehaviour {
 	}
 
 	void OnDrawGizmos() {
-		/*Gizmos.color = new Color (0, 0, 1, .1f);
+		Gizmos.color = new Color (0, 0, 1, .1f);
 		Gizmos.DrawCube (focusArea.centre, focusAreaSize);
 		Gizmos.color = new Color (0, 1, 0, .4f);
-		Gizmos.DrawCube (focusArea.centre, viewSize);*/
+		Gizmos.DrawCube (focusArea.centre, viewSize);
 	}
 
 	struct FocusArea {
