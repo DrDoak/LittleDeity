@@ -13,8 +13,8 @@ public interface ICustomMessageTarget : IEventSystemHandler
 	void OnSight(Observable observedObj);
 	void OnDeath();
 	void OnUpdate();
-	void OnCollision();
-	void OnAttack();
+	//void OnCollision();
+	void OnAttack(AttackInfo ai);
 	void OnHitboxCreate (Hitbox hitboxCreated);
 
 	void OnJump();

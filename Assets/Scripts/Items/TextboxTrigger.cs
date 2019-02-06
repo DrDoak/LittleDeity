@@ -14,8 +14,7 @@ public class TextboxTrigger : Interactable {
 	public string TextboxString;
 
 	void Start() {
-		if (GetComponent<PersistentItem> () != null)
-			GetComponent<PersistentItem> ().InitializeSaveLoadFuncs (storeData,loadData);
+		base.init ();
 	}
 
 	void Update () { destroyAfterUse (); }

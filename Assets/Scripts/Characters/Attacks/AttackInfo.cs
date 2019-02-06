@@ -59,6 +59,13 @@ public class SentimentAttack {
 	public bool TransferSentiment = false;
 }
 
+[System.Serializable]
+public class AttackFXList {
+	public List<AttackFXInfo> OnStartUp = new List<AttackFXInfo>();
+	public List<AttackFXInfo> OnAttack = new List<AttackFXInfo>();
+	public List<AttackFXInfo> OnRecovery = new List<AttackFXInfo>();
+}
+
 public class AttackInfo : MonoBehaviour
 {
 	private AttackState m_progress;
@@ -79,13 +86,19 @@ public class AttackInfo : MonoBehaviour
 	public SoundInfo m_SoundInfo;
 	public SentimentAttack m_SentimentInfo;
 
+	public AttackFXList m_attackFXList;
+
 	protected PhysicsSS m_physics;
 	protected HitboxMaker m_hitboxMaker;
+
+	private Dictionary<AttackFXInfo,float> m_queuedFX;
+
 
 	internal void Awake()
 	{
 		m_physics = GetComponent<PhysicsSS>();
 		m_hitboxMaker = GetComponent<HitboxMaker>();
+		m_queuedFX = new Dictionary<AttackFXInfo, float> ();
 
 		m_progress = AttackState.INACTIVE;
 		m_progressEndTimes = new Dictionary<AttackState, float>()
@@ -116,11 +129,13 @@ public class AttackInfo : MonoBehaviour
 	{
 		ProgressEvent += ap;
 	}
-
+		
 	public void Progress()
 	{
 		m_inTickFunctions [m_progress] ();
 		m_timeSinceStart += Time.deltaTime;
+
+		updateFXQueue ();
 		if (m_timeSinceStart < m_progressEndTimes [m_progress] + m_AttackDelay)
 			return;
 		m_progressCalls[NextInProgression()]();
@@ -144,7 +159,7 @@ public class AttackInfo : MonoBehaviour
 		m_progress = AttackState.INACTIVE;
 		Progress();
 	}
-
+		
 	public virtual void OnHitConfirm(GameObject other, HitInfo hb, HitResult hr) {}
 
 	public virtual void OnInterrupt(float stunTime, bool successfulHit, HitInfo hi) {}
@@ -157,6 +172,13 @@ public class AttackInfo : MonoBehaviour
 		}
 		if (m_SoundInfo.StartupSoundFX != null)
 			FindObjectOfType<AudioManager> ().PlayClipAtPos (m_SoundInfo.StartupSoundFX,transform.position,0.5f,0f,0.25f);
+
+		foreach (AttackFXInfo afi in m_attackFXList.OnStartUp) {
+			if (afi.Delay <= 0f)
+				CreateAttackFX (afi);
+			else
+				m_queuedFX.Add (afi,Time.timeSinceLevelLoad + afi.Delay);
+		}
 	}
 
 	protected virtual void OnAttack()
@@ -166,12 +188,25 @@ public class AttackInfo : MonoBehaviour
 		}
 		if (m_SoundInfo.AttackSoundFX != null)
 			FindObjectOfType<AudioManager> ().PlayClipAtPos (m_SoundInfo.AttackSoundFX,transform.position,0.5f,0f,0.25f);
+
+		foreach (AttackFXInfo afi in m_attackFXList.OnAttack) {
+			if (afi.Delay <= 0f)
+				CreateAttackFX (afi);
+			else
+				m_queuedFX.Add (afi,Time.timeSinceLevelLoad + afi.Delay);
+		}
 	}
 
-	protected virtual void OnRecovery() {} 
+	protected virtual void OnRecovery() {
+		foreach (AttackFXInfo afi in m_attackFXList.OnRecovery) {
+			if (afi.Delay <= 0f)
+				CreateAttackFX (afi);
+			else
+				m_queuedFX.Add (afi,Time.timeSinceLevelLoad + afi.Delay);
+		}
+	} 
 
 	protected virtual void OnConclude() {}
-
 
 	protected virtual void StartUpTick() { } 
 	protected virtual void AttackTick() { } 
@@ -203,6 +238,36 @@ public class AttackInfo : MonoBehaviour
 				Gizmos.DrawCube (transform.position + new Vector3(off.x,off.y,0f), new Vector3 (m_HitboxInfo[0].HitboxScale.x, m_HitboxInfo[0].HitboxScale.y, 0f));
 			}
 		}
+	}
+	
+	protected GameObject CreateAttackFX(AttackFXInfo afxi) {
+		Vector3 p = afxi.Offset + new Vector3(
+			UnityEngine.Random.Range (-afxi.OffsetVariation.x / 2f, afxi.OffsetVariation.x / 2f),
+			UnityEngine.Random.Range (-afxi.OffsetVariation.y / 2f, afxi.OffsetVariation.y / 2f),
+			UnityEngine.Random.Range (-afxi.OffsetVariation.z / 2f, afxi.OffsetVariation.z / 2f));
+		
+		GameObject fx = Instantiate (afxi.EffectPrefab, transform);
+		fx.transform.position = transform.position + m_physics.OrientVectorToDirection (p);
+		float zrot = afxi.RotationZ + UnityEngine.Random.Range (-afxi.RotationVariation / 2f, afxi.RotationVariation / 2f);
+		fx.transform.rotation = Quaternion.Euler(new Vector3(0f,0f,zrot));
+		Vector3 s = afxi.Scale + new Vector3(
+			UnityEngine.Random.Range (-afxi.ScaleVariation.x / 2f, afxi.ScaleVariation.x / 2f),
+			UnityEngine.Random.Range (-afxi.ScaleVariation.y / 2f, afxi.ScaleVariation.y / 2f),
+			UnityEngine.Random.Range (-afxi.ScaleVariation.z / 2f, afxi.ScaleVariation.z / 2f));
+		fx.transform.localScale = new Vector3 ((afxi.FlipOnX && m_physics.FacingLeft)?-s.x:s.x, s.y, s.z);
+
+		return fx;
+	}
+
+	private void updateFXQueue() {
+		Dictionary<AttackFXInfo,float> newQueue = new Dictionary<AttackFXInfo, float>();
+		foreach (AttackFXInfo afi in m_queuedFX.Keys) {
+			if (m_queuedFX [afi] > Time.timeSinceLevelLoad)
+				CreateAttackFX (afi);
+			else
+				newQueue.Add (afi,m_queuedFX[afi]);
+		}
+		m_queuedFX = newQueue;
 	}
 }
 

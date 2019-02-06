@@ -20,6 +20,8 @@ public class GameManager : MonoBehaviour
 	public GameObject FXWaterSplash;
 
 	public GameObject CurrentPlayer;
+	public GameObject Canvas;
+	public GameObject PauseCanvas;
 
 	public static GameManager Instance
 	{
@@ -33,6 +35,7 @@ public class GameManager : MonoBehaviour
 		if (m_instance == null)
 		{
 			m_instance = this;
+			SceneManager.sceneLoaded += InitCanvasOnSceneLoad;
 		}
 		else if (m_instance != this)
 		{
@@ -62,7 +65,7 @@ public class GameManager : MonoBehaviour
 	public void SetPlayer(BasicMovement bm) {
 		GetComponent<CameraFollow> ().target = bm.GetComponent<PhysicsSS>();
 		GetComponent<CameraFollow> ().initFunct ();
-		GetComponent<GUIHandler> ().OnSetPlayer (bm);
+		FindObjectOfType<GUIHandler> ().OnSetPlayer (bm);
 		CurrentPlayer = bm.gameObject;
 	}
 
@@ -74,6 +77,16 @@ public class GameManager : MonoBehaviour
 	public Property GetPropInfo(Property p ) {
 		System.Type sysType = p.GetType ();
 		return (Property)GetComponentInChildren (sysType);
+	}
+
+	public void InitCanvasOnSceneLoad(Scene scene, LoadSceneMode mode) {
+		Debug.Log ("Init canvas on scene load");
+		InitializeCanvas ();
+	}
+	public void InitializeCanvas() {
+		Debug.Log ("INit canvas");
+		Instantiate (Canvas);
+		Instantiate (PauseCanvas);
 	}
 }
 

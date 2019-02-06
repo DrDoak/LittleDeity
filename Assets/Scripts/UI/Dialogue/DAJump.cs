@@ -9,10 +9,10 @@ public class DAJump : DialogueAction {
 	}
 
 	public override void PerformAction(string actionString, Textbox originTextbox) {
-		string raw = originTextbox.masterSequence.RawText;
+		string raw = originTextbox.MasterSequence.RawText;
 
 		string targetTag = ExtractArgs(actionString,"@")[0];
-		Debug.Log ("Looking for tag: " + targetTag);
+		//Debug.Log ("Looking for tag: " + targetTag);
 		int startInt = 0;
 		int depth = 0;
 		List<string> tags = new List<string>();
@@ -37,7 +37,7 @@ public class DAJump : DialogueAction {
 			}
 		}
 		if (startInt != 0) {
-			originTextbox.masterSequence.closeSequence ();
+			originTextbox.MasterSequence.closeSequence ();
 			TextboxManager.StartSequence (raw.Substring (startInt + 1));
 		}
 	}

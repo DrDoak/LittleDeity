@@ -9,6 +9,7 @@ public class DAEnd : DialogueAction {
 	}
 
 	public override void PerformAction(string actionString, Textbox originTextbox) {
-		originTextbox.masterSequence.closeSequence ();
+		Debug.Log ("End Called");
+		originTextbox.MasterSequence.closeSequence ();
 	}
 }

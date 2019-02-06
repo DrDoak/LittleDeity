@@ -14,6 +14,7 @@ public class HalberdTargetFinder : MonoBehaviour {
 	public GameObject m_halberd;
 	private GameObject m_target;
 	private bool FacingLeft;
+	private PhysicsSS m_physics;
 
 	// Use this for initialization
 	void Start () {
@@ -25,6 +26,7 @@ public class HalberdTargetFinder : MonoBehaviour {
 		m_target = Instantiate (ListLua.Instance.HalberdTargeter);
 		m_halberd.GetComponent<Projectile> ().SetHitboxActive (false);
 		m_halberd.GetComponent<Projectile> ().Creator = gameObject;
+		m_physics = GetComponent<PhysicsSS> ();
 	}
 	
 	// Update is called once per frame
@@ -35,9 +37,9 @@ public class HalberdTargetFinder : MonoBehaviour {
 		if (CurrentTarget == null) {
 			updateTargets ();
 		}
-		if (FacingLeft != GetComponent<PhysicsSS> ().FacingLeft) {
+		if (FacingLeft != m_physics.FacingLeft) {
 			updateTargets ();
-			FacingLeft = GetComponent<PhysicsSS> ().FacingLeft;
+			FacingLeft = m_physics.FacingLeft;
 		}
 	}
 
@@ -46,7 +48,7 @@ public class HalberdTargetFinder : MonoBehaviour {
 		float maxScoreFound = 0;
 		GameObject bestTarget = null;
 		foreach (Attackable a in m_attackables) {
-			if (!GetComponent<Attackable> ().CanAttack (a.Faction))
+			if (!GetComponent<Attackable> ().CanAttack (a.Faction) || !a.Alive || !a.CanTarget)
 				continue;
 			float dist = Vector3.Distance (transform.position, a.transform.position);
 			if (dist > MaxRange)

@@ -32,17 +32,16 @@ public class DAQuestion : DialogueAction {
 		rawOptions.Add (lastLine.Substring(1));
 		GameObject go = GameObject.Instantiate (GameObject.FindObjectOfType<TextboxManager> ().DialogueBoxPrefab);
 		go.GetComponent<DialogueOptionBox> ().Prompt = prompt;
-		go.GetComponent<DialogueOptionBox> ().masterSequence = originTextbox.masterSequence;
+		go.GetComponent<DialogueOptionBox> ().MasterSequence = originTextbox.MasterSequence;
 		Debug.Log ("length of rawoptions; " + rawOptions.Count);
 		foreach (string s in rawOptions) {
 			DialogueOption dop = new DialogueOption ();
 			dop.SelectionText = s;
 			dop.OnSelect = SelectionFunction;
-			dop.remainderText = s + originTextbox.masterSequence.RawText;
+			dop.remainderText = s + originTextbox.MasterSequence.RawText;
 			go.GetComponent<DialogueOptionBox> ().AddDialogueOption (dop);
-			//Debug.Log ("Remainder: " + dop.remainderText + " last char: " + originTextbox.lastCharacter);
 		}
-		originTextbox.masterSequence.closeSequence ();
+		originTextbox.MasterSequence.closeSequence ();
 	}
 
 	private void SelectionFunction(DialogueOption dop) {

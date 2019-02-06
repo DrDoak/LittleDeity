@@ -70,7 +70,9 @@ public class WeaponFloating : MonoBehaviour {
 	}
 
 	protected void standardSprite() {
-		if (m_target.GetComponent<AnimatorSprite> () != null) {
+		if (m_target == null)
+			return;
+		if (m_target != null && m_target.GetComponent<AnimatorSprite> () != null ) {
 			updateState (new string[]{m_target.GetComponent<AnimatorSprite> ().CurrentAnimation });
 			return;
 		} 

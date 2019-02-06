@@ -1,5 +1,5 @@
-set source=C:\Users\luole\LittleDeity\Assets\Art\Tiles\Example_orig.png
-set dest=C:\Users\luole\LittleDeity\Assets\Art\Tiles\Example.png
+set source=C:\Users\luole\LittleDeity\Assets\Art\Tiles\buried_2_orig.png
+set dest=C:\Users\luole\LittleDeity\Assets\Art\Tiles\buried_2.png
 set newWidth=340
 set newHeight=340
 

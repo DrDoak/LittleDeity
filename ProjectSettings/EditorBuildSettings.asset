@@ -14,3 +14,16 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Test/Saving/Test_Right.unity
     guid: ab01f7fcba5abd04fa5278002efcb4d4
+  - enabled: 1
+    path: Assets/Scenes/Levels/alleys/al_garbage.unity
+    guid: 9d1ac29337899594caf092a7c23e8d1d
+  - enabled: 1
+    path: Assets/Scenes/Levels/alleys/al_halls.unity
+    guid: c5cf64f5be94fc64688b9919de8d370c
+  - enabled: 1
+    path: Assets/Scenes/Levels/alleys/al_halls2.unity
+    guid: 4c6b1f84a0a698746a08ab58962e297b
+  - enabled: 1
+    path: Assets/Scenes/Levels/alleys/al_halls3.unity
+    guid: eb5cf03250652c14682da1ee7efa2e59
+  m_configObjects: {}

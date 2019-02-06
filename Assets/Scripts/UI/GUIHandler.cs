@@ -30,18 +30,15 @@ public class GUIHandler : MonoBehaviour {
 	Dictionary<string,GameObject> m_iconList;
 
 	void Awake () {
-		if (Instance == null)
-			Instance = this;
-		else if (Instance != this) {
-			Destroy (gameObject);
-		}
+		Instance = this;
 		PropertyLists = new List<GameObject> ();
 		m_iconList = new Dictionary<string,GameObject>();
 		m_actionTextList = new List<UIActionText> ();
 	}
 	void Update() {
 		foreach (UIBarInfo u in uibars.Values) {
-			u.funcUpdate (u);
+			if (u.target != null)
+				u.funcUpdate (u);
 		}
 		List<UIActionText> newL = new List<UIActionText> ();
 		foreach (UIActionText uat in m_actionTextList) {
@@ -68,23 +65,29 @@ public class GUIHandler : MonoBehaviour {
 		if (uib.id == "SameAsLabel")
 			uib.id = uib.UILabel;
 		RemoveUIBar (uib.id);
-		GameObject newBar = Instantiate (UIBarPrefab,transform.Find("Canvas").Find("UI_Bar_List"));
+		GameObject newBar = Instantiate (UIBarPrefab, transform);
 		uib.element = newBar;
 		UIBar uibar = uib.element.GetComponent<UIBar> ();
-		uibar.Initialize (uib);
+		uibar.Initialize (uib, uibars.Count);
+		uib.uib = uibar;
 		uibars.Add (uib.id, uib);
 	}
 
 	public void RemoveUIBar(string id) {
 		if (uibars.ContainsKey (id)) {
+			int NumRemoved = uibars [id].uib.Num;
 			Destroy (uibars [id].element);
 			uibars.Remove (id);
+			foreach (UIBarInfo uibi in uibars.Values) {
+				uibi.uib.OnRemove (NumRemoved);
+			}
 		}
+
 	}
 
 	public void AddText(UIActionText uai) {
 		uai.timeCreated = Time.timeSinceLevelLoad;
-		GameObject go = Instantiate (ActionTextPrefab, transform.Find("Canvas").Find("ActionText"));
+		GameObject go = Instantiate (ActionTextPrefab, transform.Find("ActionText"));
 		go.GetComponent<TextMeshProUGUI> ().text = uai.text.PadLeft(40);
 		go.GetComponent<TextMeshProUGUI> ().color = new Color (uai.textColor.r, uai.textColor.r, uai.textColor.b, 0f);
 
@@ -102,6 +105,17 @@ public class GUIHandler : MonoBehaviour {
 		}
 		m_actionTextList = newL;
 		AddText (uai);
+	}
+
+	public void RemoveText(UIActionText uai) {
+		List<UIActionText> newL = new List<UIActionText> ();
+		foreach (UIActionText uat in m_actionTextList) {
+			if (uai.id == uat.id)
+				Destroy (uat.element);
+			else
+				newL.Add (uat);
+		}
+		m_actionTextList = newL;
 	}
 
 	public void SetHUD(bool active) {
@@ -137,7 +151,7 @@ public class GUIHandler : MonoBehaviour {
     
 
 	public void AddPropIcon(Property p) { 
-		if (!m_iconList.ContainsKey(p.GetType().ToString()) ){
+		/*if (!m_iconList.ContainsKey(p.GetType().ToString()) ){
 			System.Type sysType = p.GetType ();
 			Property mp = (Property)GetComponentInChildren (sysType);
 			GameObject go = Instantiate (IconPropertyPrefab);
@@ -145,10 +159,10 @@ public class GUIHandler : MonoBehaviour {
 			if (mp != null) {
 				go.GetComponent<Image> ().sprite = mp.icon;
 			} else {
-				go.GetComponent<Image> ().sprite = mp.icon;
+				//go.GetComponent<Image> ().sprite = mp.icon;
 			}
 			m_iconList [p.GetType().ToString()] = go;
-		}
+		}*/
 	}
 
 	public void ClearPropIcons() {

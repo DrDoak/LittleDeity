@@ -40,7 +40,7 @@ public class DialogueUnit  {
 			}
 			DialogueSubunit ne = elements [currentElement];
 			currentTB = TextboxManager.addTextbox (ne.text, Speaker,ne.isFullScreen);
-			currentTB.masterSequence = this;
+			currentTB.MasterSequence = this;
 			currentTB.FrozenCharacters = FrozenCharacters;
 			currentElement += 1;
 		}

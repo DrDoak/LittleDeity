@@ -97,7 +97,7 @@ public class BasicMovement : MonoBehaviour
 
 	internal void Start()
 	{
-		if (GetComponent<BasicMovement>().IsCurrentPlayer) {
+		/*if (IsCurrentPlayer) {
 			UIBarInfo ubi = new UIBarInfo ();
 			ubi.FillColor = Color.green;
 			ubi.UILabel = "Speed";
@@ -106,7 +106,7 @@ public class BasicMovement : MonoBehaviour
 			ubi.DisplayMode = UIBarDisplayMode.BASE;
 			ubi.useScale = false;
 			FindObjectOfType<GUIHandler> ().AddUIBar (ubi);
-		}
+		}*/
 		ExecuteEvents.Execute<ICustomMessageTarget> (gameObject, null, (x, y) => x.OnControllableChange (IsCurrentPlayer));
 	}
 
@@ -119,11 +119,11 @@ public class BasicMovement : MonoBehaviour
 	internal void Update()
 	{
 		if (!m_physics.CanMove) {
-			m_inputMove = new Vector2(0f, 0f);
-		}else if (IsCurrentPlayer && m_autonomy && Time.deltaTime > 0f)
-			PlayerMovement();
+			m_inputMove = new Vector2 (0f, 0f);
+		} else if (IsCurrentPlayer && m_autonomy && Time.deltaTime > 0f)
+			PlayerMovement ();
 		else if (m_targetSet)
-			NpcMovement();
+			NpcMovement ();		
 		if (m_FootStepInfo.PlayFootsteps)
 			PlayStepSounds ();
 		MoveSmoothly();
@@ -283,13 +283,17 @@ public class BasicMovement : MonoBehaviour
 		else
 			m_physics.SetDirection (true);
 	}
+	/*
+	 * && 
+			((m_physics.FacingLeft && point.x < transform.position.x) ||
+				(!m_physics.FacingLeft && point.x > transform.position.x))
+	 */
 	public void MoveToPoint(Vector3 point) {
 		m_inputMove = new Vector2(0,0);
 
 		float dist = Vector3.Distance (transform.position, point);
-		if (dist > m_abandonDistance || ( dist < m_minDistance && 
-			((m_physics.FacingLeft && point.x < transform.position.x) ||
-				(!m_physics.FacingLeft && point.x > transform.position.x)))){
+		bool b = dist < m_minDistance;
+		if (dist < m_minDistance ) {
 			EndTarget ();
 		} else {
 			if (m_physics.CanMove) {

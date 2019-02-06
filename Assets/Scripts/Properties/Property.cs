@@ -11,9 +11,11 @@ public class Property : MonoBehaviour, ICustomMessageTarget
 	public virtual void OnHit(HitInfo hi, GameObject attacker) { }
 	public virtual void OnHitConfirm(HitInfo myHitbox, GameObject objectHit, HitResult hr) { }
 	public virtual void OnSight(Observable observedObj) { }
+
+	public virtual void OnAttack() { }
     public virtual void OnDeath() { }
     public virtual void OnUpdate() { }
-    public virtual void OnCollision() { }
+    //public virtual void OnCollision() { }
 
 	public virtual void OnAttack(AttackInfo ai) { }
 	public virtual void OnControllableChange(bool isControllable) { }

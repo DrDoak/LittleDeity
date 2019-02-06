@@ -17,16 +17,16 @@ public class AnimatorSprite : MonoBehaviour
 		m_anim = GetComponent<Animator>();
 		if (FindObjectOfType<LightSettings> () != null &&
 		    FindObjectOfType<LightSettings> ().UseLighting) {
-			GetComponent<SpriteRenderer> ().material = FindObjectOfType<LightSettings> ().lightingMaterial;
+
 			transform.position = new Vector3 (transform.position.x, transform.position.y,  -1f * (GetComponent<Renderer> ().sortingOrder) / 32);
 		}
 	}
 
-	public void Play(string[] stateNames)
+	public void Play(string[] stateNames, bool autoAlign = false)
 	{
 		foreach (string s in stateNames)
 		{
-			if (Play(s)) 
+			if (Play(s, autoAlign)) 
 				break;
 		}
 	}

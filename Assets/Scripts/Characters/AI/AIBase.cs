@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class AIBase : MonoBehaviour {
 
-	Task m_currentTask;
+	public Task m_currentTask;
 
 	Dictionary<TaskType, List<Task>> MyTasks;
 
@@ -34,9 +34,11 @@ public class AIBase : MonoBehaviour {
 	}
 
 	public void OnHit(HitInfo hb) { 
-		m_currentTask.OnHit (hb);
-		foreach (Transition t in GenericTransitions[m_currentTask.MyTaskType]) {
-			t.OnHit (hb);
+		if (m_currentTask != null) {
+			m_currentTask.OnHit (hb);
+			foreach (Transition t in GenericTransitions[m_currentTask.MyTaskType]) {
+				t.OnHit (hb);
+			}
 		}
 	}
 
@@ -54,6 +56,7 @@ public class AIBase : MonoBehaviour {
 			m_currentTask.SetActive (false);
 		m_currentTask = t;
 		m_currentTask.SetActive (true);
+		m_currentTask.OnTransition ();
 		if (!GenericTransitions.ContainsKey (m_currentTask.MyTaskType))
 			GenericTransitions [m_currentTask.MyTaskType] = new List<Transition> ();
 	}

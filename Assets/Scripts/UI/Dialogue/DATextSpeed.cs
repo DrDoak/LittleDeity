@@ -9,6 +9,6 @@ public class DATextSpeed : DialogueAction {
 	}
 
 	public override void PerformAction(string actionString, Textbox originTextbox) {
-		originTextbox.timeBetweenChar = float.Parse (ExtractArgs(actionString,"$")[0]);
+		originTextbox.TimeBetweenType = float.Parse (ExtractArgs(actionString,"$")[0]);
 	}
 }

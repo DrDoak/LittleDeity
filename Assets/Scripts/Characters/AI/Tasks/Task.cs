@@ -41,19 +41,25 @@ public class Task : MonoBehaviour {
 	// Update is called once per frame
 	public void OnUpdate () {
 		foreach (Transition t in TransitionsFrom) {
-			t.OnUpdate ();
+			if (t.isActiveAndEnabled)
+				t.OnUpdate ();
+		}
+		if (m_active) {
+			OnActiveUpdate ();
 		}
 	}
 
 	public void OnSight(Observable o) { 
 		foreach (Transition t in TransitionsFrom) {
-			t.OnSight (o);
+			if (t.isActiveAndEnabled)
+				t.OnSight (o);
 		}
 	}
 
 	public void OnHit(HitInfo hb) { 
 		foreach (Transition t in TransitionsFrom) {
-			t.OnHit (hb);
+			if (t.isActiveAndEnabled)
+				t.OnHit (hb);
 		}
 	}
 
@@ -65,5 +71,11 @@ public class Task : MonoBehaviour {
 
 	public void SetActive(bool act) {
 		m_active = act;
+	}
+
+	public virtual void OnTransition() {
+	}
+
+	public virtual void OnActiveUpdate() {
 	}
 }

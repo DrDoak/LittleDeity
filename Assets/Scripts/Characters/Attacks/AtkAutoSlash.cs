@@ -76,15 +76,15 @@ public class AtkAutoSlash : AtkStance {
 			FindObjectOfType<WeaponFloating> ().StartSlashFX (m_autoAttack.down_WeaponPos);
 		} else if (m_attackDirection == "up") {
 			if (!GetComponent<PhysicsSS>().OnGround)
-				SetFollowPoint (new Vector3 (0f, 3f, 0f), other.transform.position,0.4f);
+				SetFollowPoint (new Vector3 (0f, 3f, 0f), other.transform.position,0.4f,true);
 			animArray = m_autoAttack.UpAttackAnimations;
 			FindObjectOfType<WeaponFloating> ().StartSlashFX (m_autoAttack.up_WeaponPos);
 		} else if (HoldingTowardsTarget (other.transform.position)) {
-			SetFollowPoint (new Vector3 (4f, 0.2f, 0f), other.transform.position,0.4f);
+			SetFollowPoint (new Vector3 (4f, 0.2f, 0f), other.transform.position,0.4f,!GetComponent<PhysicsSS>().OnGround);
 			animArray = m_autoAttack.AttackAnimations;
 			FindObjectOfType<WeaponFloating> ().StartSlashFX (m_weaponPos);
 		} else {
-			SetFollowPoint (new Vector3 (-1.5f, 0.75f, 0f), other.transform.position, 0.25f);
+			SetFollowPoint (new Vector3 (-1.5f, 0.75f, 0f), other.transform.position, 0.25f,!GetComponent<PhysicsSS>().OnGround);
 			animArray = m_autoAttack.AttackAnimations;
 			FindObjectOfType<WeaponFloating> ().StartSlashFX (m_weaponPos);
 		}
@@ -155,13 +155,13 @@ public class AtkAutoSlash : AtkStance {
 		}
 	}
 
-	private void SetFollowPoint(Vector3 offset, Vector3 target, float time) {
+	private void SetFollowPoint(Vector3 offset, Vector3 target, float time,bool floating = true) {
 		Vector3 o = offset;
 		if (target.x < transform.position.x)
 			o.x *= -1f;
 		FollowPoint = target + o;
 		FollowTime = time;
-		m_physics.Floating = true;
+		m_physics.Floating = floating;
 		VerticalMomentumCancel ();
 	}
 

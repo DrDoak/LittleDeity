@@ -143,19 +143,19 @@ public class TextboxManager : MonoBehaviour {
 		}
 
 		Textbox tb = newTextbox.GetComponent<Textbox> ();
-		tb.m_sound = nextSoundType;
+		tb.TypingSound = nextSoundType;
 		/*if (!type) {
 			//Debug.Log ("displaying Textbox: " + text);
 			newTextbox.GetComponent<DestroyAfterTime> ().duration = textSpeed * 1.2f * text.Length + timeAfter;
 			newTextbox.GetComponent<DestroyAfterTime> ().toDisappear = true;
 		}*/
 
-		tb.setTypeMode (typeText);			
+		tb.SetTypeMode (typeText);			
 		tb.setText(text);
 		//tb.transform.position = newPos;
-		tb.setTargetObj (targetObj);
-		tb.pauseAfterType = timeAfter;
-		tb.timeBetweenChar = textSpeed;
+		tb.SetTargetObj (targetObj);
+		tb.PauseAfterTextboxDone = timeAfter;
+		tb.TimeBetweenType = textSpeed;
 		RectTransform[] transforms = newTextbox.GetComponentsInChildren<RectTransform> ();
 		if (text.Length > 200) {
 			Vector2 v = new Vector2 ();
@@ -178,7 +178,7 @@ public class TextboxManager : MonoBehaviour {
 		float targetY = startLocation.y + 5f;
 		return new Vector2 (startLocation.x, targetY);
 	}
-	public void setPauseAfterType(float time) {
+	public void setPauseAfterTextboxDone(float time) {
 		timeAfter = time;
 	}
 	public void setTextSpeed(float time ){
@@ -194,6 +194,6 @@ public class TextboxManager : MonoBehaviour {
 		Instance.m_currentSequences.Clear ();
 	}
 	public static string GetKeyString(string action) {
-		return InputManager.GetAction ("Keyboard", action).Bindings [0].Positive.ToString ();
+		return InputManager.GetAction ("Default", action).Bindings [0].Positive.ToString ();
 	}
 }

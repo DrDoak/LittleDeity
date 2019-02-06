@@ -13,6 +13,7 @@ public class FXHit : MonoBehaviour {
 	public GameObject FXHitBlock;
 	public GameObject FXExplosion;
 	public GameObject FXHeal;
+	public GameObject FXSentiment;
 
 	public AudioClip SFXPhysical;
 	public AudioClip SFXFire;

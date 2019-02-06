@@ -19,6 +19,10 @@ public class PR_Focus : Property {
 
 	private const float PARRY_WINDOW = 0.3f;
 
+	private UIActionText m_msg_parry;
+	private UIActionText m_msg_backstab;
+	private UIActionText m_msg_perfectguard;
+
 	public override void OnUpdate() {
 		if (Time.timeSinceLevelLoad - m_sinceLastHit > FocusRegainDelay)
 			damageFocus(-FocusRegainRate * Time.deltaTime);
@@ -27,25 +31,56 @@ public class PR_Focus : Property {
 			LastDirectionHeld = inputDir;
 			m_last_time_held_direction = Time.timeSinceLevelLoad;
 		}
+		m_msg_parry = new UIActionText ();
+		m_msg_parry.text = "Parry";
+		m_msg_parry.textColor = Color.white;
+		m_msg_parry.timeToDisplay = 1f;
+
+		m_msg_perfectguard = new UIActionText ();
+		m_msg_perfectguard.text = "Perfect Guard";
+		m_msg_perfectguard.textColor = Color.yellow;
+		m_msg_perfectguard.timeToDisplay = 1f;
+
+		m_msg_backstab = new UIActionText ();
+		m_msg_backstab.text = "BackStabbed!!!";
+		m_msg_backstab.textColor = Color.red;
+		m_msg_backstab.timeToDisplay = 1f;
 	}
 	public override void OnHit(HitInfo hi, GameObject attacker) {
+		if (m_focus <= 0f)
+			return;
 		if (hi.Damage > 0f || hi.FocusDamage > 0f)
 			m_sinceLastHit = Time.timeSinceLevelLoad;
 		float f = hi.FocusDamage;
 		bool atk = GetComponent<Fighter> ().IsAttacking();
 		float timeSinceLastDir = Time.timeSinceLevelLoad - m_last_time_held_direction;
-		if (AwayAttack (hi.Knockback,LastDirectionHeld)) {
-			if (timeSinceLastDir < PARRY_WINDOW && !atk)
+		Vector2 kb = hi.Knockback;
+		if (!hi.IsFixedKnockback) {
+			Vector3 kb3 = transform.position - hi.mHitbox.transform.position;
+			kb = new Vector2 (kb3.x, kb3.y);
+		}
+		if (AwayAttack (kb,LastDirectionHeld)) {
+			if (timeSinceLastDir < PARRY_WINDOW && !atk) {
+				FindObjectOfType<GUIHandler> ().AddText (m_msg_parry);
+				hi.Stun = 0f;
 				f *= 0.1f;
-			else
+				hi.Knockback *= 0.2f;
+
+			} else {
+				GameManager.Instance.GetComponent<GUIHandler>().AddText (m_msg_backstab);
 				f *= 2.0f;
-		} else if (!FacingTowards (hi.Knockback)) {
+			}
+		} else if (!FacingTowards (kb)) {
+			FindObjectOfType<GUIHandler> ().AddText (m_msg_backstab);
 			f *= 2.0f;
-		} else if (TowardsAttack (hi.Knockback,LastDirectionHeld)) {
-			if (timeSinceLastDir < PARRY_WINDOW && !atk)
+		} else if (TowardsAttack (kb,LastDirectionHeld)) {
+			if (timeSinceLastDir < PARRY_WINDOW && !atk) {
+				FindObjectOfType<GUIHandler> ().AddText (m_msg_perfectguard);
 				f *= 0.5f;
-			else
+				hi.Knockback *= 0.4f;
+			} else {
 				f *= 1f - Mathf.Max (0.2f, (0.75f * Mathf.Min (2f, timeSinceLastDir) / 3f));
+			}
 		}
 		if (atk)
 			f *= 2f;
@@ -55,6 +90,7 @@ public class PR_Focus : Property {
 		} else {
 			hi.Damage = Mathf.Max (0f, hi.Damage - dmg);
 		}
+		hi.FocusDamage = f;
 	}
 	private bool FacingTowards(Vector2 kb) {
 		return (kb.x > 0 && GetComponent<PhysicsSS> ().FacingLeft ||
@@ -103,9 +139,6 @@ public class PR_Focus : Property {
 		float focusBefore = m_focus;
 		m_focus = Mathf.Max(Mathf.Min(MaxFocus, m_focus - focus_damage), 0);
 		float diff =  m_focus - focusBefore;
-		if (m_display != null) {
-			m_display.TakeDamage (diff, m_focus);
-		}
 		return diff;
 	}
 

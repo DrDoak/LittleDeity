@@ -42,6 +42,7 @@ public class PhysicsSS : MonoBehaviour
 	public bool CanMove { get { return m_canMove; } set { m_canMove = value; } }
 	public Vector2 Velocity { get { return m_velocity; } }
 	public Vector3 TrueVelocity;
+	public float TimeOnGround = 0f;
 	public Dictionary<Direction,float> TimeCollided { get { return m_timeCollided; } private set { m_timeCollided = value; } }
 	public Dictionary<Direction,float> m_timeCollided;
 
@@ -344,6 +345,7 @@ public class PhysicsSS : MonoBehaviour
 			m_timeCollided [Direction.RIGHT] += Time.fixedDeltaTime;
 		else
 			m_timeCollided [Direction.RIGHT] = 0f;
+		TimeOnGround = m_timeCollided [Direction.DOWN];
 	}
 
 	private void HandleCollision(Direction d) {
@@ -376,10 +378,11 @@ public class PhysicsSS : MonoBehaviour
 			}
 		}
 
-		FallDir = FallDirection.NONE;
+
 		OnGround = false;
 		rayLength = rayLength + 0.1f;
 
+		FallDir = FallDirection.NONE;
 		bool collide = false;
 		bool started = false;
 		rayLength = 0.3f;
@@ -388,6 +391,9 @@ public class PhysicsSS : MonoBehaviour
 			rayOrigin += Vector2.right * (m_verticalRaySpacing * i + velocity.x);
 			RaycastHit2D [] hitL = Physics2D.RaycastAll (rayOrigin, Vector2.up * -1f, rayLength, CollisionMask);
 			foreach (RaycastHit2D hit in hitL) {
+				if (FallDir == FallDirection.RIGHT) {
+					FallDir = FallDirection.NONE;
+				}
 				if (JumpThruTag (hit.collider.gameObject) && (dropThruTime > 0f)) {
 				} else {
 					if ( !hit.collider.isTrigger && hit.collider.gameObject != gameObject) {
@@ -400,7 +406,8 @@ public class PhysicsSS : MonoBehaviour
 						break;
 					} else {
 						Debug.DrawRay (rayOrigin, Vector2.up * directionY * rayLength, Color.green);
-						if (started && collide) {
+
+						if (started && collide && FallDir != FallDirection.LEFT) {
 							FallDir = FallDirection.RIGHT;
 						}
 					}

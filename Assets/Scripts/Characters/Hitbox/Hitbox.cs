@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 
-public enum HitResult { NONE, HIT,HEAL, BLOCKED, REFLECTED };
+public enum HitResult { NONE, FOCUSHIT,HIT,HEAL, BLOCKED, REFLECTED };
 
 public enum ElementType { PHYSICAL, FIRE, BIOLOGICAL, PSYCHIC, LIGHTNING };
 
@@ -17,6 +17,7 @@ public class HitInfo  {
 	public List<ElementType> Element = new List<ElementType>();
 	public Hitbox mHitbox;
 
+	public AttackInfo Attack;
 	public GameObject Creator;
 	public GameObject target;
 	public float LastTimeHit;
@@ -304,11 +305,12 @@ public class Hitbox : MonoBehaviour {
 	}
 	private void m_hitFX(ElementType et, GameObject hitObj, Vector2 knockback, HitResult hr) {
 		GameObject fx = null;
-		if (hr == HitResult.BLOCKED) {
+		if (hr == HitResult.BLOCKED || hr == HitResult.FOCUSHIT) {
 			fx = GameObject.Instantiate (FXHit.Instance.FXHitBlock, hitObj.transform.position, Quaternion.identity);
-		} else if (hr == HitResult.HEAL) {
+		}
+		if (hr == HitResult.HEAL) {
 			fx = GameObject.Instantiate (FXHit.Instance.FXHeal, hitObj.transform.position, Quaternion.identity);
-		} else if (hr == HitResult.HIT) {
+		} else if (hr == HitResult.HIT || hr == HitResult.FOCUSHIT) {
 			switch (et) {
 			case ElementType.PHYSICAL:
 				fx = GameObject.Instantiate (FXHit.Instance.FXHitPhysical, hitObj.transform.position, Quaternion.identity);
@@ -338,7 +340,7 @@ public class Hitbox : MonoBehaviour {
 	}
 	protected void m_playerSound(ElementType et,  HitResult hr) {
 		
-		if (hr == HitResult.BLOCKED) {
+		if (hr == HitResult.BLOCKED || hr == HitResult.FOCUSHIT) {
 			FindObjectOfType<AudioManager> ().PlayClipAtPos (FXHit.Instance.SFXGuard,transform.position,0.5f,0f,0.25f);
 		} else if (hr == HitResult.HEAL) {
 			FindObjectOfType<AudioManager> ().PlayClipAtPos (FXHit.Instance.SFXHeal,transform.position,0.5f,0f,0.25f);

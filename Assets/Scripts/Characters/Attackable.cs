@@ -39,6 +39,7 @@ public class Attackable : MonoBehaviour
 	private Fighter m_fighter;
 
 	public bool DisplayHealth = true;
+	public bool CanTarget = true;
 	public GameObject Killer;
 	public GameObject DeathFX;
 	private HealthDisplay m_display;
@@ -58,6 +59,7 @@ public class Attackable : MonoBehaviour
 		m_fullResistences.Clear ();
 		for (int i=0; i < 5; i++) {
 			Resistence r = new Resistence ();
+
 			r.Element = (ElementType)i;
 			m_fullResistences.Add ( (ElementType)i, r);
 		}
@@ -68,16 +70,21 @@ public class Attackable : MonoBehaviour
 	}
 
 	internal void Start() {
-		if (DisplayHealth && GetComponent<BasicMovement>() != null && GetComponent<BasicMovement>().IsCurrentPlayer) {
-			UIBarInfo ubi = new UIBarInfo ();
-			ubi.FillColor = Color.red;
-			ubi.UILabel = "Health";
-			ubi.funcUpdate = UpdateHealthValues;
-			ubi.target = gameObject;
-			FindObjectOfType<GUIHandler> ().AddUIBar (ubi);
+		if (DisplayHealth) {
+			if (GetComponent<BasicMovement>() != null && GetComponent<BasicMovement> ().IsCurrentPlayer) {
+				UIBarInfo ubi = new UIBarInfo ();
+				ubi.FillColor = Color.red;
+				ubi.UILabel = "Health";
+				ubi.funcUpdate = UpdateHealthValues;
+				ubi.target = gameObject;
+				FindObjectOfType<GUIHandler>().AddUIBar (ubi);
+			} else {
+				m_display = Instantiate (UIList.Instance.HealthBarPrefab, this.transform).GetComponent<HealthDisplay>();
+				m_display.SetMaxHealth (MaxHealth);
+			}
 		}
 	}
-
+	 
 	void UpdateHealthValues(UIBarInfo ubi) {
 		ubi.element.GetComponent<UIBar> ().UpdateValues (Mathf.Round(ubi.target.GetComponent<Attackable>().Health), 
 			Mathf.Round(ubi.target.GetComponent<Attackable>().MaxHealth));
@@ -218,6 +225,7 @@ public class Attackable : MonoBehaviour
 			force.y = force.y - counterF;
 		
 		m_movementController.AddToVelocity(force);
+		hi.Knockback = force;
 	}
 
 	void TakeDoT(HitboxDoT hbdot) {
@@ -260,6 +268,7 @@ public class Attackable : MonoBehaviour
 		float d;
 		//Debug.Log ("Damage; " + hi.Damage + " r: " + r.Percentage);
 		d = hi.Damage - (hi.Damage * (r.Percentage / 100f));
+		float fD = hi.FocusDamage;
 		d = DamageObj (d);
 
 		ApplyHitToPhysicsSS(hi);
@@ -267,15 +276,17 @@ public class Attackable : MonoBehaviour
 		if (hi.Stun > 0f && m_fighter) {
 			if (s <= 0f)
 				return HitResult.BLOCKED;
-			m_fighter.RegisterStun (s, true, hi);
+			m_fighter.RegisterStun (s, true, hi, (d >= 0f && fD >= 0f));
 		}
 		if (Health <= 0f) {
 			Killer = hi.Creator;
 		}
-		if (d == 0f) {
+		if (d == 0f && fD == 0f) {
 			return HitResult.NONE;
 		} else if (d < 0f) {
 			return HitResult.HIT;
+		} else if (fD >= 0f) {
+			return HitResult.FOCUSHIT;
 		} else {
 			return HitResult.HEAL;
 		}
@@ -283,7 +294,7 @@ public class Attackable : MonoBehaviour
 
 	internal void OnTriggerEnter2D(Collider2D other)
 	{
-		ExecuteEvents.Execute<ICustomMessageTarget> (gameObject, null, (x, y) => x.OnAttack ());
+		//ExecuteEvents.Execute<ICustomMessageTarget> (gameObject, null, (x, y) => x.OnAttack ());
 	}
 	public void SetHealth (float newHealth) {
 		DamageObj (Health - newHealth);
@@ -297,7 +308,7 @@ public class Attackable : MonoBehaviour
 		Alive = (Health > 0);
 		float diff =  Health - healthBefore;
 		if (m_display != null) {
-			m_display.TakeDamage (diff, Health);
+			m_display.ChangeValue (diff, Health);
 		}
 		return diff;
 	}

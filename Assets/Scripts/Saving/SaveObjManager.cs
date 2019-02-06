@@ -95,6 +95,11 @@ public class SaveObjManager : MonoBehaviour{
 		get { return m_instance; }
 		set { m_instance = value; }
 	}
+
+	public static CharData PublicVars()
+	{
+		return charContainer.PublicVars;
+	}
 	
 	bool IsAlphaNum(string str)
 	{
@@ -223,7 +228,7 @@ public class SaveObjManager : MonoBehaviour{
 		}
 		if (registeredPermItems.Contains(id) ){
 			if (c.recreated) {
-				Debug.Log ("Recreated entity: " + c.data.regID);
+				//Debug.Log ("Recreated entity: " + c.data.regID);
 				c.recreated = false;
 				return false;
 			} else {
@@ -278,7 +283,7 @@ public class SaveObjManager : MonoBehaviour{
 	//Loading---------------
 	public static void LoadRoom(string path) {		
 		charContainer = LoadChars(path);	
-		Debug.Log ("items to recreate: " + charContainer.actors.Count + " from: " + path);
+		//Debug.Log ("items to recreate: " + charContainer.actors.Count + " from: " + path);
 		foreach (CharData data in charContainer.actors) {
 			RecreatePersistentItem (data, data.prefabPath,
 				data.pos, Quaternion.identity);
@@ -306,8 +311,12 @@ public class SaveObjManager : MonoBehaviour{
 
 	}
 	public static PersistentItem RecreatePersistentItem(string path, Vector3 position, Quaternion rotation) {
-		//Debug.Log ("re-instantiating object: " + path);
+		
 		GameObject prefab = Resources.Load<GameObject>(path);
+		if (prefab == null) {
+			Debug.Log ("ERROR: Could not re-instantiate object: " + path);
+			return null;
+		}
 		//Debug.Log (prefab);
 		GameObject go = GameObject.Instantiate(prefab, position, rotation) as GameObject;
 		PersistentItem actor = go.GetComponent<PersistentItem>() ?? go.AddComponent<PersistentItem>();

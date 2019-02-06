@@ -19,6 +19,7 @@ public class Fighter : MonoBehaviour
 	public bool AutoOrientSprite = true;
 	public string IdleAnimation = "idle";
 	public string WalkAnimation = "walk";
+	public string GuardAnimation = "guard";
 	public string HurtAnimation = "hit";
 	public string AirAnimation = "air";
 	public string JumpAnimation = "air";
@@ -37,6 +38,9 @@ public class Fighter : MonoBehaviour
 	private bool m_pauseAnim = false;
 
 	private bool m_haveMovedOnGround = false;
+	private bool m_hitStateIsGuard = false;
+
+	private Dictionary<ProjectileInfo, float> m_queuedProjectiles = new Dictionary<ProjectileInfo, float> ();
 
 	[HideInInspector]
 	public AudioClip AttackSound;
@@ -76,7 +80,7 @@ public class Fighter : MonoBehaviour
 	public void QueueHitbox(HitboxInfo hi, float delay) {
 		m_queuedHitboxes.Add (hi, Time.timeSinceLevelLoad + delay);
 	}
-	private void updateQueueHitboxes() {
+	private void updateQueueAttacks() {
 		Dictionary<HitboxInfo, float> newQueue = new Dictionary<HitboxInfo, float> ();
 		foreach (HitboxInfo hi in m_queuedHitboxes.Keys) {
 			if (Time.timeSinceLevelLoad > m_queuedHitboxes [hi])
@@ -85,6 +89,47 @@ public class Fighter : MonoBehaviour
 				newQueue.Add (hi,m_queuedHitboxes[hi]);
 		}
 		m_queuedHitboxes = newQueue;
+		Dictionary<ProjectileInfo, float> newQueue2 = new Dictionary<ProjectileInfo, float> ();
+		foreach (ProjectileInfo pi in m_queuedProjectiles.Keys) {
+			if (Time.timeSinceLevelLoad > m_queuedProjectiles [pi])
+				CreateProjectile (pi);
+			else
+				newQueue2.Add (pi,m_queuedProjectiles[pi]);
+		}
+		m_queuedProjectiles = newQueue2;
+	}
+
+	public void CreateProjectile(ProjectileInfo pi) {
+		Vector2 AimPoint = pi.ProjectileAimDirection;
+		if (pi.AimTowardsTarget) {
+			Vector3 tp = pi.ProjectileAimDirection;
+			if (GetComponent<OffenseAI> () != null && GetComponent<OffenseAI> ().CurrentTarget != null) {
+				tp = GetComponent<OffenseAI> ().CurrentTarget.transform.position;
+				Debug.Log ("Targeting point: " + tp);
+			} else if (GetComponent<HalberdTargetFinder> ()) {
+				tp = GetComponent<HalberdTargetFinder> ().GetTarget ();
+			}
+
+			Vector2 newAimPoint = Vector2.ClampMagnitude(new Vector2 (tp.x - transform.position.x, tp.y - transform.position.y), 1.0f);
+			Debug.Log ("Aim point: " + newAimPoint);
+			Vector2 ViewVec = new Vector2 (1f, 0f);
+			if (GetComponent<PhysicsSS> ().FacingLeft) {
+				ViewVec = new Vector2 (-1f, 0f);
+			}
+			Debug.Log ("Angle to point: " + Vector2.Angle (ViewVec, newAimPoint));
+			if (Vector2.Angle (ViewVec, newAimPoint) < pi.MaxAngle) {
+				AimPoint = new Vector2(Mathf.Abs(newAimPoint.x),newAimPoint.y);
+			}
+		}
+		Projectile p = GetComponent<HitboxMaker> ().CreateProjectile (pi.Projectile, pi.ProjectileCreatePos, 
+			AimPoint, pi.ProjectileSpeed,
+			pi.Damage,pi.Stun,pi.HitboxDuration,pi.Knockback,true,
+			pi.Element);
+		p.PenetrativePower = pi.PenetrativePower;		
+	}
+
+	public void QueueProjectile(ProjectileInfo pi, float delay) {
+		m_queuedProjectiles.Add (pi, Time.timeSinceLevelLoad + delay);
 	}
 
 	internal void Update()
@@ -92,7 +137,7 @@ public class Fighter : MonoBehaviour
 		ActivateStunIfDead ();
 		if (ProgressStun())
 			return;
-		updateQueueHitboxes();
+		updateQueueAttacks();
 		if (ProgressAttack())
 			return;
 		if (!m_pauseAnim)
@@ -165,7 +210,11 @@ public class Fighter : MonoBehaviour
 	{
 		if (StunTime <= 0.0f)
 			return false;
-		m_anim.Play(HurtAnimation, AutoOrientSprite);
+		if (m_hitStateIsGuard) {
+			m_anim.Play (new string[]{GuardAnimation,HurtAnimation}, AutoOrientSprite);
+		} else {
+			m_anim.Play (HurtAnimation, AutoOrientSprite);
+		}
 		StunTime -= Time.deltaTime;
 		if (m_currentAttack != null)
 			m_currentAttack = null;
@@ -219,6 +268,13 @@ public class Fighter : MonoBehaviour
 		m_anim.Play(m_currentAttack.m_AttackAnimInfo.RecoveryAnimation, true);
 	}
 
+	public void SkipAttackToEnd() {
+		if (m_currentAttack != null) {
+			m_currentAttack.OnInterrupt (0,true,new HitInfo());
+		}
+		EndAttack();
+	}
+
 	public void EndAttack()
 	{
 		m_physics.CanMove = true;
@@ -228,7 +284,14 @@ public class Fighter : MonoBehaviour
 
 	public void ProgressWalkOrIdleAnimation()
 	{
-		if (!m_physics.OnGround) {
+		if (m_physics.Floating) {
+			m_haveMovedOnGround = false;
+			if (m_physics.TrueVelocity.y > 0f || m_physics.TrueVelocity.x > 0f) {
+				m_anim.Play (new string[]{WalkAnimation,AirAnimation});
+			} else {
+				m_anim.Play (AirAnimation);
+			}
+		} else if (!m_physics.OnGround) {
 			m_haveMovedOnGround = false;
 			if (m_physics.TrueVelocity.y > 0f) {
 				m_anim.Play (new string[]{JumpAnimation,AirAnimation});
@@ -273,22 +336,23 @@ public class Fighter : MonoBehaviour
 		return m_currentAttack != null && m_currentAttack.CurrentProgress != AttackState.INACTIVE;
 	}
 
-	public void RegisterStun(float st, bool defaultStun, HitInfo hi)
+	public void RegisterStun(float st, bool defaultStun, HitInfo hi, bool guard = false)
 	{
 
 		if (m_currentAttack != null) {
 			m_currentAttack.OnInterrupt (StunTime, defaultStun, hi);
 		}
 		if (defaultStun) {
-			StartHitState (st);
+			StartHitState (st, guard);
 		}
 	}
 
-	void StartHitState(float st)
+	void StartHitState(float st, bool guard = false)
 	{
 		//Debug.Log ("Starting Hit State with Stun: "+ st);
 		EndAttack();
 		StunTime = st;
+		m_hitStateIsGuard = guard;
 		m_physics.CanMove = false;
 	}
 
@@ -333,8 +397,10 @@ public class Fighter : MonoBehaviour
 			return null;
 		m_currentAttack = Attacks[attackName];
 		m_physics.CanMove = false;
-		m_currentAttack.ResetAndProgress();
 		ExecuteEvents.Execute<ICustomMessageTarget> (gameObject, null, (x, y) => x.OnAttack (m_currentAttack));
+		if (m_currentAttack != null) {
+			m_currentAttack.ResetAndProgress ();
+		}
 		return m_currentAttack;
 	}
 

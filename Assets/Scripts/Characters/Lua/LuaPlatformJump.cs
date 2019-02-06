@@ -13,9 +13,9 @@ public class ClingPoint {
 
 public class LuaPlatformJump : Property {
 
-	public float MaxHeight = 4;
-	public float MinHeight = 1;
-	public float Width;
+	public float MaxHeight = 4f;
+	public float MinHeight = 0f;
+	public float Width = 4.5f;
 	public int VerticalRayCount = 4;
 
 	private BasicMovement m_movement;
@@ -43,6 +43,17 @@ public class LuaPlatformJump : Property {
 		JumpToBestClingTarget ();
 	}
 
+	void Update() {
+		float rayLength = Mathf.Abs (MaxHeight - MinHeight);
+		Vector3 pos = transform.position;
+		for (int i = 0; i < VerticalRayCount; i++) {
+			Vector2 rayOrigin = new Vector2 ( pos.x - Width/2f, pos.y + MaxHeight );
+			rayOrigin += Vector2.right * (m_verticalRaySpacing * i);
+			Vector3 s = new Vector3 (rayOrigin.x, rayOrigin.y, 0f);
+			Debug.DrawRay (s,new Vector3(0f,- rayLength,0f));
+		}
+	}
+
 	private void FindValidClingPoints() {
 
 		float rayLength = Mathf.Abs (MaxHeight - MinHeight);
@@ -60,11 +71,23 @@ public class LuaPlatformJump : Property {
 					break;
 				}
 			}
+
 		}
 	}
 
 	private bool validClingTarget(RaycastHit2D hit) {
-		return true;
+		if (JumpThruTag(hit.rigidbody.gameObject)) {
+			return true;
+		}
+		Vector2 o = new Vector2 (transform.position.x, transform.position.y);
+		RaycastHit2D [] hitL = Physics2D.RaycastAll(o, Vector2.ClampMagnitude(hit.point - o,1), Vector2.Distance(o,hit.point), m_collisionMask);
+		//Debug.Log ("---- Length: " + hitL.Length);
+		foreach (RaycastHit2D h in hitL) {
+			//Debug.Log (h.rigidbody.gameObject);
+			if (JumpThruTag (h.rigidbody.gameObject))
+				return true;
+		}
+		return (hitL.Length % 2 != 0);
 	}
 
 	private void JumpToBestClingTarget() {

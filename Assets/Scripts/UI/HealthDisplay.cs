@@ -9,6 +9,12 @@ public enum HealthTextMode {DAMAGE, HEALTH};
 public class HealthDisplay : MonoBehaviour {
 
 	public HealthTextMode HealthTextDisplay = HealthTextMode.HEALTH;
+
+	bool m_displayAsFraction;
+
+	public bool DisplayAsFraction { get { return m_displayAsFraction; } set { m_displayAsFraction = value; } }
+
+
 	TextMeshProUGUI m_number;
 	Slider m_s;
 	const float DISPLAY_TIME = 2.0f;
@@ -24,6 +30,12 @@ public class HealthDisplay : MonoBehaviour {
 	float m_cumulativeDamage = 1;
 	Image m_background;
 	Image m_fill;
+
+	public string ValueLabel { get { return m_valueLabel; } set { m_valueLabel = value; } }
+
+	string m_valueLabel = "HP";
+	string deltaLabel = "DMG";
+
 	// Use this for initialization
 	void Awake () {
 		m_number = transform.GetChild (0).GetChild(2).GetComponent<TextMeshProUGUI> ();
@@ -70,7 +82,7 @@ public class HealthDisplay : MonoBehaviour {
 		bar_displayed = false;
 		m_alpha = 1.0f;
 	}
-	public void TakeDamage(float diff, float currentHealth) {
+	public void ChangeValue(float diff, float currentHealth) {
 		m_s.value = (currentHealth / m_maxHealth);
 		if (diff >= 0f && diff < 1f)
 			return;
@@ -89,9 +101,14 @@ public class HealthDisplay : MonoBehaviour {
 		if (Mathf.Abs (m_cumulativeDamage) < 1f)
 			return;
 		if (HealthTextDisplay == HealthTextMode.HEALTH) {
-			m_number.SetText (Mathf.RoundToInt (currentHealth).ToString () + " HP");
+			if (m_displayAsFraction) {
+				string s = Mathf.RoundToInt (currentHealth).ToString () + " \\ " + Mathf.RoundToInt (m_maxHealth).ToString () + " " + m_valueLabel;
+				m_number.SetText (s);
+			} else {
+				m_number.SetText (Mathf.RoundToInt (currentHealth).ToString () + " " + m_valueLabel);
+			}
 		} else {
-			m_number.SetText (Mathf.Abs (Mathf.RoundToInt (m_cumulativeDamage)).ToString () + " DMG");
+			m_number.SetText (Mathf.Abs (Mathf.RoundToInt (m_cumulativeDamage)).ToString () + " " + deltaLabel);
 		}
 		m_timeDisplayed = 0.0f;
 		bar_displayed = true;

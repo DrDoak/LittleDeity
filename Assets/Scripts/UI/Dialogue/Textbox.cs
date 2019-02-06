@@ -9,35 +9,36 @@ public enum DialogueSound { TYPED, SPOKEN, RECORDED};
 
 public class Textbox : MonoBehaviour {
 
-	public DialogueUnit masterSequence;
-	GameObject targetedObj;
-	public bool typing;
-	public DialogueSound m_sound;
-	Vector3 lastPos;
+	public DialogueUnit MasterSequence;
 	public string FullText;
 	public string CurrentText;
-	public float timeBetweenChar = 0.01f;
-	float sinceLastChar = 0f;
-	float sinceLastSound = 0f;
-	float pauseTime = 0f;
-	float timeSinceStop = 0f;
-	public int lastCharacter;
-	public float pauseAfterType = 2f;
-	TextMeshProUGUI mText;
-	public Color tC;
-	public bool conclude = false;
-	private List<DialogueAction> m_potentialActions;
-
+	public float TimeBetweenType = 0.01f;
+	public float PauseAfterTextboxDone = 2f;
+	public Color TextboxColor;
 	public Dictionary<BasicMovement,bool> FrozenCharacters;
+	public DialogueSound TypingSound;
+
+	TextMeshProUGUI m_Text;
+	private float m_sinceLastChar = 0f;
+	private float m_sinceLastSound = 0f;
+	private float m_pauseTime = 0f;
+	private float m_timeSinceStop = 0f;
+	private Vector3 m_lastPos;
+	private int m_lastCharacterIndex;
+	private bool m_isTyping;
+
+	private List<DialogueAction> m_potentialActions;
+	private GameObject m_targetedObj;
+
 
 	// Use this for initialization
 	void Start () {
-		mText = GetComponentInChildren<TextMeshProUGUI> ();
-		if (!typing) {
-			mText.text = FullText;
-		}
+		m_Text = GetComponentInChildren<TextMeshProUGUI> ();
+		if (!m_isTyping)
+			m_Text.text = FullText;
+		
 		m_potentialActions = new List<DialogueAction> ();
-		m_potentialActions.Add(new DAPause());
+		m_potentialActions.Add (new DAPause());
 		m_potentialActions.Add (new DATextSpeed ());
 		m_potentialActions.Add (new DAWalkTo ());
 		m_potentialActions.Add (new DAControl ());
@@ -50,58 +51,80 @@ public class Textbox : MonoBehaviour {
 		m_potentialActions.Add (new DAEnd ());
 		m_potentialActions.Add (new DAJump ());
 		m_potentialActions.Add (new DAQuestion ());
-	}
-	void OnDestroy() {
-		conclude = true;
 
-		if (masterSequence != null) {
-			masterSequence.parseNextElement ();
+		m_potentialActions.Add (new DAVarSet ());
+		m_potentialActions.Add (new DAVarCheck ());
+	}
+
+	void OnDestroy() {
+		if (MasterSequence != null) {
+			MasterSequence.parseNextElement ();
 		}
 		//TextboxManager.Instance.removeTextbox (gameObject);
-		/*if (targetedObj.GetComponent<Character> ()) {
-			targetedObj.GetComponent<Character> ().onTBComplete ();
+		/*if (m_targetedObj.GetComponent<Character> ()) {
+			m_targetedObj.GetComponent<Character> ().onTBComplete ();
 		}*/
 	}
-	public void initColor() {
-		GetComponentInChildren<Image> ().color = tC;
-		float avgCol = (1.0f - tC.r + 1.0f - tC.g + 1.0f - tC.b)/3f;
-		GetComponentInChildren<TextMeshProUGUI> ().color = new Color(avgCol,avgCol,avgCol,tC.a + 0.5f);
+		
+	public void SetPause(float pt) {
+		m_pauseTime = pt;
 	}
-	public void setColor(Color C) {
-		tC = C;
+	public void SetTargetObj(GameObject gameObj) {
+		m_targetedObj = gameObj;
+		if (m_targetedObj != null)
+			m_lastPos = gameObj.transform.position;
 	}
-
-	// Update is called once per frame
+	public void SetTypeMode(bool type) {
+		m_isTyping = type;
+		if (type) {
+			CurrentText = "";
+			m_lastCharacterIndex = 0;
+		} else {
+			CurrentText = FullText;
+		}
+	}
+	public void setText(string text) {
+		FullText = text;
+	}
+	public void FreezeCharacter(BasicMovement bm, bool isFrozen = true) {
+		if (!FrozenCharacters.ContainsKey (bm))
+			FrozenCharacters.Add (bm, bm.IsCurrentPlayer);
+		bm.SetAutonomy (!isFrozen);
+	}
+		
 	/* Cutscene scripting guide:
 	 *  Normal text is shown as dialogue for the starting character.
-	 * 	Using the '|' character or the enter character will create a new textbox.
+	 * 	Using the '|' character or the newline character will create a new textbox.
 	 *  At the start of a new textbox if the colon character is found within the first 18 characters, the game will attempt to search
 	 *  For the character and make the dialogue come from that character instead.
 	 *  
-	 *  The character ` surrounds a special block.
+	 *  The characters < and > surrounds a special block. This can call commands in a simple lisp like language
+	 * 
+	 * 
 	 * A number will result in a pause for a certain amount of time.
 	 * $ will change the text speed
 	 * 
-	 * --NOT IMPLEMENTED YET--
-	 * Any text means the character would try to do an animation
-	 * --NOT IMPLEMENTED YET--
 	 * */
 
-	private void processSpecialSection() {
+	public void PerformSpecialAction(string section) {
 		string actStr = "";
-		char nextChar = FullText.ToCharArray () [lastCharacter];
+		int charNum = 0;
+		char nextChar = section.ToCharArray () [charNum];
+		actStr += nextChar;
 		int numSpecials = 1;
-		while (numSpecials > 0 && lastCharacter < FullText.Length - 1) {
-			actStr += nextChar;
-			lastCharacter++;
-			nextChar = FullText.ToCharArray () [lastCharacter];
-			if (nextChar == '>')
+		while (numSpecials > 0 && charNum < section.Length - 1) {
+			charNum++;
+			nextChar = section.ToCharArray () [charNum];
+			if (nextChar == '>') {
 				numSpecials--;
-			else if (nextChar == '<')
+				continue;
+			} else if (nextChar == '<') {
 				numSpecials++;
+				continue;
+			}
+			actStr += nextChar;
 		}
-		//Debug.Log ("Action string: " + actStr);
-		//Debug.Log ("Length on execution: " + m_potentialActions.Count);
+			
 		List<DialogueAction> executedActions = new List<DialogueAction> ();
 		foreach (DialogueAction da in m_potentialActions) {
 			if (da.IsExecutionString (actStr))
@@ -109,22 +132,45 @@ public class Textbox : MonoBehaviour {
 		}
 		foreach (DialogueAction da in executedActions)
 			da.PerformAction (actStr, this);
-		lastCharacter++;
+	}
+
+
+	private void processSpecialSection() {
+		string actStr = "";
+		char nextChar = FullText.ToCharArray () [m_lastCharacterIndex];
+		int numSpecials = 1;
+		while (numSpecials > 0 && m_lastCharacterIndex < FullText.Length - 1) {
+			actStr += nextChar;
+			m_lastCharacterIndex++;
+			nextChar = FullText.ToCharArray () [m_lastCharacterIndex];
+			if (nextChar == '>')
+				numSpecials--;
+			else if (nextChar == '<')
+				numSpecials++;
+		}
+		List<DialogueAction> executedActions = new List<DialogueAction> ();
+		foreach (DialogueAction da in m_potentialActions) {
+			if (da.IsExecutionString (actStr))
+				executedActions.Add (da);
+		}
+		foreach (DialogueAction da in executedActions)
+			da.PerformAction (actStr, this);
+		m_lastCharacterIndex++;
 	}
 
 	private void processNormalChar(char nextChar) {
-		if (sinceLastSound > 0.15f) {
-			sinceLastSound = 0f;
+		if (m_sinceLastSound > 0.15f) {
+			m_sinceLastSound = 0f;
 			playSound ();
 		}
 		CurrentText += nextChar;
-		mText.text = CurrentText;
-		sinceLastChar = 0f;
+		m_Text.text = CurrentText;
+		m_sinceLastChar = 0f;
 	}
 
 	private void processChar() {
-		lastCharacter++;
-		char nextChar = FullText.ToCharArray () [lastCharacter - 1];
+		m_lastCharacterIndex++;
+		char nextChar = FullText.ToCharArray () [m_lastCharacterIndex - 1];
 		if (nextChar == '<') {
 			processSpecialSection ();
 		} else {
@@ -133,22 +179,22 @@ public class Textbox : MonoBehaviour {
 	}
 
 	void Update () {
-		if (targetedObj != null) {
-			transform.position += targetedObj.transform.position-lastPos;
-			lastPos = targetedObj.transform.position;
+		if (m_targetedObj != null) {
+			transform.position += m_targetedObj.transform.position-m_lastPos;
+			m_lastPos = m_targetedObj.transform.position;
 		}
-		if (typing ) {
-			if (lastCharacter < FullText.Length) { 
-				sinceLastChar += Time.deltaTime;
-				sinceLastSound += Time.deltaTime;
-				if (pauseTime > 0f) {
-					pauseTime -= Time.deltaTime;
-				} else if (sinceLastChar > timeBetweenChar) {
+		if (m_isTyping ) {
+			if (m_lastCharacterIndex < FullText.Length) { 
+				m_sinceLastChar += Time.deltaTime;
+				m_sinceLastSound += Time.deltaTime;
+				if (m_pauseTime > 0f) {
+					m_pauseTime -= Time.deltaTime;
+				} else if (m_sinceLastChar > TimeBetweenType) {
 					processChar ();
 				}
 			} else {
-				timeSinceStop += Time.deltaTime;
-				if (timeSinceStop > pauseAfterType) {
+				m_timeSinceStop += Time.deltaTime;
+				if (m_timeSinceStop > PauseAfterTextboxDone) {
 					Destroy (gameObject);
 				}
 			}
@@ -156,7 +202,7 @@ public class Textbox : MonoBehaviour {
 		}
 	}
 	private void playSound() {
-		switch (m_sound) {
+		switch (TypingSound) {
 		case DialogueSound.RECORDED:
 			FindObjectOfType<AudioManager> ().PlayClipAtPos (UIList.Instance.SFXDialogueStatic, FindObjectOfType<CameraFollow> ().transform.position, 0.15f, 0f, 0.1f);
 			break;
@@ -170,28 +216,10 @@ public class Textbox : MonoBehaviour {
 			break;
 		}
 	}
-	public void SetPause(float pt) {
-		pauseTime = pt;
-	}
-	public void setTargetObj(GameObject gameObj) {
-		targetedObj = gameObj;
-		if (targetedObj != null)
-			lastPos = gameObj.transform.position;
-	}
-	public void setTypeMode(bool type) {
-		typing = type;
-		if (type) {
-			CurrentText = "";
-			lastCharacter = 0;
-		} else {
-			CurrentText = FullText;
-		}
-	}
-	public void setText(string text) {
-		FullText = text;
-	}
+}
 
-	private void playAnimation(string targetChar) {
+/*
+private void playAnimation(string targetChar) {
 		string[] chars = targetChar.Split(',');
 		if (chars.Length < 2)
 			return;
@@ -201,10 +229,4 @@ public class Textbox : MonoBehaviour {
 			bool res = character.GetComponent<AnimatorSprite> ().Play (anim);
 		}
 	}
-
-	public void FreezeCharacter(BasicMovement bm, bool isFrozen = true) {
-		if (!FrozenCharacters.ContainsKey (bm))
-			FrozenCharacters.Add (bm, bm.IsCurrentPlayer);
-		bm.SetAutonomy (!isFrozen);
-	}
-}
+*/

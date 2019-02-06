@@ -82,20 +82,23 @@ public class AtkStance : AttackInfo {
 
 
 		GetComponent<PhysicsSS> ().CanMove = m_stanceInfo.CanMove;
-		m_time_in_stance = 0f;
+		m_time_in_stance = Time.deltaTime;
 	}
 
 	protected virtual void OnStanceEnd() {
-		Fighter f = GetComponent<Fighter> ();
-		f.AirAnimation = old_air;
-		f.WalkAnimation = old_walk;
-		f.IdleAnimation = old_idle;
+		if (m_time_in_stance > 0f) {
+			Fighter f = GetComponent<Fighter> ();
+			f.AirAnimation = old_air;
+			f.WalkAnimation = old_walk;
+			f.IdleAnimation = old_idle;
 
-		BasicMovement bm = GetComponent<BasicMovement> ();
-		bm.SetMoveSpeed (bm.MoveSpeed / m_stanceInfo.speedModifier);
-		bm.SetJumpHeight (bm.JumpHeight / m_stanceInfo.jumpModifier);
-		bm.CanJump = old_can_jump;
+			BasicMovement bm = GetComponent<BasicMovement> ();
+			bm.SetMoveSpeed (bm.MoveSpeed / m_stanceInfo.speedModifier);
+			bm.SetJumpHeight (bm.JumpHeight / m_stanceInfo.jumpModifier);
+			bm.CanJump = old_can_jump;
 
-		GetComponent<PhysicsSS> ().CanMove = old_can_move;
+			GetComponent<PhysicsSS> ().CanMove = old_can_move;
+		}
+		m_time_in_stance = 0f;
 	}
 }

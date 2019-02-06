@@ -18,6 +18,7 @@ public class UIBarInfo {
 	public GameObject element;
 	public GameObject target;
 	public UIBarUpdateFunction funcUpdate;
+	public UIBar uib;
 }
 
 public class UIBar : MonoBehaviour {
@@ -31,6 +32,10 @@ public class UIBar : MonoBehaviour {
 
 	private float m_scale = 1.0f;
 	private bool m_use_scale = true;
+	public int Num = 0;
+	private const float BarHeight = 25;
+	private const float StartingHeight = -100;
+	private const float StartingX = 100;
 	// Use this for initialization
 	void Start () {
 		m_slider = transform.Find ("Health_Bar").GetComponent<Slider> ();
@@ -42,7 +47,7 @@ public class UIBar : MonoBehaviour {
 	void Update () {
 	}
 
-	public void Initialize(UIBarInfo ubi) {
+	public void Initialize(UIBarInfo ubi, int Num) {
 		SetColor (ubi.FillColor);
 		if (ubi.DisplayLabel)
 			SetLabel (ubi.UILabel);
@@ -51,6 +56,15 @@ public class UIBar : MonoBehaviour {
 		SetUseScale (ubi.useScale);
 		SetScale (ubi.scale);
 		SetDisplayMode (ubi.DisplayMode);
+		Vector2 v = new Vector2 (StartingX, BarHeight * Num + StartingHeight);
+		GetComponent<RectTransform> ().anchoredPosition = v;
+		Num = Num;
+	}
+	public void OnRemove(int n) {
+		if (n < Num)
+			Num -= 1;
+		Vector2 v = new Vector2 (StartingX, BarHeight * Num + StartingHeight);
+		GetComponent<RectTransform> ().anchoredPosition = v;
 	}
 	public void SetUseScale(bool us) {
 		m_use_scale = us;

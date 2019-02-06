@@ -14,6 +14,7 @@ public class TRTarget : Transition {
 		    MasterAI.GetComponent<Attackable> ().CanAttack (
 			    o.GetComponent<Attackable> ().Faction)) {
 			TargetTask.Target = o.gameObject;
+			//Debug.Log ("Triggering Transition");
 			TriggerTransition ();
 		}
 	}

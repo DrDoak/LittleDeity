@@ -3,9 +3,12 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [System.Serializable]
-class ProjectileInfo {
+public class ProjectileInfo {
+	public float Delay = 0f;
 	public GameObject Projectile = null;
 	public Vector2 ProjectileCreatePos = new Vector2 (1.0f, 0f);
+	public bool AimTowardsTarget = false;
+	public float MaxAngle = 360f;
 	public Vector2 ProjectileAimDirection = new Vector2 (1.0f, 0f);
 	public float ProjectileSpeed = 10.0f;
 	public int PenetrativePower = 1;
@@ -20,15 +23,27 @@ class ProjectileInfo {
 public class AtkProjectile : AtkDash {
 	
 	[SerializeField]
-	private ProjectileInfo m_ProjectileData;
+	private List<ProjectileInfo> m_ProjectileData;
 
 	protected override void OnAttack()
 	{
 		base.OnAttack();
-		Projectile p = GetComponent<HitboxMaker> ().CreateProjectile (m_ProjectileData.Projectile, m_ProjectileData.ProjectileCreatePos, 
-			m_ProjectileData.ProjectileAimDirection, m_ProjectileData.ProjectileSpeed,
-			m_ProjectileData.Damage,m_ProjectileData.Stun,m_ProjectileData.HitboxDuration,m_ProjectileData.Knockback,true,
-			m_ProjectileData.Element);
-		p.PenetrativePower = m_ProjectileData.PenetrativePower;
+		if (m_ProjectileData.Count != 0) {
+			createProjectiles ();
+		}
+	}
+
+	protected void createProjectiles()
+	{
+		//m_hitboxMaker.AddHitType(HitType);
+		foreach (ProjectileInfo pi in m_ProjectileData) {
+			if (pi.Delay <= 0f)
+				GetComponent<Fighter> ().CreateProjectile(pi);
+			else
+				GetComponent<Fighter> ().QueueProjectile (pi, pi.Delay);
+		}
+		//		Vector2 offset = m_physics.OrientVectorToDirection(m_HitboxInfo.HitboxOffset);
+		//		m_hitboxMaker.CreateHitbox(m_HitboxInfo.HitboxScale, offset, m_HitboxInfo.Damage,
+		//			m_HitboxInfo.Stun, m_HitboxInfo.HitboxDuration, m_HitboxInfo.Knockback, true, true,m_HitboxInfo.Element,m_HitboxInfo.ApplyProps);
 	}
 }

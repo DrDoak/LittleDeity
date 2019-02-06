@@ -23,10 +23,14 @@ public class DialogueAction  {
 		if (key.Length > actionString.Length)
 			return allArgs;
 		string lastArg = "";
-		//Debug.Log ("Extracting from: " + actionString + " starting at: " + key.Length);
+		int numSpecials = 0;
 		for (int i = key.Length; i < actionString.Length; i++) {
-			if (actionString.ToCharArray () [i] != ' ') {
-				//Debug.Log ("Adding : " + actionString.ToCharArray () [i]);
+			char nextChar = actionString.ToCharArray () [i];
+			if (nextChar == '>') {
+				numSpecials--;
+			} else if (nextChar == '<') {
+				numSpecials++;
+			} else if (nextChar != ' ' || numSpecials > 0) {
 				lastArg += actionString.ToCharArray () [i];
 			} else if (lastArg.Length > 0) {
 				allArgs.Add (lastArg);

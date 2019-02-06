@@ -51,6 +51,8 @@ public class Observer : MonoBehaviour {
 					if (cDist < minDist) {
 						if (!VisibleObjs.Contains (o)) {
 							OnSight (o);
+						} else {
+							m_lastTimeSeen [o] = lts;
 						}
 					}
 				}
@@ -62,6 +64,7 @@ public class Observer : MonoBehaviour {
 				if (o == null) { // c.gameObject == null) {
 					VisibleObjs.RemoveAt (i);
 				} else if (m_lastTimeSeen.ContainsKey(o)) {
+					//Debug.Log ("Cannot see, lts = " + lts + " m_lasttime: " + m_lastTimeSeen [o] + " post: " + postLineVisibleTime);
 					if (lts - m_lastTimeSeen[o] > postLineVisibleTime) {
 						o.removeObserver (this);
 						//outOfSight (o, true);
